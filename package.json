@@ -1,0 +1,10 @@
+{
+  "name": "KalliopeServer",
+  "version": "1.0.0",
+  "dependencies": {
+    "express": "^4.18.2",
+    "websocket": "^1.0.34"
+  },
+  "main": "main.js",
+  "type": "module"
+}
