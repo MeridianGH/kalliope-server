@@ -1,0 +1,113 @@
+section {
+    width: 100vw;
+
+    padding: 5vh 5vw;
+    box-sizing: border-box;
+
+    display: flex;
+    flex-direction: column;
+    gap: 5vh;
+    place-items: center;
+    place-content: center;
+}
+section > div {
+    width: 75vw;
+    border: 0.25em solid #ffffff;
+    border-radius: 25px;
+    background-color: #121212;
+    padding: 5%;
+}
+@media screen and (min-width: 768px) {
+    section > div {
+        margin-bottom: 10vh;
+    }
+}
+
+section h1 {
+    font-size: 3em;
+    text-align: center;
+    margin: 0;
+}
+section h2 {
+    font-size: 2em;
+    text-align: center;
+    margin: 0;
+}
+
+section p {
+    font-size: 1.5em;
+}
+
+details {
+    padding: 2vh;
+    border-radius: 5px;
+    background: #212121;
+    margin-bottom: 2vh;
+}
+details > summary {
+    display: flex;
+    justify-content: space-between;
+    cursor: pointer;
+}
+details[open] > summary {
+    padding-bottom: 0.5em;
+}
+details > summary > * {
+    max-width: 90%;
+}
+details[open] > summary ~ * {
+    animation: open 0.5s;
+}
+@keyframes open {
+    0%    { opacity: 0; }
+    100%  { opacity: 1; }
+}
+details > summary .icon {
+    width: 1.5em;
+    height: 1.5em;
+    display: flex;
+    place-content: center;
+    place-items: center;
+    transform-origin: 50% 50%;
+    transition: transform 0.5s;
+}
+details[open] > summary .icon {
+    transform: rotate(180deg);
+}
+
+.commands-container span {
+    display: inline-block;
+    margin: 15px;
+    padding: 15px;
+    border-radius: 15px;
+    border: 2px solid transparent;
+    background-color: #212121;
+    cursor: pointer;
+    transition: background-color 0.25s, border-color 0.25s;
+}
+.commands-container span:hover {
+    background-color: transparent;
+    border-color: #ffffff;
+}
+
+.discord-messages {
+    --scale: 0.4;
+    transform: scale(var(--scale));
+    transform-origin: 0 0;
+    border-radius: 10px;
+    width: calc(75vw * (1 / var(--scale)));
+    margin: 0;
+}
+@media screen and (min-width: 872px) { .discord-messages { --scale: 1; } }
+@media screen and (min-width: 1600px) { .discord-messages { --scale: 1.5; } }
+@media screen and (min-width: 2000px) { .discord-messages { --scale: 2; } }
+.discord-message {
+    background: inherit !important;
+}
+.discord-attachments {
+    margin-top: -10px !important;
+}
+.discord-button-select {
+    background: #202225 !important;
+    color: #a3a6aa !important;
+}
