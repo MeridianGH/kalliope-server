@@ -1,0 +1,16 @@
+.dashboard {
+    min-height: 100vh;
+}
+
+h1 {
+    margin: 0;
+}
+
+.server-container {
+    width: 75vw;
+    min-height: 50vh;
+    border: 0.25em solid #ffffff;
+    border-radius: 25px;
+    background-color: #121212;
+    padding: 0 5%;
+}

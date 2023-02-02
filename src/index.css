@@ -9,6 +9,8 @@ html::-webkit-scrollbar {
 }
 
 .app {
+    min-height: 100vh;
+    min-width: 100vw;
     color: #ffffff;
     font-family: 'Montserrat', sans-serif;
     font-size: 1em;

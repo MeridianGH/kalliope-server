@@ -22,7 +22,7 @@ nav {
 .nav-link-container {
     gap: 20px;
 }
-a.nav-link {
+.nav-link-container a {
     font-size: 1em;
     font-weight: lighter;
     text-transform: uppercase;

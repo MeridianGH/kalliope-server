@@ -13,10 +13,10 @@ import {
   DiscordMessages
 } from '@skyra/discord-components-react'
 
-import '../App/app.css'
 import './home.css'
+import kalliopePNG from '../../assets/kalliope.png'
 
-export function Home(props) {
+export function Home() {
   useEffect(() => {
     document.querySelectorAll('.discord-messages').forEach((element) => {
       element.style.marginBottom = 0 - element.offsetHeight * (1 - getComputedStyle(element).getPropertyValue('--scale')) + 'px'
@@ -26,7 +26,7 @@ export function Home(props) {
     profiles: {
       kalliope: {
         author: 'Kalliope',
-        avatar: '../../assets/kalliope.png',
+        avatar: kalliopePNG,
         bot: true,
         roleColor: '#ffffff'
       },
@@ -39,9 +39,16 @@ export function Home(props) {
   }
   return (
     <div id={'home'}>
-      <Header setDashboard={props.setDashboard}/>
+      <Header/>
       <section id={'features'}>
         <h1><i className={'fas fa-th'}/> Features</h1>
+        <div>
+          <h2>The Kalliope network</h2>
+          <p>
+            Kalliope is active in <b id={'servers'}>...</b> servers with <b id={'clients'}>...</b> clients<br/>
+            and providing clean music to <b id={'users'}>...</b> users.
+          </p>
+        </div>
         <div>
           <h2>Full support</h2>
           <p>
@@ -66,7 +73,7 @@ export function Home(props) {
                   <DiscordEmbedField inline inlineIndex={2} fieldTitle={'Author'}>Jim Yosef</DiscordEmbedField>
                   <DiscordEmbedField inline inlineIndex={3} fieldTitle={'Position'}>0</DiscordEmbedField>
                 </DiscordEmbedFields>
-                <DiscordEmbedFooter slot={'footer'} footerImage={'../../assets/kalliope.png'}>Kalliope.</DiscordEmbedFooter>
+                <DiscordEmbedFooter slot={'footer'} footerImage={kalliopePNG}>Kalliope.</DiscordEmbedFooter>
               </DiscordEmbed>
               <DiscordAttachments slot={'components'}>
                 <DiscordActionRow>
@@ -96,7 +103,7 @@ export function Home(props) {
                 embedTitle={'Here are the search results for your search "riell animal":'}
                 thumbnail={'https://img.youtube.com/vi/QQX2hpmtMJs/maxresdefault.jpg'}
               >
-                <DiscordEmbedFooter slot={'footer'} footerImage={'../../assets/kalliope.png'}>Kalliope. | This embed expires after one minute.</DiscordEmbedFooter>
+                <DiscordEmbedFooter slot={'footer'} footerImage={kalliopePNG}>Kalliope. | This embed expires after one minute.</DiscordEmbedFooter>
               </DiscordEmbed>
               <DiscordAttachments slot={'components'}>
                 <DiscordActionRow>
@@ -113,7 +120,7 @@ export function Home(props) {
             You can even use your keyboard&apos;s built-in music buttons to skip songs and pause or resume playback.<span style={{ color: '#8b8b8b' } }>*</span><br/>
             <span className={'small-text'}> * Currently only available on Firefox. Requires browser permissions.</span>
           </p>
-          <a className={'dashboard-button'} onClick={props.setDashboard}>Dashboard.</a>
+          <a className={'dashboard-button'}>Dashboard.</a>
         </div>
         <div>
           <h2>Genius Lyrics</h2>
@@ -141,7 +148,7 @@ export function Home(props) {
                   <br/>
                   ...<br/>
                 </DiscordEmbedDescription>
-                <DiscordEmbedFooter slot={'footer'} footerImage={'../../assets/kalliope.png'}>Kalliope. | Repeat: ❌ | Provided by genius.com</DiscordEmbedFooter>
+                <DiscordEmbedFooter slot={'footer'} footerImage={kalliopePNG}>Kalliope. | Repeat: ❌ | Provided by genius.com</DiscordEmbedFooter>
               </DiscordEmbed>
               <DiscordAttachments slot={'components'}>
                 <DiscordActionRow>

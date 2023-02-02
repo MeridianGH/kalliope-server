@@ -8,19 +8,19 @@ import { logging } from './src/utilities/logging.js'
 
 const app = express()
 
-const port = 80
+const port = 8080
 const domain = 'kalliope.xyz'
 const host = 'http://' + domain
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 
 // Bundle folder
-app.use(express.static('src'))
+app.use(express.static('dist'))
 
 // Endpoints
 app.get('/', (req, res) => {
   console.log('[Server] Request: ' + req.hostname)
-  res.sendFile(path.resolve(__dirname, './src/endpoints/index/index.html'))
+  res.sendFile(path.resolve(__dirname, './dist/index.html'))
 })
 
 // Login endpoint.

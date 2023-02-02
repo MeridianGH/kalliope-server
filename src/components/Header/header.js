@@ -2,8 +2,9 @@ import React, { useEffect } from 'react'
 import { Navbar } from '../Navbar/navbar.js'
 
 import './header.css'
+import kalliopeTransparentPNG from '../../assets/kalliope_transparent.png'
 
-export function Header(props) {
+export function Header() {
   useEffect(() => {
     const observer = new IntersectionObserver(([entry]) => {
       const element = document.querySelector('.scroll-hint')
@@ -15,7 +16,7 @@ export function Header(props) {
     <header>
       <Navbar/>
       <div className={'header-container flex-container column nowrap'}>
-        <img className={'header-title-logo'} src={'../../assets/kalliope_transparent.png'} alt={'Logo'}/>
+        <img className={'header-title-logo'} src={kalliopeTransparentPNG} alt={'Logo'}/>
         <h1 className={'header-title'}>Kalliope.</h1>
         <p className={'header-slogan'}>A Discord music bot that still supports YouTube.</p>
         <div className={'source-icons-container flex-container row'}>
@@ -27,7 +28,7 @@ export function Header(props) {
           <i className={'fab fa-vimeo'} style={{ color: '#19b7ea' }}/>
           <i className={'fas fa-cloud-music'} style={{ color: '#f0f0f0' }}/>
         </div>
-        <a className={'dashboard-button'} onClick={props.setDashboard}>Dashboard.</a>
+        <a className={'dashboard-button'}>Dashboard.</a>
         <a className={'scroll-hint'} href={'#features'}><i className={'fas fa-chevron-down'}/> Scroll</a>
       </div>
     </header>
