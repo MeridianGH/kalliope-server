@@ -36,7 +36,7 @@ function send(ws, type = 'none', data = {}) {
   ws.sendUTF(JSON.stringify(data))
 }
 
-const clientData = {}
+const guilds = {}
 const userConnections = {}
 const clientConnections = {}
 
@@ -54,17 +54,14 @@ wss.on('request', (request) => {
       console.log(data)
 
       // Return client guilds if guild is not set
-      if (!data.guildId && data.type == 'requestClientGuilds') {
-        const guildsArray = Object.values(clientData).map((client) => client.guilds.map((guild) => guild.id))
-        const guilds = [].concat(...guildsArray)
+      if (data.type == 'requestClientGuilds') {
         console.log(guilds)
         send(ws, 'clientGuilds', { guilds: guilds })
         return
       }
 
       // Verify and store user connection
-      // noinspection JSUnresolvedVariable
-      if (!data.clientId || !data.guildId || !data.userId) { return }
+      if (!data.guildId || !data.userId) { return }
       userConnections[data.guildId] = { ...userConnections[data.guildId], [data.userId]: ws }
       guildId = data.guildId
       userId = data.userId
@@ -77,8 +74,8 @@ wss.on('request', (request) => {
 
     ws.on('close', (reasonCode, description) => {
       console.log(`WebSocket closed with reason: ${reasonCode} | ${description}`)
-      delete userConnections[guildId][userId]
-      if (Object.keys(userConnections[guildId]).length === 0) { delete userConnections[guildId] }
+      // delete userConnections[guildId][userId]
+      // if (Object.keys(userConnections[guildId]).length === 0) { delete userConnections[guildId] }
     })
 
     return
@@ -103,9 +100,9 @@ wss.on('request', (request) => {
 
       // Update clientData
       if (data.type === 'clientData') {
-        clientData[data.clientId] = { guilds: data.guilds, users: data.users }
+        data.guilds.forEach((guild) => { guilds[guild] = data.clientId })
+        console.log(guilds)
       }
-      console.log(clientData)
 
       // Forward data to users
       // noinspection JSUnresolvedVariable

@@ -4,7 +4,7 @@ import { Routes } from 'discord-api-types/v10'
 
 import './dashboard.css'
 import genericServer from '../../assets/generic_server.png'
-import { Player } from '../Queue/player.js'
+import { Player } from '../Player/player.js'
 
 export function Dashboard() {
   document.title = 'Kalliope | Dashboard'
@@ -12,7 +12,7 @@ export function Dashboard() {
 
   const [searchParams] = useSearchParams()
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')))
-  const [clientGuilds, setClientGuilds] = useState([])
+  const [clientGuilds, setClientGuilds] = useState({})
   const [player, setPlayer] = useState(null)
   const websocket = useRef(null)
 
@@ -120,17 +120,21 @@ export function Dashboard() {
     })
   })
 
-  return player ? <Player player={player} websocket={websocket.current}/> :
-    <div className={'dashboard flex-container'}>
-      <h1><i className={'fas fa-th'}/> Select a server...</h1>
-      <div className={'server-container flex-container row'}>
-        {/* eslint-disable-next-line no-extra-parens */}
-        {user.guilds.filter((guild) => clientGuilds.includes(guild.id)).map((guild, index) => (
-          <div className={'server-card flex-container column'} key={index}>
-            <img src={guild.icon ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}?size=1024` : genericServer} alt={'Server Icon'}></img>
-            <span>{guild.name}</span>
+  return (
+    player ? <Player player={player} websocket={websocket.current}/> :
+      user ?
+        <div className={'dashboard flex-container'}>
+          <h1><i className={'fas fa-th'}/> Select a server...</h1>
+          <div className={'server-container flex-container row'}>
+            {/* eslint-disable-next-line no-extra-parens */}
+            {user.guilds.filter((guild) => Object.keys(clientGuilds).includes(guild.id)).map((guild, index) => (
+              <div className={'server-card flex-container column'} key={index} onClick={() => websocket.current.sendData('requestPlayerData', { guildId: guild.id, clientId: clientGuilds[guild.id] })}>
+                <img src={guild.icon ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}?size=1024` : genericServer} alt={'Server Icon'}></img>
+                <span>{guild.name}</span>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-    </div>
+        </div> :
+        <div></div>
+  )
 }
