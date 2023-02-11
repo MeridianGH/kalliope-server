@@ -1,4 +1,5 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+import React, { useState } from 'react'
 
 const msToHMS = (ms) => {
   let totalSeconds = ms / 1000
@@ -9,33 +10,11 @@ const msToHMS = (ms) => {
   return hours === '0' ? `${minutes}:${seconds.padStart(2, '0')}` : `${hours}:${minutes.padStart(2, '0')}:${seconds.padStart(2, '0')}`
 }
 
-function Player() {
-  const [user, setUser] = React.useState(null)
-  const [player, setPlayer] = React.useState(null)
-  const [toast, setToast] = React.useState(null)
-
-  const websocket = new WebSocket(location.hostname === 'localhost' ? 'ws://localhost' : `wss://${location.hostname}`)
-
-  function send(data) {
-    data.guildId = player.guildId
-    data.userId = user.id
-    websocket.send(JSON.stringify(data))
-  }
+export function Player({ player, websocket }) {
 
   React.useEffect(() => {
-    websocket.addEventListener('open', () => {
-      send({ type: 'request' })
-    })
-    websocket.addEventListener('message', (message) => {
-      document.getElementById('loader')?.remove()
-      const data = JSON.parse(message.data)
-      if (data.toast) {
-        setToast(data.toast)
-      } else {
-        setPlayer(data)
-      }
-    })
-  }, [])
+    websocket.sendData({ type: 'requestPlayerData' })
+  }, [player])
   React.useEffect(() => {
     const interval = setInterval(() => {
       if (player && !player.paused && player.current && !player.current.isStream) {
@@ -58,10 +37,9 @@ function Player() {
   return html`
     <div>
       <${MediaSession} track=${player.current} paused=${player.paused} />
-      <${Toast} toast=${toast} />
       <${NowPlaying} track=${player.current} paused=${player.paused} position=${player.position} repeatMode=${player.repeatMode} volume=${player.volume} />
       <div style=${{ marginBottom: '20px' }} />
-      <${Queue} tracks=${player.queue} />
+      <${Player} tracks=${player.queue} />
     </div>
   `
 }
