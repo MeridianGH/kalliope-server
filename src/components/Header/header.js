@@ -8,6 +8,7 @@ export function Header() {
   useEffect(() => {
     const observer = new IntersectionObserver(([entry]) => {
       const element = document.querySelector('.scroll-hint')
+      if (!element) { return }
       element.style.opacity = entry.isIntersecting ? '1' : '0'
     }, { threshold: [0.95] })
     observer.observe(document.querySelector('header'))

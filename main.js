@@ -2,62 +2,33 @@ import express from 'express'
 import { server as WebSocketServer } from 'websocket'
 import url from 'url'
 import path from 'path'
-import { Routes } from 'discord-api-types/v10'
-import fetch from 'node-fetch'
-import { logging } from './src/utilities/logging.js'
 
 const app = express()
 
 const port = 8080
-const domain = 'kalliope.xyz'
+const domain = 'kalliope.xyz' + (port !== 80 ? `:${port}` : '')
 const host = 'http://' + domain
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 
-// Bundle folder
+// Distribute folder
 app.use(express.static('dist'))
 
 // Endpoints
-app.get('/', (req, res) => {
-  console.log('[Server] Request: ' + req.hostname)
-  res.sendFile(path.resolve(__dirname, './dist/index.html'))
-})
-
 // Login endpoint.
 app.get('/login', (req, res) => {
   const loginUrl = `https://discordapp.com/api/oauth2/authorize?client_id=1053262351803093032&scope=identify%20guilds&response_type=code&redirect_uri=${encodeURIComponent(`${host}/callback`)}`
   res.redirect(loginUrl)
 })
 
-// Callback endpoint.
-app.get('/callback', async (req, res) => {
-  if (!req.query.code) { return res.redirect('/') }
-
-  const body = new URLSearchParams({ 'client_id': '1053262351803093032', 'client_secret': 'z3rbrd_dNS-sR6JJ3UvciefXljqwqv0o', 'code': req.query.code, 'grant_type': 'authorization_code', 'redirect_uri': `${host}/callback` })
-  const token = await fetch('https://discord.com/api' + Routes.oauth2TokenExchange(), { method: 'POST', body: body, headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }).then((response) => response.json()).catch((e) => { logging.warn('Error while fetching token while authenticating: ' + e) })
-  console.log(token)
-  if (!token?.access_token) { return res.redirect('/login') }
-
-  const user = await fetch('https://discord.com/api' + Routes.user(), { method: 'GET', headers: { authorization: `${token.token_type} ${token.access_token}` } }).then((response) => response.json()).catch((e) => { logging.warn('Error while fetching user while authenticating: ' + e) })
-  const guilds = await fetch('https://discord.com/api' + Routes.userGuilds(), { method: 'GET', headers: { authorization: `${token.token_type} ${token.access_token}` } }).then((response) => response.json()).catch((e) => { logging.warn('Error while fetching guilds while authenticating: ' + e) })
-  if (!user || !guilds) { return res.redirect('/login') }
-
-  user.guilds = guilds
-  // req.session.user = user
-  console.log(user)
-
-  res.redirect('/')
-})
-
-// Logout endpoint.
-app.get('/logout', (req, res) => {
-  req.session.destroy(() => {
-    res.redirect('/')
-  })
+// Allow client-side routing.
+app.get('*', (req, res) => {
+  console.log('[Server] Request: ' + req.hostname)
+  res.sendFile(path.resolve(__dirname, './dist/index.html'))
 })
 
 const server = app.listen(port, null, null, () => {
-  console.log(`Started server on ${host}:${port}.`)
+  console.log(`Started server on ${host}.`)
 })
 
 function send(ws, type = 'none', data = {}) {
@@ -81,6 +52,15 @@ wss.on('request', (request) => {
       if (message.type !== 'utf8') { return }
       const data = JSON.parse(message.utf8Data)
       console.log(data)
+
+      // Return client guilds if guild is not set
+      if (!data.guildId && data.type == 'requestClientGuilds') {
+        const guildsArray = Object.values(clientData).map((client) => client.guilds.map((guild) => guild.id))
+        const guilds = [].concat(...guildsArray)
+        console.log(guilds)
+        send(ws, 'clientGuilds', { guilds: guilds })
+        return
+      }
 
       // Verify and store user connection
       // noinspection JSUnresolvedVariable
@@ -125,6 +105,7 @@ wss.on('request', (request) => {
       if (data.type === 'clientData') {
         clientData[data.clientId] = { guilds: data.guilds, users: data.users }
       }
+      console.log(clientData)
 
       // Forward data to users
       // noinspection JSUnresolvedVariable
