@@ -31,11 +31,6 @@ const server = app.listen(port, null, null, () => {
   console.log(`Started server on ${host}.`)
 })
 
-function send(ws, type = 'none', data = {}) {
-  data.type = data.type ?? type
-  ws.sendUTF(JSON.stringify(data))
-}
-
 const guilds = {}
 const userConnections = {}
 const clientConnections = {}
@@ -45,6 +40,11 @@ wss.on('request', (request) => {
   // User WebSocket.
   if (request.origin === host) {
     const ws = request.accept(null, request.origin)
+
+    ws.sendData = (type = 'none', data = {}) => {
+      data.type = data.type ?? type
+      ws.sendUTF(JSON.stringify(data))
+    }
 
     let guildId, userId
 
@@ -56,7 +56,7 @@ wss.on('request', (request) => {
       // Return client guilds if guild is not set
       if (data.type == 'requestClientGuilds') {
         console.log(guilds)
-        send(ws, 'clientGuilds', { guilds: guilds })
+        ws.sendData('clientGuilds', { guilds: guilds })
         return
       }
 
@@ -69,7 +69,7 @@ wss.on('request', (request) => {
       // Forward data to client
       const clientWs = clientConnections[data.clientId]
       if (!clientWs) { return }
-      send(clientWs, data.type, data)
+      clientWs.sendData(data.type, data)
     })
 
     ws.on('close', (reasonCode, description) => {
@@ -84,6 +84,11 @@ wss.on('request', (request) => {
   // Client WebSocket.
   if (request.host === 'clients.' + domain && (request.origin === undefined || request.origin === '*')) {
     const ws = request.accept(null, request.origin)
+
+    ws.sendData = (type = 'none', data = {}) => {
+      data.type = data.type ?? type
+      ws.sendUTF(JSON.stringify(data))
+    }
 
     let clientId
 
@@ -107,9 +112,10 @@ wss.on('request', (request) => {
       // Forward data to users
       // noinspection JSUnresolvedVariable
       if (!data.guildId) { return }
-      for (const userWs in userConnections[data.guildId]) {
-        send(userWs, data.type, data)
-      }
+      Object.values(userConnections[data.guildId]).forEach((userWs) => {
+        console.log('Send')
+        userWs.sendData(data.type, data)
+      })
     })
 
     ws.on('close', (reasonCode, description) => {

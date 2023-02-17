@@ -18,28 +18,24 @@ export function Dashboard() {
 
   useEffect(() => {
     if (!user) { return }
-    websocket.current = new WebSocket(`ws://${location.host}`)
+    const ws = new WebSocket(`ws://${location.host}`)
 
-    websocket.current.sendData = (type = 'none', data = {}) => {
+    ws.sendData = (type = 'none', data = {}) => {
       data.type = data.type ?? type
       data.userId = user.id
-      websocket.current.send(JSON.stringify(data))
+      ws.send(JSON.stringify(data))
     }
 
-    websocket.current.addEventListener('open', () => {
-      websocket.current.sendData('requestClientGuilds')
+    ws.addEventListener('open', () => {
+      ws.sendData('requestClientGuilds')
     })
-    websocket.current.addEventListener('close', () => {
+    ws.addEventListener('close', () => {
       console.warn('WebSocket closed.')
     })
-
-    const current = websocket.current
-    return () => { current.close() }
-  }, [user])
-  useEffect(() => {
-    if (!websocket.current) { return }
-    websocket.current.addEventListener('message', (message) => {
+    ws.addEventListener('message', (message) => {
       const data = JSON.parse(message?.data)
+      console.log('Dashboard received message:')
+      console.log(data)
       switch (data.type) {
         case 'clientGuilds': {
           setClientGuilds(data.guilds)
@@ -53,7 +49,10 @@ export function Dashboard() {
         }
       }
     })
-  })
+
+    websocket.current = ws
+    return () => { ws.close() }
+  }, [user])
   useEffect(() => {
     const code = searchParams.get('code')
     if (user) { return }
