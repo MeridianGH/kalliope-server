@@ -113,7 +113,6 @@ wss.on('request', (request) => {
       // noinspection JSUnresolvedVariable
       if (!data.guildId) { return }
       Object.values(userConnections[data.guildId]).forEach((userWs) => {
-        console.log('Send')
         userWs.sendData(data.type, data)
       })
     })

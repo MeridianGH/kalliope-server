@@ -61,7 +61,7 @@ function NowPlaying({ track, position, paused, repeatMode, volume, websocket }) 
           </li>
         </ul>
       </div>
-      <VolumeControl volume={volume} websocket={websocket} />
+      <VolumeControl initialVolume={volume} websocket={websocket} />
     </div>
   )
 }
@@ -149,13 +149,13 @@ function QueueButtons({ websocket }) {
   }
   return (
     <div className='queue-button-container'>
-      <div style="${{ display: 'flex' }}">
+      <div style={{ display: 'flex' }}>
         <form onSubmit={handlePlay}>
           <input type='text' className='textfield' placeholder='Add to queue' ref={input} />
           <button className='button'><i className='fas fa-plus' /> Play</button>
         </form>
-        <select className="button select" style="${{ marginLeft: '20px' }}" name="filter" id="filter" onChange={(event) => { websocket.sendData({ type: 'filter', filter: event.target.value }) }}>
-          <option selected disabled>Select a filter...</option>
+        <select className="button select" style={{ marginLeft: '20px' } } name="filter" id="filter" onChange={(event) => { websocket.sendData({ type: 'filter', filter: event.target.value }) }}>
+          <option disabled hidden>Select a filter...</option>
           <option value="none">None</option>
           <option value="bassboost">Bass Boost</option>
           <option value="classic">Classic</option>
@@ -173,20 +173,19 @@ function QueueButtons({ websocket }) {
 }
 
 function MediaSession({ track, paused, websocket }) {
-  React.useEffect(async () => {
+  React.useEffect(() => {
     if (navigator.userAgent.indexOf('Firefox') !== -1) {
       const audio = document.createElement('audio')
       audio.src = '/queue/near-silence.mp3'
       audio.volume = 0.00001
       audio.load()
-      await audio.play().catch(() => {
+      audio.play().then(() => { setTimeout(() => audio.pause(), 100) }).catch(() => {
         const div = document.getElementById('autoplay-alert')
         div.classList.add('alert', 'alert-danger', 'alert-dismissible', 'fade', 'show')
         div.setAttribute('role', 'alert')
         div.style.cssText = 'position: fixed; right: 1em; bottom: 0;'
         div.innerHTML = '<i class="far fa-exclamation-triangle fa-1.5x"></i><span style="font-size: 1em; margin-left: 5px">Autoplay seems to be disabled. Enable Media Autoplay to use media buttons to control the music bot!<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'
       })
-      setTimeout(() => audio.pause(), 100)
     }
   }, [])
   React.useEffect(() => {

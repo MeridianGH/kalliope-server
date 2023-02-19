@@ -17,6 +17,7 @@ export function Dashboard() {
   const websocket = useRef(null)
 
   useEffect(() => {
+    // WebSocket Effect
     if (!user) { return }
     const ws = new WebSocket(`ws://${location.host}`)
 
@@ -54,6 +55,7 @@ export function Dashboard() {
     return () => { ws.close() }
   }, [user])
   useEffect(() => {
+    // Login Effect
     const code = searchParams.get('code')
     if (user) { return }
     if (!code) {
@@ -109,6 +111,7 @@ export function Dashboard() {
     fetchUser().catch((e) => { console.error(e) })
   })
   useEffect(() => {
+    // Scrollable Titles Effect
     const elements = document.querySelectorAll('.server-card > span')
     elements.forEach((element) => {
       if (element.offsetWidth < element.scrollWidth) {
@@ -120,7 +123,7 @@ export function Dashboard() {
   })
 
   return (
-    player ? <Player player={player} websocket={websocket.current}/> :
+    player ? <Player initialPlayer={player} websocket={websocket.current}/> :
       user ?
         <div className={'dashboard flex-container'}>
           <h1><i className={'fas fa-th'}/> Select a server...</h1>
