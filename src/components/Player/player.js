@@ -1,6 +1,8 @@
 /* eslint-disable react/prop-types */
 import React, { useEffect, useState } from 'react'
 
+import './player.css'
+
 const msToHMS = (ms) => {
   let totalSeconds = ms / 1000
   const hours = Math.floor(totalSeconds / 3600).toString()
@@ -33,10 +35,10 @@ export function Player({ initialPlayer, websocket }) {
   if (!player.current) { return <div>Nothing currently playing!<br/>Join a voice channel and type &quot;/play&quot; to get started!</div> }
   return (
     <div>
-      <MediaSession track={player.current} paused={player.paused} websocket={websocket} />
+      {/*<MediaSession track={player.current} paused={player.paused} websocket={websocket} />*/}
       <NowPlaying track={player.current} paused={player.paused} position={player.position} repeatMode={player.repeatMode} volume={player.volume} websocket={websocket} />
-      <div style={{ marginBottom: '20px' }} />
-      <Queue tracks={player.queue} websocket={websocket} />
+      {/*<div style={{ marginBottom: '20px' }} />*/}
+      {/*<Queue tracks={player.queue} websocket={websocket} />*/}
     </div>
   )
 }
@@ -44,23 +46,21 @@ export function Player({ initialPlayer, websocket }) {
 function NowPlaying({ track, position, paused, repeatMode, volume, websocket }) {
   return (
     <div>
-      <h1 className='queue-title'>Now Playing</h1>
-      <div className='nowplaying-container'>
-        <ul className='horizontal-list'>
-          <li>
-            <Thumbnail image={track.thumbnail} />
-            <div className='progress-container'>
-              <div className='progress-bar' style={{ width: `${track.isStream ? '100%' : position / track.duration * 100 + '%'}` }} />
-            </div>
-          </li>
-          <li>
-            <a href={track.uri} rel='noreferrer' target='_blank'><h4>{track.title}</h4></a>
-            <h6>{track.author}</h6>
-            <h5>{track.isStream ? '🔴 Live' : `${msToHMS(position)} / ${msToHMS(track.duration)}`}</h5>
-            <MusicControls paused={paused} repeatMode={repeatMode} websocket={websocket} />
-          </li>
-        </ul>
+      <div className={'flex-container row'}>
+        <div className={'flex-container column'}>
+          <Thumbnail image={track.thumbnail} />
+          <div className={'progress-container'}>
+            <div className={'progress-bar'} style={{ width: `${track.isStream ? '100%' : position / track.duration * 100 + '%'}` }} />
+          </div>
+        </div>
+        <div className={'flex-container column start'}>
+          <h1>Now Playing:</h1>
+          <a href={track.uri} rel='noreferrer' target='_blank'><h4>{track.title}</h4></a>
+          <h6>{track.author}</h6>
+          <h5>{track.isStream ? '🔴 Live' : `${msToHMS(position)} / ${msToHMS(track.duration)}`}</h5>
+        </div>
       </div>
+      <MusicControls paused={paused} repeatMode={repeatMode} websocket={websocket} />
       <VolumeControl initialVolume={volume} websocket={websocket} />
     </div>
   )
@@ -68,9 +68,9 @@ function NowPlaying({ track, position, paused, repeatMode, volume, websocket }) 
 
 function Thumbnail({ image }) {
   return (
-    <div className='thumbnail-container'>
-      <img className='thumbnail-backdrop' src={image ?? '/assets/img/image_placeholder.png'} alt='Thumbnail Background'/>
-      <img className='thumbnail' src={image ?? '/assets/img/image_placeholder.png'} alt='Video Thumbnail'/>
+    <div className={'thumbnail-container'}>
+      <img className={'thumbnail-backdrop'} src={image ?? '/assets/img/image_placeholder.png'} alt='Thumbnail Background'/>
+      <img className={'thumbnail'} src={image ?? '/assets/img/image_placeholder.png'} alt='Video Thumbnail'/>
     </div>
   )
 }
@@ -78,12 +78,12 @@ function Thumbnail({ image }) {
 function MusicControls({ paused, repeatMode, websocket }) {
   return (
     <div>
-      <button className='button icon' onClick={() => { websocket.sendData({ type: 'previous' }) }}><i className='fas fa-backward' /></button>
-      <button className='button icon' onClick={() => { websocket.sendData({ type: 'pause' }) }}><i className={paused ? 'fas fa-play' : 'fas fa-pause'} /></button>
-      <button className='button icon' onClick={() => { websocket.sendData({ type: 'skip' }) }}><i className='fas fa-forward' /></button>
+      <button className={'music-button'} onClick={() => { websocket.sendData({ type: 'previous' }) }}><i className={'fas fa-backward'} /></button>
+      <button className={'music-button'} onClick={() => { websocket.sendData({ type: 'pause' }) }}><i className={paused ? 'fas fa-play' : 'fas fa-pause'} /></button>
+      <button className={'music-button'} onClick={() => { websocket.sendData({ type: 'skip' }) }}><i className={'fas fa-forward'} /></button>
       <span style={{ marginRight: '10px' }}></span>
-      <button className='button icon' onClick={() => { websocket.sendData({ type: 'shuffle' }) }}><i className='fas fa-random' /></button>
-      <button className='button icon' onClick={() => { websocket.sendData({ type: 'repeat' }) }}><i className={repeatMode === 'none' ? 'fad fa-repeat-alt' : repeatMode === 'track' ? 'fas fa-repeat-1-alt' : 'fas fa-repeat'} /></button>
+      <button className={'music-button'} onClick={() => { websocket.sendData({ type: 'shuffle' }) }}><i className={'fas fa-random'} /></button>
+      <button className={'music-button'} onClick={() => { websocket.sendData({ type: 'repeat' }) }}><i className={repeatMode === 'none' ? 'fad fa-repeat-alt' : repeatMode === 'track' ? 'fas fa-repeat-1-alt' : 'fas fa-repeat'} /></button>
     </div>
   )
 }
@@ -96,8 +96,8 @@ function VolumeControl({ initialVolume, websocket }) {
 
   return (
     <div>
-      <button className='volume-display disabled'><i className={volume === 0 ? 'fas fa-volume-off' : volume <= 33 ? 'fas fa-volume-down' : volume <= 66 ? 'fas fa-volume' : 'fas fa-volume-up'} /> ${volume}</button>
-      <input className='volume-slider' type='range' defaultValue={volume.toString()} step='1' min='0' max='100' onInput={(event) => { setVolume(event.target.value) }} onMouseUp={(event) => { websocket.sendData({ type: 'volume', volume: event.target.value }) }} />
+      <button className={'volume-display disabled'}><i className={volume === 0 ? 'fas fa-volume-off' : volume <= 33 ? 'fas fa-volume-down' : volume <= 66 ? 'fas fa-volume' : 'fas fa-volume-up'} /> ${volume}</button>
+      <input className={'volume-slider'} type='range' defaultValue={volume.toString()} step='1' min='0' max='100' onInput={(event) => { setVolume(event.target.value) }} onMouseUp={(event) => { websocket.sendData({ type: 'volume', volume: event.target.value }) }} />
     </div>
   )
 }
@@ -108,20 +108,20 @@ function Queue({ tracks, websocket }) {
   for (let i = 0; i < tracks.length; i++) {
     rows.push(
       <tr key={i + 1}>
-        <td><span className='text-nowrap'>${i + 1}</span></td>
-        <td><span className='text-nowrap'>${tracks[i].title}</span></td>
-        <td><span className='text-nowrap'>${tracks[i].author}</span></td>
-        <td><span className='text-nowrap'>${tracks[i].isStream ? '🔴 Live' : msToHMS(tracks[i].duration)}</span></td>
-        <td><span className='text-nowrap'><button className='button icon' onClick={() => { websocket.sendData({ type: 'remove', index: i + 1 }) }}><i className='fas fa-trash-alt' /></button><button className='button icon' onClick={() => { websocket.sendData({ type: 'skipto', index: i + 1 }) }}><i className='fas fa-forward' /></button></span></td>
+        <td><span className={'text-nowrap'}>${i + 1}</span></td>
+        <td><span className={'text-nowrap'}>${tracks[i].title}</span></td>
+        <td><span className={'text-nowrap'}>${tracks[i].author}</span></td>
+        <td><span className={'text-nowrap'}>${tracks[i].isStream ? '🔴 Live' : msToHMS(tracks[i].duration)}</span></td>
+        <td><span className={'text-nowrap'}><button className={'button icon'} onClick={() => { websocket.sendData({ type: 'remove', index: i + 1 }) }}><i className={'fas fa-trash-alt'} /></button><button className={'button icon'} onClick={() => { websocket.sendData({ type: 'skipto', index: i + 1 }) }}><i className={'fas fa-forward'} /></button></span></td>
       </tr>
     )
   }
   return (
     <div>
-      <h1 className='queue-title'>Queue</h1>
+      <h1 className={'queue-title'}>Queue</h1>
       <QueueButtons websocket={websocket}/>
-      <div className='table-responsive'>
-        <table className='table table-dark'>
+      <div className={'table-responsive'}>
+        <table className={'table table-dark'}>
           <thead>
             <tr>
               <th>#</th>
@@ -148,11 +148,11 @@ function QueueButtons({ websocket }) {
     input.current.value = ''
   }
   return (
-    <div className='queue-button-container'>
+    <div className={'queue-button-container'}>
       <div style={{ display: 'flex' }}>
         <form onSubmit={handlePlay}>
-          <input type='text' className='textfield' placeholder='Add to queue' ref={input} />
-          <button className='button'><i className='fas fa-plus' /> Play</button>
+          <input type='text' className={'textfield'} placeholder='Add to queue' ref={input} />
+          <button className={'button'}><i className={'fas fa-plus'} /> Play</button>
         </form>
         <select className="button select" style={{ marginLeft: '20px' } } name="filter" id="filter" onChange={(event) => { websocket.sendData({ type: 'filter', filter: event.target.value }) }}>
           <option disabled hidden>Select a filter...</option>
@@ -167,7 +167,7 @@ function QueueButtons({ websocket }) {
           <option value="vaporwave">Vaporwave</option>
         </select>
       </div>
-      <button className='button' style={{ marginRight: 0 }} onClick={() => { websocket.sendData({ type: 'clear' }) }}><i className='fas fa-trash-alt' /> Clear queue</button>
+      <button className={'button'} style={{ marginRight: 0 }} onClick={() => { websocket.sendData({ type: 'clear' }) }}><i className={'fas fa-trash-alt'} /> Clear queue</button>
     </div>
   )
 }

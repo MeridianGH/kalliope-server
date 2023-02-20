@@ -6,6 +6,34 @@ import './dashboard.css'
 import genericServer from '../../assets/generic_server.png'
 import { Player } from '../Player/player.js'
 
+const playerObject = {
+  'guild': '610498937874546699',
+  'queue': [],
+  'voiceChannel': '658690208295944232',
+  'textChannel': '658690163290931220',
+  'current': {
+    'requester': {
+      'displayName': 'Meridian',
+      'displayAvatarURL': 'https://cdn.discordapp.com/avatars/360817252158930954/5ca503af7e9f9b64c1eee2d4f947a29d.webp'
+    },
+    'track': 'QAAAiwIAKEppbSBZb3NlZiB4IFJJRUxMIC0gQW5pbWFsIChMeXJpYyBWaWRlbykACUppbSBZb3NlZgAAAAAAArNoAAtRUVgyaHBtdE1KcwABACtodHRwczovL3d3dy55b3V0dWJlLmNvbS93YXRjaD92PVFRWDJocG10TUpzAAd5b3V0dWJlAAAAAAAAAAA=',
+    'title': 'Jim Yosef x RIELL - Animal (Lyric Video)',
+    'identifier': 'QQX2hpmtMJs',
+    'author': 'Jim Yosef',
+    'duration': 177000,
+    'isSeekable': true,
+    'isStream': false,
+    'uri': 'https://www.youtube.com/watch?v=QQX2hpmtMJs',
+    'thumbnail': 'https://img.youtube.com/vi/QQX2hpmtMJs/maxresdefault.jpg'
+  },
+  'paused': false,
+  'volume': 50,
+  'filter': 'none',
+  'position': 0,
+  'timescale': 1,
+  'repeatMode': 'none'
+}
+
 export function Dashboard() {
   document.title = 'Kalliope | Dashboard'
   const loginUrl = `https://discordapp.com/api/oauth2/authorize?client_id=1053262351803093032&scope=identify%20guilds&response_type=code&redirect_uri=${encodeURIComponent(`${window.location.protocol}//${window.location.host}/dashboard`)}`
@@ -13,7 +41,7 @@ export function Dashboard() {
   const [searchParams] = useSearchParams()
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')))
   const [clientGuilds, setClientGuilds] = useState({})
-  const [player, setPlayer] = useState(null)
+  const [player, setPlayer] = useState(playerObject)
   const websocket = useRef(null)
 
   useEffect(() => {
@@ -123,20 +151,25 @@ export function Dashboard() {
   })
 
   return (
-    player ? <Player initialPlayer={player} websocket={websocket.current}/> :
-      user ?
-        <div className={'dashboard flex-container'}>
+    <div className={'dashboard flex-container'}>
+      {player ? <Player initialPlayer={player} websocket={websocket.current}/> :
+        <div className={'server-container flex-container row'}>
           <h1><i className={'fas fa-th'}/> Select a server...</h1>
-          <div className={'server-container flex-container row'}>
-            {/* eslint-disable-next-line no-extra-parens */}
-            {user.guilds.filter((guild) => Object.keys(clientGuilds).includes(guild.id)).map((guild, index) => (
-              <div className={'server-card flex-container column'} key={index} onClick={() => websocket.current.sendData('requestPlayerData', { guildId: guild.id, clientId: clientGuilds[guild.id] })}>
-                <img src={guild.icon ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}?size=1024` : genericServer} alt={'Server Icon'}></img>
-                <span>{guild.name}</span>
-              </div>
-            ))}
-          </div>
-        </div> :
-        <div></div>
+          {/* eslint-disable-next-line no-extra-parens */}
+          {user ? user.guilds.filter((guild) => Object.keys(clientGuilds).includes(guild.id)).map((guild, index) => (
+            <div className={'server-card flex-container column'} key={index}
+              onClick={() => websocket.current.sendData('requestPlayerData', {
+                guildId: guild.id,
+                clientId: clientGuilds[guild.id]
+              })}>
+              <img
+                src={guild.icon ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}?size=1024` : genericServer}
+                alt={'Server Icon'}></img>
+              <span>{guild.name}</span>
+            </div>
+          )) : null}
+        </div>
+      }
+    </div>
   )
 }
