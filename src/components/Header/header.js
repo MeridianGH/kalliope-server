@@ -15,7 +15,7 @@ export function Header() {
   })
   return (
     <header>
-      <Navbar/>
+      <Navbar displayLinks={true}/>
       <div className={'header-container flex-container column nowrap'}>
         <img className={'header-title-logo'} src={kalliopeTransparentPNG} alt={'Logo'}/>
         <h1 className={'header-title'}>Kalliope.</h1>
