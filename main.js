@@ -2,12 +2,14 @@ import express from 'express'
 import { server as WebSocketServer } from 'websocket'
 import url from 'url'
 import path from 'path'
+import fetch from 'node-fetch'
 
 const app = express()
 
 const port = 8080
-const domain = 'kalliope.xyz' + (port !== 80 ? `:${port}` : '')
-const host = 'http://' + domain
+const domain = 'kalliope.xyz'
+const host = domain + (port !== 80 ? `:${port}` : '')
+const hostname = 'http://' + host
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 
@@ -17,8 +19,14 @@ app.use(express.static('dist'))
 // Endpoints
 // Login endpoint.
 app.get('/login', (req, res) => {
-  const loginUrl = `https://discordapp.com/api/oauth2/authorize?client_id=1053262351803093032&scope=identify%20guilds&response_type=code&redirect_uri=${encodeURIComponent(`${host}/callback`)}`
+  const loginUrl = `https://discordapp.com/api/oauth2/authorize?client_id=1053262351803093032&scope=identify%20guilds&response_type=code&redirect_uri=${encodeURIComponent(`${hostname}/callback`)}`
   res.redirect(loginUrl)
+})
+
+// CORS Proxy
+app.get('/cors', (req, res) => {
+  if (req.hostname == domain) { return fetch(req.query.url).then((response) => { response.body.pipe(res) }) }
+  res.status(403).end()
 })
 
 // Allow client-side routing.
@@ -28,7 +36,7 @@ app.get('*', (req, res) => {
 })
 
 const server = app.listen(port, null, null, () => {
-  console.log(`Started server on ${host}.`)
+  console.log(`Started server on ${hostname}.`)
 })
 
 const guilds = {}
@@ -38,7 +46,7 @@ const clientConnections = {}
 const wss = new WebSocketServer({ httpServer: server })
 wss.on('request', (request) => {
   // User WebSocket.
-  if (request.origin === host) {
+  if (request.origin === hostname) {
     const ws = request.accept(null, request.origin)
 
     ws.sendData = (type = 'none', data = {}) => {
@@ -82,7 +90,7 @@ wss.on('request', (request) => {
   }
 
   // Client WebSocket.
-  if (request.host === 'clients.' + domain && (request.origin === undefined || request.origin === '*')) {
+  if (request.host === 'clients.' + host && (request.origin === undefined || request.origin === '*')) {
     const ws = request.accept(null, request.origin)
 
     ws.sendData = (type = 'none', data = {}) => {

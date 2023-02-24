@@ -1,10 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { Routes } from 'discord-api-types/v10'
 
 import './dashboard.css'
 import genericServer from '../../assets/generic_server.png'
 import { Player } from '../Player/player.js'
+import { WebsocketContext } from '../WebSocket/websocket.js'
 
 const playerObject = {
   'guild': '610498937874546699',
@@ -36,32 +37,18 @@ const playerObject = {
 
 export function Dashboard() {
   document.title = 'Kalliope | Dashboard'
-  const loginUrl = `https://discordapp.com/api/oauth2/authorize?client_id=1053262351803093032&scope=identify%20guilds&response_type=code&redirect_uri=${encodeURIComponent(`${window.location.protocol}//${window.location.host}/dashboard`)}`
+  const loginUrl = `https://discordapp.com/api/oauth2/authorize?client_id=1053262351803093032&scope=identify%20guilds&response_type=code&redirect_uri=${encodeURIComponent(window.location.origin + '/dashboard')}`
 
   const [searchParams] = useSearchParams()
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')))
   const [clientGuilds, setClientGuilds] = useState({})
   const [player, setPlayer] = useState(playerObject)
-  const websocket = useRef(null)
+  const websocket = useContext(WebsocketContext)
 
   useEffect(() => {
-    // WebSocket Effect
-    if (!user) { return }
-    const ws = new WebSocket(`ws://${location.host}`)
-
-    ws.sendData = (type = 'none', data = {}) => {
-      data.type = data.type ?? type
-      data.userId = user.id
-      ws.send(JSON.stringify(data))
-    }
-
-    ws.addEventListener('open', () => {
-      ws.sendData('requestClientGuilds')
-    })
-    ws.addEventListener('close', () => {
-      console.warn('WebSocket closed.')
-    })
-    ws.addEventListener('message', (message) => {
+    websocket.addEventListener('open', () => { websocket.sendData('requestClientGuilds') })
+    websocket.addEventListener('close', () => { console.warn('WebSocket closed.') })
+    websocket.addEventListener('message', (message) => {
       const data = JSON.parse(message?.data)
       console.log('Dashboard received message:')
       console.log(data)
@@ -78,12 +65,9 @@ export function Dashboard() {
         }
       }
     })
+  }, [websocket])
 
-    websocket.current = ws
-    return () => { ws.close() }
-  }, [user])
   useEffect(() => {
-    // Login Effect
     const code = searchParams.get('code')
     if (user) { return }
     if (!code) {
@@ -137,9 +121,9 @@ export function Dashboard() {
       setUser(discordUser)
     }
     fetchUser().catch((e) => { console.error(e) })
-  })
+  }) // Login Effect
+
   useEffect(() => {
-    // Scrollable Titles Effect
     const elements = document.querySelectorAll('.server-card > span')
     elements.forEach((element) => {
       if (element.offsetWidth < element.scrollWidth) {
@@ -148,17 +132,17 @@ export function Dashboard() {
         element.onmouseleave = () => { element.style.marginLeft = 0 }
       }
     })
-  })
+  }) // Scrollable Titles Effect
 
   return (
     <div className={'dashboard flex-container'}>
-      {player ? <Player initialPlayer={player} websocket={websocket.current}/> :
+      {player ? <Player initialPlayer={player}/> :
         <div className={'server-container flex-container row'}>
           <h1><i className={'fas fa-th'}/> Select a server...</h1>
           {/* eslint-disable-next-line no-extra-parens */}
           {user ? user.guilds.filter((guild) => Object.keys(clientGuilds).includes(guild.id)).map((guild, index) => (
             <div className={'server-card flex-container column'} key={index}
-              onClick={() => websocket.current.sendData('requestPlayerData', {
+              onClick={() => websocket.sendData('requestPlayerData', {
                 guildId: guild.id,
                 clientId: clientGuilds[guild.id]
               })}>

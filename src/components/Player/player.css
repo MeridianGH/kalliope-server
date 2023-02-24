@@ -1,4 +1,5 @@
 .now-playing-container {
+    --dominant-color: red;
     min-height: 100vh;
     padding-top: 5vh;
     box-sizing: border-box;
@@ -39,12 +40,11 @@
     width: 0;
     height: 10px;
     border-radius: 5px;
-    background-color: white;
-    transition: width 1s linear;
+    background-color: var(--dominant-color);
+    transition: width 1s linear, background-color 0.25s ease-in-out;
 }
 
 .music-buttons {
-    width: 40vw;
     gap: 2vw;
 }
 .music-buttons > button {
@@ -53,9 +53,13 @@
     color: white;
     border: none;
     cursor: pointer;
+    transition: color 0.25s ease-in-out;
 }
 .music-buttons > button:first-child, .music-buttons > button:last-child {
     font-size: 0.8em;
+}
+.music-buttons > button:hover {
+    color: var(--dominant-color);
 }
 
 .volume-slider-container {
@@ -63,20 +67,24 @@
     width: 80vw;
     height: 10px;
     position: relative;
-    background-color: white;
+    background-color: darkgray;
     border-radius: 5px;
     overflow: hidden;
+    transition: background-color 0.25s ease-in-out;
 }
 @media screen and (min-width: 768px)  { .volume-slider-container { width: 50vw; } }
 @media screen and (min-width: 1600px) { .volume-slider-container { width: 35vw; } }
 @media screen and (min-width: 2000px) { .volume-slider-container { width: 35vw; } }
+.volume-slider-container:hover {
+    background-color: var(--dominant-color);
+}
 
-.volume-slider-container > input {
+.volume-slider-input {
     -webkit-appearance: none;
     width: 100%;
     height: 10px;
     margin: 0;
-    background: transparent;
+    background: none;
     cursor: pointer;
 }
 .volume-slider-input::-webkit-slider-thumb, .volume-slider-input::-moz-range-thumb {
@@ -99,6 +107,53 @@
     text-align: center;
 }
 
+.queue-container {
+    min-width: 90vw;
+}
+
+.queue-buttons-container {
+    width: 100%;
+    margin-top: 5vh;
+    gap: 2vw;
+}
+.queue-input {
+    width: 150px;
+    height: 30px;
+    padding: 5px;
+    box-sizing: border-box;
+    background: none;
+    color: white;
+    border: 2px solid gray;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: border-color 0.25s ease-in-out;
+}
+.queue-input:hover {
+    border-color: white;
+}
+.queue-input:focus {
+    outline: none;
+}
+.queue-input.pointer {
+    cursor: pointer;
+}
+.queue-input-form {
+    position: relative;
+}
+.queue-input-button {
+    height: 30px;
+    font-size: 15px !important;
+    text-align: center;
+    box-sizing: border-box;
+    position: absolute;
+    bottom: 0;
+    right: 5px;
+}
+
 .queue-track {
-    width: 90vw;
+    width: 100%;
+    padding: 1em;
+    margin: 1em;
+    box-sizing: border-box;
+    border-bottom: 2px solid white;
 }

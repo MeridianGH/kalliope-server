@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { Home } from './components/Home/home.js'
 import { Dashboard } from './components/Dashboard/dashboard.js'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { WebsocketProvider } from './components/WebSocket/websocket.js'
 
 import './app.css'
 import kalliopeTransparentPNG from './assets/kalliope_transparent.png'
@@ -14,7 +15,11 @@ export function App() {
     <BrowserRouter>
       <Routes>
         <Route index element={<Home/>}/>
-        <Route path={'/dashboard'} element={<Dashboard/>}/>
+        <Route path={'/dashboard'} element={
+          <WebsocketProvider>
+            <Dashboard/>
+          </WebsocketProvider>
+        }/>
       </Routes>
     </BrowserRouter>
   )

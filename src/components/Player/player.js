@@ -1,9 +1,13 @@
 /* eslint-disable react/prop-types */
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
+import { WebsocketContext } from '../WebSocket/websocket.js'
+import { Navbar } from '../Navbar/navbar.js'
+import { FastAverageColor } from 'fast-average-color'
+
 
 import './player.css'
 import imagePlaceholder from '/src/assets/image_placeholder.png'
-import { Navbar } from '../Navbar/navbar.js'
+import nearSilence from './near-silence.mp3'
 
 const msToHMS = (ms) => {
   let totalSeconds = ms / 1000
@@ -14,7 +18,7 @@ const msToHMS = (ms) => {
   return hours === '0' ? `${minutes}:${seconds.padStart(2, '0')}` : `${hours}:${minutes.padStart(2, '0')}:${seconds.padStart(2, '0')}`
 }
 
-export function Player({ initialPlayer, websocket }) {
+export function Player({ initialPlayer }) {
   const [player, setPlayer] = useState(initialPlayer)
   useEffect(() => {
     const interval = setInterval(() => {
@@ -37,20 +41,41 @@ export function Player({ initialPlayer, websocket }) {
   if (!player.current) { return <div>Nothing currently playing!<br/>Join a voice channel and type &quot;/play&quot; to get started!</div> }
   return (
     <div>
+      <MediaSession track={player.current} paused={player.paused}/>
       <Navbar/>
-      {/*<MediaSession track={player.current} paused={player.paused} websocket={websocket}/>*/}
-      <NowPlaying track={player.current} paused={player.paused} position={player.position} repeatMode={player.repeatMode} initialVolume={player.volume} websocket={websocket}/>
-      {/*<div style={{ marginBottom: '20px' }}/>*/}
-      <Queue tracks={[player.current]} websocket={websocket}/>
+      <NowPlaying track={player.current} paused={player.paused} position={player.position} repeatMode={player.repeatMode} initialVolume={player.volume}/>
+      <Queue tracks={[player.current]}/>
     </div>
   )
 }
 
-function NowPlaying({ track, position, paused, repeatMode, initialVolume, websocket }) {
+function NowPlaying({ track, position, paused, repeatMode, initialVolume }) {
+  const websocket = useContext(WebsocketContext)
   const [volume, setVolume] = React.useState(initialVolume)
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      const element = document.querySelector('.scroll-hint')
+      if (!element) { return }
+      element.style.opacity = entry.isIntersecting ? '1' : '0'
+    }, { threshold: [0.95] })
+    observer.observe(document.querySelector('.now-playing-container'))
+  })
+  useEffect(() => {
+    const fac = new FastAverageColor()
+    fetch(window.location.origin + '/cors?url=' + encodeURIComponent(track.thumbnail)).then((response) => response.blob()).then((image) => {
+      fac.getColorAsync(window.URL.createObjectURL(image), { algorithm: 'sqrt' }).then((color) => {
+        console.log(color)
+        document.querySelector('.now-playing-container').style.setProperty('--dominant-color', color.hex)
+      }).catch((e) => {
+        console.warn(e.message)
+      })
+    })
+    return () => { fac.destroy() }
+  }, [track])
   return (
     <div className={'now-playing-container flex-container column'}>
-      <Thumbnail image={track.thumbnail} size={'350px'}/>
+      <img className={'test'}/>
+      <Thumbnail image={track.thumbnail} size={'35vh'}/>
       <div className={'flex-container row nowrap'} style={{ gap: '1em' }}>
         <span>{!track.isStream ? msToHMS(position) : ''}</span>
         <div className={'progress-container'}>
@@ -76,50 +101,41 @@ function NowPlaying({ track, position, paused, repeatMode, initialVolume, websoc
         </div>
         <div className={'volume-display'}><i className={volume === 0 ? 'fas fa-volume-off' : volume <= 33 ? 'fas fa-volume-down' : volume <= 66 ? 'fas fa-volume' : 'fas fa-volume-up'}/> {volume}</div>
       </div>
+      <a className={'scroll-hint'} href={'#queue'}><i className={'fas fa-chevron-down'}/> Scroll</a>
     </div>
   )
 }
 
-/*function Queue({ tracks, websocket }) {
-  // noinspection JSMismatchedCollectionQueryUpdate
-  const rows = []
-  for (let i = 0; i < tracks.length; i++) {
-    rows.push(
-      <tr key={i + 1}>
-        <td><span className={'text-nowrap'}>${i + 1}</span></td>
-        <td><span className={'text-nowrap'}>${tracks[i].title}</span></td>
-        <td><span className={'text-nowrap'}>${tracks[i].author}</span></td>
-        <td><span className={'text-nowrap'}>${tracks[i].isStream ? '🔴 Live' : msToHMS(tracks[i].duration)}</span></td>
-        <td><span className={'text-nowrap'}><button className={'button icon'} onClick={() => { websocket.sendData({ type: 'remove', index: i + 1 }) }}><i className={'fas fa-trash-alt'}/></button><button className={'button icon'} onClick={() => { websocket.sendData({ type: 'skipto', index: i + 1 }) }}><i className={'fas fa-forward'}/></button></span></td>
-      </tr>
-    )
+function Queue({ tracks }) {
+  const websocket = useContext(WebsocketContext)
+  const input = React.createRef()
+  const handlePlay = (event) => {
+    event.preventDefault()
+    websocket.sendData({ type: 'play', query: input.current.value })
+    input.current.value = ''
   }
   return (
-    <div>
-      <h1 className={'queue-title'}>Queue</h1>
-      {/!*<QueueButtons websocket={websocket}/>*!/}
-      <div className={'table-responsive'}>
-        <table className={'table table-dark'}>
-          <thead>
-            <tr>
-              <th>#</th>
-              <th style={{ width: '100%' }}>Track</th>
-              <th>Author</th>
-              <th>Duration</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows}
-          </tbody>
-        </table>
+    <div className={'queue-container flex-container column nowrap'} id={'queue'}>
+      <h1>Queue:</h1>
+      <div className={'queue-buttons-container flex-container'}>
+        <form onSubmit={handlePlay} className={'queue-input-form music-buttons'}>
+          <input type='text' className={'queue-input'} placeholder='Add to queue' ref={input}/>
+          <button className={'queue-input-button'}><i className={'fas fa-plus'}/></button>
+        </form>
+        <select className="queue-input pointer" name="filter" id="filter" onChange={(event) => { websocket.sendData({ type: 'filter', filter: event.target.value }) }}>
+          <option disabled hidden>Select a filter...</option>
+          <option value="none">No Filter</option>
+          <option value="bassboost">Bass Boost</option>
+          <option value="classic">Classic</option>
+          <option value="eightd">8D</option>
+          <option value="earrape">Earrape</option>
+          <option value="karaoke">Karaoke</option>
+          <option value="nightcore">Nightcore</option>
+          <option value="superfast">Superfast</option>
+          <option value="vaporwave">Vaporwave</option>
+        </select>
+        <button className={'queue-input pointer'} onClick={() => { websocket.sendData({ type: 'clear' }) }}><i className={'fas fa-trash-alt'}/> Clear queue</button>
       </div>
-    </div>
-  )
-}*/
-function Queue({ tracks, websocket }) {
-  return (
-    <div className={'flex-container column nowrap'}>
       {/* eslint-disable-next-line no-extra-parens */}
       {tracks.map((track, index) => (
         <div className={'queue-track flex-container row space-between nowrap'} key={index}>
@@ -127,7 +143,10 @@ function Queue({ tracks, websocket }) {
             <Thumbnail image={track.thumbnail} size={'3em'}/>
             {track.title}
           </div>
-
+          <div className={'music-buttons queue-buttons'}>
+            <button onClick={() => { websocket.sendData({ type: 'remove', index: index + 1 }) }}><i className={'fas fa-trash-alt'}/></button>
+            <button onClick={() => { websocket.sendData({ type: 'skipto', index: index + 1 }) }}><i className={'fas fa-forward'}/></button>
+          </div>
         </div>
       ))}
     </div>
@@ -143,51 +162,18 @@ function Thumbnail({ image, size }) {
   )
 }
 
-function QueueButtons({ websocket }) {
-  const input = React.createRef()
-  const handlePlay = (event) => {
-    event.preventDefault()
-    websocket.sendData({ type: 'play', query: input.current.value })
-    input.current.value = ''
-  }
-  return (
-    <div className={'queue-button-container'}>
-      <div style={{ display: 'flex' }}>
-        <form onSubmit={handlePlay}>
-          <input type='text' className={'textfield'} placeholder='Add to queue' ref={input}/>
-          <button className={'button'}><i className={'fas fa-plus'}/> Play</button>
-        </form>
-        <select className="button select" style={{ marginLeft: '20px' } } name="filter" id="filter" onChange={(event) => { websocket.sendData({ type: 'filter', filter: event.target.value }) }}>
-          <option disabled hidden>Select a filter...</option>
-          <option value="none">None</option>
-          <option value="bassboost">Bass Boost</option>
-          <option value="classic">Classic</option>
-          <option value="eightd">8D</option>
-          <option value="earrape">Earrape</option>
-          <option value="karaoke">Karaoke</option>
-          <option value="nightcore">Nightcore</option>
-          <option value="superfast">Superfast</option>
-          <option value="vaporwave">Vaporwave</option>
-        </select>
-      </div>
-      <button className={'button'} style={{ marginRight: 0 }} onClick={() => { websocket.sendData({ type: 'clear' }) }}><i className={'fas fa-trash-alt'}/> Clear queue</button>
-    </div>
-  )
-}
-
-function MediaSession({ track, paused, websocket }) {
+function MediaSession({ track, paused }) {
+  const websocket = useContext(WebsocketContext)
   React.useEffect(() => {
     if (navigator.userAgent.indexOf('Firefox') !== -1) {
       const audio = document.createElement('audio')
-      audio.src = '/queue/near-silence.mp3'
+      audio.src = nearSilence
       audio.volume = 0.00001
       audio.load()
       audio.play().then(() => { setTimeout(() => audio.pause(), 100) }).catch(() => {
         const div = document.getElementById('autoplay-alert')
-        div.classList.add('alert', 'alert-danger', 'alert-dismissible', 'fade', 'show')
-        div.setAttribute('role', 'alert')
-        div.style.cssText = 'position: fixed; right: 1em; bottom: 0;'
-        div.innerHTML = '<i class="far fa-exclamation-triangle fa-1.5x"></i><span style="font-size: 1em; margin-left: 5px">Autoplay seems to be disabled. Enable Media Autoplay to use media buttons to control the music bot!<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'
+        div.style.cssText = 'position: absolute; right: 1em; top: 1em; margin-left: 30vw;'
+        div.innerHTML = '<i class="far fa-exclamation-triangle fa-1.5x"></i><span style="font-size: 1em; margin-left: 5px">Autoplay seems to be disabled. Enable Media Autoplay to use media buttons to control the music bot!'
       })
     }
   }, [])
@@ -207,5 +193,5 @@ function MediaSession({ track, paused, websocket }) {
     navigator.mediaSession.setActionHandler('nexttrack', () => { websocket.sendData({ type: 'skip' }) })
     navigator.mediaSession.setActionHandler('previoustrack', () => { websocket.sendData({ type: 'previous' }) })
   }, [track, paused])
-  return <div id="autoplay-alert"></div>
+  return <div id="autoplay-alert" className={'flex-container row nowrap'}></div>
 }

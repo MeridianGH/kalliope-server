@@ -3,6 +3,7 @@ import { Navbar } from '../Navbar/navbar.js'
 
 import './header.css'
 import kalliopeTransparentPNG from '../../assets/kalliope_transparent.png'
+import { Link } from 'react-router-dom'
 
 export function Header() {
   useEffect(() => {
@@ -29,7 +30,7 @@ export function Header() {
           <i className={'fab fa-vimeo'} style={{ color: '#19b7ea' }}/>
           <i className={'fas fa-cloud-music'} style={{ color: '#f0f0f0' }}/>
         </div>
-        <a className={'dashboard-button'}>Dashboard.</a>
+        <Link to={'/dashboard'}><div className={'dashboard-button'}>Dashboard.</div></Link>
         <a className={'scroll-hint'} href={'#features'}><i className={'fas fa-chevron-down'}/> Scroll</a>
       </div>
     </header>
