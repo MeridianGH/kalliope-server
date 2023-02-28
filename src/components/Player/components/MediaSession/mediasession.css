@@ -1,0 +1,11 @@
+.autoplay-alert {
+    position: absolute;
+    top: 1em;
+    right: 1em;
+    margin-left: 30vw;
+}
+
+.autoplay-text {
+    font-size: 1em;
+    margin-left: 5px
+}

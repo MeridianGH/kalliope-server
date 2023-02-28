@@ -5,14 +5,14 @@ import {
   DiscordAttachments,
   DiscordButton,
   DiscordCommand,
-  DiscordEmbed, DiscordEmbedDescription,
+  DiscordEmbed,
+  DiscordEmbedDescription,
   DiscordEmbedField,
   DiscordEmbedFields,
   DiscordEmbedFooter,
   DiscordMessage,
   DiscordMessages
 } from '@skyra/discord-components-react'
-
 import './home.css'
 import kalliopePNG from '../../assets/kalliope.png'
 

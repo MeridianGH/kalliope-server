@@ -1,8 +1,9 @@
 import express from 'express'
-import { server as WebSocketServer } from 'websocket'
 import url from 'url'
 import path from 'path'
 import fetch from 'node-fetch'
+import { server as WebSocketServer } from 'websocket'
+import { logging } from './src/utilities/logging.js'
 
 const app = express()
 
@@ -44,6 +45,7 @@ const userConnections = {}
 const clientConnections = {}
 
 const wss = new WebSocketServer({ httpServer: server })
+// noinspection JSUnresolvedFunction
 wss.on('request', (request) => {
   // User WebSocket.
   if (request.origin === hostname) {
@@ -61,7 +63,7 @@ wss.on('request', (request) => {
       const data = JSON.parse(message.utf8Data)
       console.log(data)
 
-      // Return client guilds if guild is not set
+      // Return client guilds
       if (data.type == 'requestClientGuilds') {
         console.log(guilds)
         ws.sendData('clientGuilds', { guilds: guilds })
@@ -69,6 +71,7 @@ wss.on('request', (request) => {
       }
 
       // Verify and store user connection
+      // noinspection JSUnresolvedVariable
       if (!data.guildId || !data.userId) { return }
       userConnections[data.guildId] = { ...userConnections[data.guildId], [data.userId]: ws }
       guildId = data.guildId
@@ -81,7 +84,7 @@ wss.on('request', (request) => {
     })
 
     ws.on('close', (reasonCode, description) => {
-      console.log(`WebSocket closed with reason: ${reasonCode} | ${description}`)
+      logging.warn(`WebSocket closed with reason: ${reasonCode} | ${description}`)
       // delete userConnections[guildId][userId]
       // if (Object.keys(userConnections[guildId]).length === 0) { delete userConnections[guildId] }
     })
@@ -126,7 +129,7 @@ wss.on('request', (request) => {
     })
 
     ws.on('close', (reasonCode, description) => {
-      console.log(`WebSocket closed with reason: ${reasonCode} | ${description}`)
+      logging.warn(`WebSocket closed with reason: ${reasonCode} | ${description}`)
       delete clientConnections[clientId]
     })
 

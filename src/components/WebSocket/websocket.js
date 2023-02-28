@@ -1,17 +1,22 @@
-/* eslint-disable react/prop-types */
-import React, { createContext } from 'react'
+import React, { createContext, useEffect, useState } from 'react'
+import PropTypes from 'prop-types'
 
-const websocket = new WebSocket(`ws://${location.host}`)
-websocket.sendData = (type = 'none', data = {}) => {
-  data.type = data.type ?? type
-  websocket.send(JSON.stringify(data))
-}
-export const WebsocketContext = createContext(websocket)
+export const WebsocketContext = createContext(null)
 
 export function WebsocketProvider({ children }) {
+  const [websocket, setWebsocket] = useState(null)
+
+  useEffect(() => {
+    const ws = new WebSocket(`ws://${location.host}`)
+    setWebsocket(ws)
+    return () => { ws.close() }
+  }, [])
+
   return (
     <WebsocketContext.Provider value={websocket}>
       {children}
     </WebsocketContext.Provider>
   )
 }
+
+WebsocketProvider.propTypes = { children: PropTypes.node }

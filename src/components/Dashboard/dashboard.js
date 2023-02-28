@@ -1,11 +1,10 @@
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { WebsocketContext } from '../WebSocket/websocket.js'
+import { Player } from '../Player/player.js'
 import { Routes } from 'discord-api-types/v10'
-
 import './dashboard.css'
 import genericServer from '../../assets/generic_server.png'
-import { Player } from '../Player/player.js'
-import { WebsocketContext } from '../WebSocket/websocket.js'
 
 const playerObject = {
   'guild': '610498937874546699',
@@ -37,7 +36,6 @@ const playerObject = {
 
 export function Dashboard() {
   document.title = 'Kalliope | Dashboard'
-  const loginUrl = `https://discordapp.com/api/oauth2/authorize?client_id=1053262351803093032&scope=identify%20guilds&response_type=code&redirect_uri=${encodeURIComponent(window.location.origin + '/dashboard')}`
 
   const [searchParams] = useSearchParams()
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')))
@@ -46,7 +44,17 @@ export function Dashboard() {
   const websocket = useContext(WebsocketContext)
 
   useEffect(() => {
-    websocket.addEventListener('open', () => { websocket.sendData('requestClientGuilds') })
+    if (!websocket || !user) { return }
+    websocket.sendData = (type = 'none', data = {}) => {
+      data.type = data.type ?? type
+      data.userId = data.userId ?? user.id
+      websocket.send(JSON.stringify(data))
+    }
+    if (websocket.readyState == 1) {
+      websocket.sendData('requestClientGuilds')
+    } else {
+      websocket.addEventListener('open', () => { websocket.sendData('requestClientGuilds') })
+    }
     websocket.addEventListener('close', () => { console.warn('WebSocket closed.') })
     websocket.addEventListener('message', (message) => {
       const data = JSON.parse(message?.data)
@@ -65,11 +73,13 @@ export function Dashboard() {
         }
       }
     })
-  }, [websocket])
+  }, [websocket, user])
 
   useEffect(() => {
-    const code = searchParams.get('code')
     if (user) { return }
+    const loginUrl = `https://discordapp.com/api/oauth2/authorize?client_id=1053262351803093032&scope=identify%20guilds&response_type=code&redirect_uri=${encodeURIComponent(window.location.origin + '/dashboard')}`
+
+    const code = searchParams.get('code')
     if (!code) {
       window.location.replace(loginUrl)
       return
@@ -81,7 +91,7 @@ export function Dashboard() {
         'client_secret': 'z3rbrd_dNS-sR6JJ3UvciefXljqwqv0o',
         'code': code,
         'grant_type': 'authorization_code',
-        'redirect_uri': `${location.protocol}//${location.host}/dashboard`
+        'redirect_uri': `${location.origin}/dashboard`
       })
 
       const token = await fetch('https://discord.com/api' + Routes.oauth2TokenExchange(), {
@@ -91,7 +101,7 @@ export function Dashboard() {
       }).then((response) => response.json()).catch((e) => {
         console.error('Error while fetching token while authenticating: ' + e)
       })
-      console.log(token)
+      // noinspection JSUnresolvedVariable
       if (!token?.access_token) {
         window.location.replace(loginUrl)
         return
@@ -120,10 +130,10 @@ export function Dashboard() {
       localStorage.setItem('user', JSON.stringify(discordUser))
       setUser(discordUser)
     }
-    fetchUser().catch((e) => { console.error(e) })
-  }) // Login Effect
+    fetchUser().catch(() => { window.location.replace(loginUrl) })
+  }, [searchParams, user]) // Login Effect
 
-  useEffect(() => {
+  /*  useEffect(() => {
     const elements = document.querySelectorAll('.server-card > span')
     elements.forEach((element) => {
       if (element.offsetWidth < element.scrollWidth) {
@@ -132,17 +142,18 @@ export function Dashboard() {
         element.onmouseleave = () => { element.style.marginLeft = 0 }
       }
     })
-  }) // Scrollable Titles Effect
+  })*/ // Scrollable Titles Effect
 
   return (
-    <div className={'dashboard flex-container'}>
-      {player ? <Player initialPlayer={player}/> :
+    player ? <Player player={player}/> :
+      <div className={'dashboard flex-container'}>
+        <h1><i className={'fas fa-th'}/> Select a server...</h1>
         <div className={'server-container flex-container row'}>
-          <h1><i className={'fas fa-th'}/> Select a server...</h1>
           {/* eslint-disable-next-line no-extra-parens */}
-          {user ? user.guilds.filter((guild) => Object.keys(clientGuilds).includes(guild.id)).map((guild, index) => (
+          {user?.guilds ? user.guilds.filter((guild) => Object.keys(clientGuilds).includes(guild.id)).map((guild, index) => (
             <div className={'server-card flex-container column'} key={index}
               onClick={() => websocket.sendData('requestPlayerData', {
+                userId: user.id,
                 guildId: guild.id,
                 clientId: clientGuilds[guild.id]
               })}>
@@ -153,7 +164,6 @@ export function Dashboard() {
             </div>
           )) : null}
         </div>
-      }
-    </div>
+      </div>
   )
 }

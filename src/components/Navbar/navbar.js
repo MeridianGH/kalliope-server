@@ -1,6 +1,6 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
-
 import './navbar.css'
 import kalliopeTransparentPNG from '../../assets/kalliope_transparent.png'
 
@@ -25,3 +25,5 @@ export function Navbar({ displayLinks = false }) {
     </nav>
   )
 }
+
+Navbar.propTypes = { displayLinks: PropTypes.bool }

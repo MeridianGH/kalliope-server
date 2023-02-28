@@ -1,15 +1,15 @@
 import React, { useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { Navbar } from '../Navbar/navbar.js'
-
 import './header.css'
 import kalliopeTransparentPNG from '../../assets/kalliope_transparent.png'
-import { Link } from 'react-router-dom'
 
 export function Header() {
   useEffect(() => {
     const observer = new IntersectionObserver(([entry]) => {
       const element = document.querySelector('.scroll-hint')
       if (!element) { return }
+      // noinspection JSUnresolvedVariable
       element.style.opacity = entry.isIntersecting ? '1' : '0'
     }, { threshold: [0.95] })
     observer.observe(document.querySelector('header'))

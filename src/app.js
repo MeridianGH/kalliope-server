@@ -1,10 +1,9 @@
 import React from 'react'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { createRoot } from 'react-dom/client'
 import { Home } from './components/Home/home.js'
 import { Dashboard } from './components/Dashboard/dashboard.js'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { WebsocketProvider } from './components/WebSocket/websocket.js'
-
 import './app.css'
 import kalliopeTransparentPNG from './assets/kalliope_transparent.png'
 
@@ -26,5 +25,5 @@ export function App() {
 }
 
 
-const root = createRoot(document.getElementById('app'))
+const root = createRoot(document.querySelector('.app'))
 root.render(<App/>)
