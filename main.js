@@ -18,7 +18,7 @@ const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 app.use(express.static('dist'))
 
 // Endpoints
-// Login endpoint.
+// Login endpoint
 app.get('/login', (req, res) => {
   const loginUrl = `https://discordapp.com/api/oauth2/authorize?client_id=1053262351803093032&scope=identify%20guilds&response_type=code&redirect_uri=${encodeURIComponent(`${hostname}/callback`)}`
   res.redirect(loginUrl)
@@ -30,9 +30,8 @@ app.get('/cors', (req, res) => {
   res.status(403).end()
 })
 
-// Allow client-side routing.
+// Allow client-side routing
 app.get('*', (req, res) => {
-  console.log('[Server] Request: ' + req.hostname)
   res.sendFile(path.resolve(__dirname, './dist/index.html'))
 })
 
@@ -40,14 +39,14 @@ const server = app.listen(port, null, null, () => {
   console.log(`Started server on ${hostname}.`)
 })
 
-const guilds = {}
+const clientGuilds = {}
 const userConnections = {}
 const clientConnections = {}
 
 const wss = new WebSocketServer({ httpServer: server })
 // noinspection JSUnresolvedFunction
 wss.on('request', (request) => {
-  // User WebSocket.
+  // User WebSocket
   if (request.origin === hostname) {
     const ws = request.accept(null, request.origin)
 
@@ -65,8 +64,7 @@ wss.on('request', (request) => {
 
       // Return client guilds
       if (data.type == 'requestClientGuilds') {
-        console.log(guilds)
-        ws.sendData('clientGuilds', { guilds: guilds })
+        ws.sendData('clientGuilds', { guilds: clientGuilds })
         return
       }
 
@@ -78,25 +76,30 @@ wss.on('request', (request) => {
       userId = data.userId
 
       // Forward data to client
-      const clientWs = clientConnections[data.clientId]
+      const clientWs = clientConnections[data.clientId ?? clientGuilds[data.guildId]]
       if (!clientWs) { return }
-      clientWs.sendData(data.type, data)
+      clientWs.sendData(null, data)
     })
 
     ws.on('close', (reasonCode, description) => {
-      logging.warn(`WebSocket closed with reason: ${reasonCode} | ${description}`)
-      // delete userConnections[guildId][userId]
-      // if (Object.keys(userConnections[guildId]).length === 0) { delete userConnections[guildId] }
+      logging.warn(`[WebSocket] User websocket closed with reason: ${reasonCode} | ${description}`)
+      try {
+        delete userConnections[guildId][userId]
+        if (Object.keys(userConnections[guildId]).length === 0) { delete userConnections[guildId] }
+      } catch (e) {
+        logging.warn('[WebSocket] Failed to delete websocket.')
+      }
     })
 
     return
   }
 
-  // Client WebSocket.
+  // Client WebSocket
   if (request.host === 'clients.' + host && (request.origin === undefined || request.origin === '*')) {
     const ws = request.accept(null, request.origin)
 
     ws.sendData = (type = 'none', data = {}) => {
+      console.log('sent', data)
       data.type = data.type ?? type
       ws.sendUTF(JSON.stringify(data))
     }
@@ -106,8 +109,7 @@ wss.on('request', (request) => {
     ws.on('message', (message) => {
       if (message.type !== 'utf8') { return }
       const data = JSON.parse(message.utf8Data)
-      console.log('Server received message:')
-      console.log(data)
+      console.log('received', data)
 
       // Verify and store client connection
       if (!data.clientId) { return }
@@ -116,25 +118,25 @@ wss.on('request', (request) => {
 
       // Update clientData
       if (data.type === 'clientData') {
-        data.guilds.forEach((guild) => { guilds[guild] = data.clientId })
-        console.log(guilds)
+        data.guilds.forEach((guild) => { clientGuilds[guild] = data.clientId })
+        return
       }
 
       // Forward data to users
       // noinspection JSUnresolvedVariable
       if (!data.guildId) { return }
       Object.values(userConnections[data.guildId]).forEach((userWs) => {
-        userWs.sendData(data.type, data)
+        userWs?.sendData(null, data)
       })
     })
 
     ws.on('close', (reasonCode, description) => {
-      logging.warn(`WebSocket closed with reason: ${reasonCode} | ${description}`)
+      logging.warn(`[WebSocket] Client connection closed with reason: ${reasonCode} | ${description}`)
       delete clientConnections[clientId]
     })
 
     return
   }
-  // Invalid WebSocket request.
+  // Invalid WebSocket request
   request.reject('Invalid request.')
 })

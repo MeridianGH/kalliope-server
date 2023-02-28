@@ -30,7 +30,7 @@ export function NowPlaying({ track, position, paused, repeatMode, initialVolume 
   useEffect(() => {
     const fac = new FastAverageColor()
     fetch(window.location.origin + '/cors?url=' + encodeURIComponent(track.thumbnail)).then((response) => response.blob()).then((image) => {
-      fac.getColorAsync(window.URL.createObjectURL(image), { algorithm: 'dominant' }).then((color) => {
+      fac.getColorAsync(window.URL.createObjectURL(image), { algorithm: 'dominant', ignoredColor: [[0, 0, 0, 255, 50], [255, 255, 255, 255, 25]] }).then((color) => {
         document.querySelector('.now-playing-container').style.setProperty('--dominant-color', color.hex)
       }).catch((e) => {
         console.warn(e.message)

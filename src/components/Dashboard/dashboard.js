@@ -40,7 +40,7 @@ export function Dashboard() {
   const [searchParams] = useSearchParams()
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')))
   const [clientGuilds, setClientGuilds] = useState({})
-  const [player, setPlayer] = useState(playerObject)
+  const [player, setPlayer] = useState(null)
   const websocket = useContext(WebsocketContext)
 
   useEffect(() => {
@@ -48,18 +48,15 @@ export function Dashboard() {
     websocket.sendData = (type = 'none', data = {}) => {
       data.type = data.type ?? type
       data.userId = data.userId ?? user.id
+      data.guildId = data.guildId ?? player?.guild ?? null
       websocket.send(JSON.stringify(data))
     }
-    if (websocket.readyState == 1) {
-      websocket.sendData('requestClientGuilds')
-    } else {
-      websocket.addEventListener('open', () => { websocket.sendData('requestClientGuilds') })
-    }
-    websocket.addEventListener('close', () => { console.warn('WebSocket closed.') })
-    websocket.addEventListener('message', (message) => {
+
+    if (websocket.readyState == 1 && !clientGuilds) { websocket.sendData('requestClientGuilds') }
+    websocket.onclose = () => { console.warn('WebSocket closed.') }
+    websocket.onmessage = (message) => {
       const data = JSON.parse(message?.data)
-      console.log('Dashboard received message:')
-      console.log(data)
+      console.log('recieved', data)
       switch (data.type) {
         case 'clientGuilds': {
           setClientGuilds(data.guilds)
@@ -72,8 +69,8 @@ export function Dashboard() {
           break
         }
       }
-    })
-  }, [websocket, user])
+    }
+  }, [websocket, user, player])
 
   useEffect(() => {
     if (user) { return }
@@ -133,7 +130,7 @@ export function Dashboard() {
     fetchUser().catch(() => { window.location.replace(loginUrl) })
   }, [searchParams, user]) // Login Effect
 
-  /*  useEffect(() => {
+  useEffect(() => {
     const elements = document.querySelectorAll('.server-card > span')
     elements.forEach((element) => {
       if (element.offsetWidth < element.scrollWidth) {
@@ -142,7 +139,7 @@ export function Dashboard() {
         element.onmouseleave = () => { element.style.marginLeft = 0 }
       }
     })
-  })*/ // Scrollable Titles Effect
+  }) // Scrollable Titles Effect
 
   return (
     player ? <Player player={player}/> :

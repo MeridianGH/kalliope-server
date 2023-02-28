@@ -44,7 +44,7 @@ export function Queue({ tracks }) {
           </div>
           <div className={'music-buttons flex-container'}>
             <button onClick={() => { websocket.sendData('remove', { index: index + 1 }) }}><i className={'fas fa-trash-alt'}/></button>
-            <button onClick={() => { websocket.sendData('skipto', { index: index + 1 }) }}><i className={'fas fa-forward'}/></button>
+            <button onClick={() => { websocket.sendData('skip', { index: index + 1 }) }}><i className={'fas fa-forward'}/></button>
           </div>
         </div>
       )) : <div className={'queue-track flex-container'}>No upcoming songs! Add songs with &apos;/play&apos; or by using the field above.</div>}
