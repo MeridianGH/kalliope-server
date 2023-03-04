@@ -3,16 +3,21 @@
 }
 
 h1 {
-    margin: 0;
+    margin: 5vh;
 }
 
 .server-container {
     width: 75vw;
     min-height: 50vh;
-    border: 0.25em solid #ffffff;
+    box-shadow: 5px 5px 2px black;
     border-radius: 25px;
-    background-color: #121212;
+    background-color: var(--bg-light);
     padding: 0 5%;
+}
+
+.loading-gear {
+    width: 50px;
+    height: 50px;
 }
 
 .server-card {
@@ -24,9 +29,10 @@ h1 {
 .server-card > img {
     height: 200px;
     width: 200px;
-    border: 3px solid white;
+    border: 2px solid white;
     border-radius: 10px;
     box-sizing: border-box;
+    cursor: pointer;
 }
 .server-card > span {
     font-size: 0.8em;

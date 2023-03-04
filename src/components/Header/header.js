@@ -20,7 +20,7 @@ export function Header() {
       <div className={'header-container flex-container column nowrap'}>
         <img className={'header-title-logo'} src={kalliopeTransparentPNG} alt={'Logo'}/>
         <h1 className={'header-title'}>Kalliope.</h1>
-        <p className={'header-slogan'}>A Discord music bot that still supports YouTube.</p>
+        <p className={'header-slogan'}>A Discord music bot that still supports all platforms.</p>
         <div className={'source-icons-container flex-container row'}>
           <i className={'fab fa-youtube'} style={{ color: '#ff0000' }}/>
           <i className={'fab fa-spotify'} style={{ color: '#1db954' }}/>

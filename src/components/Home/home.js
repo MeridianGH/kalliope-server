@@ -15,13 +15,13 @@ import {
 } from '@skyra/discord-components-react'
 import './home.css'
 import kalliopePNG from '../../assets/kalliope.png'
+import playPause from '../../assets/emojis/play_pause.svg'
+import stopButton from '../../assets/emojis/stop_button.svg'
+import trackNext from '../../assets/emojis/track_next.svg'
+import trackPrevious from '../../assets/emojis/track_previous.svg'
+import { Link } from 'react-router-dom'
 
 export function Home() {
-  useEffect(() => {
-    document.querySelectorAll('.discord-messages').forEach((element) => {
-      element.style.marginBottom = 0 - element.offsetHeight * (1 - getComputedStyle(element).getPropertyValue('--scale')) + 'px'
-    })
-  })
   window.$discordMessage = {
     profiles: {
       kalliope: {
@@ -37,23 +37,27 @@ export function Home() {
       }
     }
   }
+  useEffect(() => {
+    function resizeElements() {
+      document.querySelectorAll('.discord-messages').forEach((element) => {
+        element.style.marginBottom = 0 - element.offsetHeight * (1 - getComputedStyle(element).getPropertyValue('--scale')) + 'px'
+      })
+    }
+    window.addEventListener('resize', resizeElements)
+    resizeElements()
+
+    return () => { window.removeEventListener('resize', resizeElements) }
+  }, [])
   return (
     <div id={'home'}>
       <Header/>
       <section id={'features'}>
         <h1><i className={'fas fa-th'}/> Features</h1>
         <div>
-          <h2>The Kalliope network</h2>
-          <p>
-            Kalliope is active in <b id={'servers'}>...</b> servers with <b id={'clients'}>...</b> clients<br/>
-            and providing clean music to <b id={'users'}>...</b> users.
-          </p>
-        </div>
-        <div>
           <h2>Full support</h2>
           <p>
             Kalliope still offers full support for almost every platform you can imagine:<br/>
-            YouTube, Spotify<span style={{ color: '#8b8b8b' }}>*</span>, Twitch and many others!<br/>
+            YouTube, Spotify<span style={{ color: 'gray' }}>*</span>, Twitch and many others!<br/>
             It also supports playlists, livestreams and HTTP sources.<br/>
             <span className={'small-text'}>* Spotify queries will be resolved on YouTube.</span>
           </p>
@@ -77,10 +81,10 @@ export function Home() {
               </DiscordEmbed>
               <DiscordAttachments slot={'components'}>
                 <DiscordActionRow>
-                  <DiscordButton type={'secondary'} emoji={'../../assets/emojis/track_previous.svg'} emojiName={'⏮️'}></DiscordButton>
-                  <DiscordButton type={'secondary'} emoji={'../../assets/emojis/play_pause.svg'} emojiName={'⏯️'}></DiscordButton>
-                  <DiscordButton type={'secondary'} emoji={'../../assets/emojis/track_next.svg'} emojiName={'⏭️'}></DiscordButton>
-                  <DiscordButton type={'secondary'} emoji={'../../assets/emojis/stop_button.svg'} emojiName={'⏹️'}></DiscordButton>
+                  <DiscordButton type={'secondary'} emoji={trackPrevious} emojiName={'⏮️'}></DiscordButton>
+                  <DiscordButton type={'secondary'} emoji={playPause} emojiName={'⏯️'}></DiscordButton>
+                  <DiscordButton type={'secondary'} emoji={trackNext} emojiName={'⏭️'}></DiscordButton>
+                  <DiscordButton type={'secondary'} emoji={stopButton} emojiName={'⏹️'}></DiscordButton>
                   <DiscordButton url={'/'}>Dashboard</DiscordButton>
                 </DiscordActionRow>
               </DiscordAttachments>
@@ -117,16 +121,16 @@ export function Home() {
           <h2>Dashboard</h2>
           <p>
             Use the web dashboard to control your bot without having to type out commands ever again.
-            You can even use your keyboard&apos;s built-in music buttons to skip songs and pause or resume playback.<span style={{ color: '#8b8b8b' } }>*</span><br/>
-            <span className={'small-text'}> * Currently only available on Firefox. Requires browser permissions.</span>
+            You can even use your keyboard&apos;s built-in music buttons to skip songs and pause or resume playback.<span style={{ color: 'gray' } }>*</span><br/>
+            <span className={'small-text'}>* Requires browser permissions. Only available in supported browsers.</span>
           </p>
-          <a className={'dashboard-button'}>Dashboard.</a>
+          <Link to={'/dashboard'}><div className={'dashboard-button'}>Dashboard.</div></Link>
         </div>
         <div>
           <h2>Genius Lyrics</h2>
           <p>
             Kalliope supports Genius Lyrics! Quite literally actually, because they are directly accessible in Discord itself via a command.<br/>
-            <span className={'small-text'}>*Discord will show more text, this is just a demo.</span>
+            <span className={'small-text'}>* Actual command will show more text, this is just a demo.</span>
           </p>
           <DiscordMessages>
             <DiscordMessage profile={'kalliope'}>
@@ -218,17 +222,17 @@ export function Home() {
         <h1><i className={'fas fa-list-ul'}/> Commands</h1>
         <div className={'commands-container flex-container row'}>
           <p><span>/play</span><span>/search</span><span>/lyrics</span><span>/shuffle</span><span>/pause</span><span>/nowplaying</span><span>/queue</span><span>And more...</span></p>
-          <p>View all commands <a className={'underline'}>here</a>.</p>
+          <a href={'https://github.com/MeridianGH/Kalliope'}><div className={'dashboard-button'}>View all commands</div></a>
         </div>
       </section>
       <section id={'github'}>
         <h1><i className={'fab fa-github'}/> GitHub</h1>
-        <div>
+        <div className={'flex-container'}>
           <p>
             Kalliope is open-source! You can find it&apos;s source-code, releases and more info using the link below.<br/>
             However, please be mindful of the license if you&apos;re interested in redistributing code from the repository.<br/><br/>
-            <a className={'underline'} href={'https://github.com/MeridianGH/Kalliope'}>GitHub</a>
           </p>
+          <a href={'https://github.com/MeridianGH/Kalliope'}><div className={'dashboard-button'}>GitHub</div></a>
         </div>
       </section>
     </div>

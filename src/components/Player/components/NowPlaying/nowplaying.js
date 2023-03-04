@@ -42,7 +42,7 @@ export function NowPlaying({ track, position, paused, repeatMode, initialVolume 
     <div className={'now-playing-container flex-container column'}>
       <Thumbnail image={track.thumbnail} size={'35vh'}/>
       <div className={'flex-container row nowrap'} style={{ gap: '1em' }}>
-        <span>{!track.isStream ? msToHMS(position) : ''}</span>
+        <span>{msToHMS(position)}</span>
         <div className={'progress-container'}>
           <div className={'progress-bar'} style={{ width: `${track.isStream ? '100%' : position / track.duration * 100 + '%'}` }}/>
         </div>
@@ -61,8 +61,8 @@ export function NowPlaying({ track, position, paused, repeatMode, initialVolume 
       </div>
       <div className={'flex-container column'}>
         <div className={'volume-slider-container'}>
+          <div className={'volume-slider-range'} style={{ width: `${100 - volume}%` }}></div>
           <input className={'volume-slider-input'} type={'range'} defaultValue={volume.toString()} step={'1'} min={'0'} max={'100'} onInput={(event) => { setVolume(event.target.value) }} onMouseUp={(event) => { websocket.sendData('volume', { volume: event.target.value }) }}/>
-          <div className={'volume-slider-range'} style={{ marginLeft: `${volume}%` }}></div>
         </div>
         <div className={'volume-display'}><i className={volume === 0 ? 'fas fa-volume-off' : volume <= 33 ? 'fas fa-volume-down' : volume <= 66 ? 'fas fa-volume' : 'fas fa-volume-up'}/> {volume}</div>
       </div>

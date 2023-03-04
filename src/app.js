@@ -2,6 +2,7 @@ import React from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { createRoot } from 'react-dom/client'
 import { Home } from './components/Home/home.js'
+import { Navbar } from './components/Navbar/navbar.js'
 import { Dashboard } from './components/Dashboard/dashboard.js'
 import { WebsocketProvider } from './components/WebSocket/websocket.js'
 import './app.css'
@@ -16,6 +17,7 @@ export function App() {
         <Route index element={<Home/>}/>
         <Route path={'/dashboard'} element={
           <WebsocketProvider>
+            <Navbar/>
             <Dashboard/>
           </WebsocketProvider>
         }/>

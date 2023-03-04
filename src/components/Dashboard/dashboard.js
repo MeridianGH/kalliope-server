@@ -37,12 +37,13 @@ const playerObject = {
 export function Dashboard() {
   document.title = 'Kalliope | Dashboard'
 
-  const [searchParams] = useSearchParams()
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')))
-  const [clientGuilds, setClientGuilds] = useState({})
-  const [player, setPlayer] = useState(null)
   const websocket = useContext(WebsocketContext)
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')))
+  const [player, setPlayer] = useState(null)
+  const [clientGuilds, setClientGuilds] = useState({})
+  const [searchParams] = useSearchParams()
 
+  // WebSocket Effect
   useEffect(() => {
     if (!websocket || !user) { return }
     websocket.sendData = (type = 'none', data = {}) => {
@@ -53,6 +54,7 @@ export function Dashboard() {
     }
 
     if (websocket.readyState == 1 && !clientGuilds) { websocket.sendData('requestClientGuilds') }
+    websocket.onopen = () => { websocket.sendData('requestClientGuilds') }
     websocket.onclose = () => { console.warn('WebSocket closed.') }
     websocket.onmessage = (message) => {
       const data = JSON.parse(message?.data)
@@ -60,18 +62,16 @@ export function Dashboard() {
       switch (data.type) {
         case 'clientGuilds': {
           setClientGuilds(data.guilds)
-          console.log('Guilds:', data.guilds)
           break
         }
         case 'playerData': {
           setPlayer(data.player)
-          console.log('PlayerData:', data.player)
           break
         }
       }
     }
-  }, [websocket, user, player])
-
+  }, [websocket, user, player, clientGuilds])
+  // Login Effect
   useEffect(() => {
     if (user) { return }
     const loginUrl = `https://discordapp.com/api/oauth2/authorize?client_id=1053262351803093032&scope=identify%20guilds&response_type=code&redirect_uri=${encodeURIComponent(window.location.origin + '/dashboard')}`
@@ -128,8 +128,8 @@ export function Dashboard() {
       setUser(discordUser)
     }
     fetchUser().catch(() => { window.location.replace(loginUrl) })
-  }, [searchParams, user]) // Login Effect
-
+  }, [searchParams, user])
+  // Scrollable Titles Effect
   useEffect(() => {
     const elements = document.querySelectorAll('.server-card > span')
     elements.forEach((element) => {
@@ -139,28 +139,25 @@ export function Dashboard() {
         element.onmouseleave = () => { element.style.marginLeft = 0 }
       }
     })
-  }) // Scrollable Titles Effect
+  })
 
+  if (player) { return <Player player={player}/> }
   return (
-    player ? <Player player={player}/> :
-      <div className={'dashboard flex-container'}>
-        <h1><i className={'fas fa-th'}/> Select a server...</h1>
-        <div className={'server-container flex-container row'}>
-          {/* eslint-disable-next-line no-extra-parens */}
-          {user?.guilds ? user.guilds.filter((guild) => Object.keys(clientGuilds).includes(guild.id)).map((guild, index) => (
-            <div className={'server-card flex-container column'} key={index}
-              onClick={() => websocket.sendData('requestPlayerData', {
-                userId: user.id,
-                guildId: guild.id,
-                clientId: clientGuilds[guild.id]
-              })}>
-              <img
-                src={guild.icon ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}?size=1024` : genericServer}
-                alt={'Server Icon'}></img>
-              <span>{guild.name}</span>
-            </div>
-          )) : null}
-        </div>
+    <div className={'dashboard flex-container'}>
+      {/*<button onClick={() => { setPlayer(playerObject) }}>Set Player</button>*/}
+      <h1><i className={'fas fa-th'}/> Select a server...</h1>
+      <div className={'server-container flex-container row'}>
+        {/* eslint-disable-next-line no-extra-parens */}
+        {user?.guilds && Object.keys(clientGuilds).length != 0 ? user.guilds.filter((guild) => Object.keys(clientGuilds).includes(guild.id)).map((guild, index) => (
+          <div className={'server-card flex-container column'} key={index}
+            onClick={() => { websocket.sendData('requestPlayerData', { userId: user.id, guildId: guild.id, clientId: clientGuilds[guild.id] }) }}>
+            <img
+              src={guild.icon ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}?size=1024` : genericServer}
+              alt={'Server Icon'}></img>
+            <span>{guild.name}</span>
+          </div>
+        )) : <div className={'loading-gear'}><i className="fas fa-cog fa-spin"/></div>}
       </div>
+    </div>
   )
 }

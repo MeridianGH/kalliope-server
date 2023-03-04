@@ -12,9 +12,9 @@ section {
 }
 section > div {
     width: 75vw;
-    border: 0.25em solid #ffffff;
+    box-shadow: 5px 5px 2px black;
     border-radius: 25px;
-    background-color: #121212;
+    background-color: var(--bg-light);
     padding: 5%;
 }
 @media screen and (min-width: 768px) {
@@ -41,7 +41,8 @@ section p {
 details {
     padding: 2vh;
     border-radius: 5px;
-    background: #212121;
+    background: var(--bg-lighter);
+    box-shadow: 5px 5px 2px black;
     margin-bottom: 2vh;
 }
 details > summary {
@@ -75,17 +76,18 @@ details[open] > summary .icon {
     transform: rotate(180deg);
 }
 
-.commands-container span {
+.commands-container > p > span {
     display: inline-block;
     margin: 15px;
     padding: 15px;
     border-radius: 15px;
     border: 2px solid transparent;
-    background-color: #212121;
+    background-color: var(--bg-lighter);
+    box-shadow: 5px 5px 2px black;
     cursor: pointer;
     transition: background-color 0.25s, border-color 0.25s;
 }
-.commands-container span:hover {
+.commands-container > p > span:hover {
     background-color: transparent;
     border-color: #ffffff;
 }

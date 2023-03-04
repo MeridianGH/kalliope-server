@@ -1,5 +1,5 @@
 .now-playing-container {
-    --dominant-color: red;
+    --dominant-color: white;
     min-height: 100vh;
     padding-top: 5vh;
     box-sizing: border-box;
@@ -8,16 +8,16 @@
 
 .progress-container {
     width: 50vw;
-    height: 10px;
+    height: 20px;
     margin: 10px 0;
-    border-radius: 5px;
+    border-radius: 10px;
     background-color: gray;
     overflow: hidden;
 }
 .progress-bar {
     width: 0;
-    height: 10px;
-    border-radius: 5px;
+    height: 20px;
+    border-radius: 10px;
     background-color: var(--dominant-color);
     transition: width 1s linear, background-color 0.25s ease-in-out;
 }
@@ -44,18 +44,18 @@
     display: flex;
     width: 80vw;
     height: 10px;
+    margin: 10px 0;
     position: relative;
-    background-color: white;
     border-radius: 5px;
-    overflow: hidden;
+    background-color: white;
     transition: background-color 0.25s ease-in-out;
+}
+.volume-slider-container:hover {
+    background-color: var(--dominant-color);
 }
 @media screen and (min-width: 768px)  { .volume-slider-container { width: 50vw; } }
 @media screen and (min-width: 1600px) { .volume-slider-container { width: 35vw; } }
 @media screen and (min-width: 2000px) { .volume-slider-container { width: 35vw; } }
-.volume-slider-container:hover {
-    background-color: var(--dominant-color);
-}
 
 .volume-slider-input {
     -webkit-appearance: none;
@@ -70,13 +70,28 @@
     border: none;
 }
 .volume-slider-range {
-    width: 100%;
+    width: 50%;
     height: 10px;
     position: absolute;
-    top: 0;
+    right: 0;
     pointer-events: none;
     background-color: gray;
-    transition: margin-left 0.25s linear;
+    border-radius: 0 5px 5px 0;
+    transition: width 0.1s linear;
+}
+.volume-slider-range:before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -10px;
+    width: 20px;
+    height: 20px;
+    border-radius: 15px;
+    background-color: transparent;
+    transition: background-color 0.25s ease-in-out;
+}
+.volume-slider-container:hover .volume-slider-range:before {
+    background-color: var(--dominant-color);
 }
 .volume-display {
     width: 100px;
