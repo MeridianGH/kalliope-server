@@ -58,7 +58,6 @@ export function Dashboard() {
     websocket.onclose = () => { console.warn('WebSocket closed.') }
     websocket.onmessage = (message) => {
       const data = JSON.parse(message?.data)
-      console.log('recieved', data)
       switch (data.type) {
         case 'clientGuilds': {
           setClientGuilds(data.guilds)
@@ -110,14 +109,12 @@ export function Dashboard() {
       }).then((response) => response.json()).catch((e) => {
         console.error('Error while fetching user while authenticating: ' + e)
       })
-      console.log(discordUser)
       const guilds = await fetch('https://discord.com/api' + Routes.userGuilds(), {
         method: 'GET',
         headers: { authorization: `${token.token_type} ${token.access_token}` }
       }).then((response) => response.json()).catch((e) => {
         console.error('Error while fetching guilds while authenticating: ' + e)
       })
-      console.log(guilds)
       if (!discordUser || !guilds) {
         window.location.replace(loginUrl)
         return
@@ -144,7 +141,7 @@ export function Dashboard() {
   if (player) { return <Player player={player}/> }
   return (
     <div className={'dashboard flex-container'}>
-      {/*<button onClick={() => { setPlayer(playerObject) }}>Set Player</button>*/}
+      <button onClick={() => { setPlayer(playerObject) }}>Set Player</button>
       <h1><i className={'fas fa-th'}/> Select a server...</h1>
       <div className={'server-container flex-container row'}>
         {/* eslint-disable-next-line no-extra-parens */}

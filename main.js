@@ -36,12 +36,12 @@ app.get('*', (req, res) => {
 })
 
 const server = app.listen(port, null, null, () => {
-  console.log(`Started server on ${hostname}.`)
+  logging.success(`Started server on ${hostname}.`)
 })
 
 const clientGuilds = {}
-const userConnections = {}
 const clientConnections = {}
+const userConnections = { none: {} }
 
 const wss = new WebSocketServer({ httpServer: server })
 // noinspection JSUnresolvedFunction
@@ -55,25 +55,22 @@ wss.on('request', (request) => {
       ws.sendUTF(JSON.stringify(data))
     }
 
-    let guildId, userId
-
     ws.on('message', (message) => {
       if (message.type !== 'utf8') { return }
       const data = JSON.parse(message.utf8Data)
-      console.log(data)
+
+      // Verify and store user connection
+      if (!data.userId) { return }
+      userConnections[data.guildId ?? 'none'] = { ...userConnections[data.guildId ?? 'none'], [data.userId]: ws }
+      if (data.guildId && Object.keys(userConnections.none).includes(data.userId)) { delete userConnections.none[data.userId] }
+      ws.guildId = data.guildId ?? 'none'
+      ws.userId = data.userId
 
       // Return client guilds
       if (data.type == 'requestClientGuilds') {
         ws.sendData('clientGuilds', { guilds: clientGuilds })
         return
       }
-
-      // Verify and store user connection
-      // noinspection JSUnresolvedVariable
-      if (!data.guildId || !data.userId) { return }
-      userConnections[data.guildId] = { ...userConnections[data.guildId], [data.userId]: ws }
-      guildId = data.guildId
-      userId = data.userId
 
       // Forward data to client
       const clientWs = clientConnections[data.clientId ?? clientGuilds[data.guildId]]
@@ -84,8 +81,8 @@ wss.on('request', (request) => {
     ws.on('close', (reasonCode, description) => {
       logging.warn(`[WebSocket] User websocket closed with reason: ${reasonCode} | ${description}`)
       try {
-        delete userConnections[guildId][userId]
-        if (Object.keys(userConnections[guildId]).length === 0) { delete userConnections[guildId] }
+        delete userConnections[ws.guildId][ws.userId]
+        if (Object.keys(userConnections[ws.guildId]).length === 0) { delete userConnections[ws.guildId] }
       } catch (e) {
         logging.warn('[WebSocket] Failed to delete websocket.')
       }
@@ -99,7 +96,6 @@ wss.on('request', (request) => {
     const ws = request.accept(null, request.origin)
 
     ws.sendData = (type = 'none', data = {}) => {
-      console.log('sent', data)
       data.type = data.type ?? type
       ws.sendUTF(JSON.stringify(data))
     }
@@ -109,7 +105,6 @@ wss.on('request', (request) => {
     ws.on('message', (message) => {
       if (message.type !== 'utf8') { return }
       const data = JSON.parse(message.utf8Data)
-      console.log('received', data)
 
       // Verify and store client connection
       if (!data.clientId) { return }
@@ -118,15 +113,19 @@ wss.on('request', (request) => {
 
       // Update clientData
       if (data.type === 'clientData') {
-        data.guilds.forEach((guild) => { clientGuilds[guild] = data.clientId })
+        data.guilds.forEach((guild) => {
+          clientGuilds[guild] = data.clientId
+        })
+        Object.values(userConnections.none).forEach((userWs) => {
+          userWs.sendData('clientGuilds', { guilds: clientGuilds })
+        })
         return
       }
 
       // Forward data to users
-      // noinspection JSUnresolvedVariable
       if (!data.guildId) { return }
       Object.values(userConnections[data.guildId]).forEach((userWs) => {
-        userWs?.sendData(null, data)
+        userWs.sendData(null, data)
       })
     })
 
