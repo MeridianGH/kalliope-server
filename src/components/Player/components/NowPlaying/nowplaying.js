@@ -26,7 +26,12 @@ export function NowPlaying({ track, position, paused, repeatMode, initialVolume 
       element.style.opacity = entry.isIntersecting ? '1' : '0'
     }, { threshold: [0.95] })
     observer.observe(document.querySelector('.now-playing-container'))
-  })
+
+    const slider = document.querySelector('.volume-slider-input')
+    const container = document.querySelector('.volume-slider-container')
+    slider.ontouchstart = () => { container.classList.add('active') }
+    slider.ontouchend = () => { container.classList.remove('active') }
+  }, [])
   useEffect(() => {
     const fac = new FastAverageColor()
     fetch(window.location.origin + '/cors?url=' + encodeURIComponent(track.thumbnail)).then((response) => response.blob()).then((image) => {
@@ -61,8 +66,8 @@ export function NowPlaying({ track, position, paused, repeatMode, initialVolume 
       </div>
       <div className={'flex-container column'}>
         <div className={'volume-slider-container'}>
-          <div className={'volume-slider-range'} style={{ width: `${100 - volume}%` }}></div>
           <input className={'volume-slider-input'} type={'range'} defaultValue={volume.toString()} step={'1'} min={'0'} max={'100'} onInput={(event) => { setVolume(event.target.value) }} onMouseUp={(event) => { websocket.sendData('volume', { volume: event.target.value }) }}/>
+          <div className={'volume-slider-range'} style={{ width: `${100 - volume}%`, borderRadius: volume == 0 ? '5px' : '0 5px 5px 0' }}></div>
         </div>
         <div className={'volume-display'}><i className={volume === 0 ? 'fas fa-volume-off' : volume <= 33 ? 'fas fa-volume-down' : volume <= 66 ? 'fas fa-volume' : 'fas fa-volume-up'}/> {volume}</div>
       </div>

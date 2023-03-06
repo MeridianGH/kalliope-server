@@ -50,9 +50,6 @@
     background-color: white;
     transition: background-color 0.25s ease-in-out;
 }
-.volume-slider-container:hover {
-    background-color: var(--dominant-color);
-}
 @media screen and (min-width: 768px)  { .volume-slider-container { width: 50vw; } }
 @media screen and (min-width: 1600px) { .volume-slider-container { width: 35vw; } }
 @media screen and (min-width: 2000px) { .volume-slider-container { width: 35vw; } }
@@ -90,7 +87,8 @@
     background-color: transparent;
     transition: background-color 0.25s ease-in-out;
 }
-.volume-slider-container:hover .volume-slider-range:before {
+.volume-slider-container:hover, .volume-slider-container:hover > .volume-slider-range:before,
+.volume-slider-container.active, .volume-slider-container.active > .volume-slider-range:before {
     background-color: var(--dominant-color);
 }
 .volume-display {
