@@ -41,7 +41,7 @@ const server = app.listen(port, null, null, () => {
 
 const clientGuilds = {}
 const clientConnections = {}
-const userConnections = { none: {} }
+const userConnections = { noGuild: {} }
 
 const wss = new WebSocketServer({ httpServer: server })
 // noinspection JSUnresolvedFunction
@@ -61,9 +61,9 @@ wss.on('request', (request) => {
 
       // Verify and store user connection
       if (!data.userId) { return }
-      userConnections[data.guildId ?? 'none'] = { ...userConnections[data.guildId ?? 'none'], [data.userId]: ws }
-      if (data.guildId && Object.keys(userConnections.none).includes(data.userId)) { delete userConnections.none[data.userId] }
-      ws.guildId = data.guildId ?? 'none'
+      userConnections[data.guildId ?? 'noGuild'] = { ...userConnections[data.guildId ?? 'noGuild'], [data.userId]: ws }
+      if (data.guildId && Object.keys(userConnections.noGuild).includes(data.userId)) { delete userConnections.noGuild[data.userId] }
+      ws.guildId = data.guildId ?? 'noGuild'
       ws.userId = data.userId
 
       // Return client guilds
@@ -80,11 +80,9 @@ wss.on('request', (request) => {
 
     ws.on('close', (reasonCode, description) => {
       logging.warn(`[WebSocket] User websocket closed with reason: ${reasonCode} | ${description}`)
-      try {
+      if (userConnections[ws.guildId]) {
         delete userConnections[ws.guildId][ws.userId]
         if (Object.keys(userConnections[ws.guildId]).length === 0) { delete userConnections[ws.guildId] }
-      } catch (e) {
-        logging.warn('[WebSocket] Failed to delete websocket.')
       }
     })
 
@@ -116,14 +114,14 @@ wss.on('request', (request) => {
         data.guilds.forEach((guild) => {
           clientGuilds[guild] = data.clientId
         })
-        Object.values(userConnections.none).forEach((userWs) => {
+        Object.values(userConnections.noGuild).forEach((userWs) => {
           userWs.sendData('clientGuilds', { guilds: clientGuilds })
         })
         return
       }
 
       // Forward data to users
-      if (!data.guildId) { return }
+      if (!data.guildId || !userConnections[data.guildId]) { return }
       Object.values(userConnections[data.guildId]).forEach((userWs) => {
         userWs.sendData(null, data)
       })
