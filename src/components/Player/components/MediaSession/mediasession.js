@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import PropTypes from 'prop-types'
 import { WebsocketContext } from '../../../WebSocket/websocket.js'
 import './mediasession.css'
-import nearSilence from '../../near-silence.mp3'
+import nearSilence from './near-silence.mp3'
 
 export function MediaSession({ track, paused }) {
   const websocket = useContext(WebsocketContext)
