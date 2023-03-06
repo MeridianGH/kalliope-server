@@ -2,17 +2,14 @@
     min-height: 100vh;
 }
 
-h1 {
-    margin: 5vh;
-}
-
 .server-container {
     width: 75vw;
     min-height: 50vh;
+    padding: 2%;
+    margin-bottom: 10vh;
     box-shadow: 5px 5px 2px black;
     border-radius: 25px;
     background-color: var(--bg-light);
-    padding: 0 5%;
 }
 
 .loading-gear {
@@ -47,4 +44,11 @@ h1 {
 .server-card > span:hover {
     text-overflow: unset;
     overflow: unset;
+}
+
+.logout-button {
+    position: absolute;
+    top: 0;
+    right: 5%;
+    line-height: 10vh;
 }

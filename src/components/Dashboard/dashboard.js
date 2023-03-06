@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { WebsocketContext } from '../WebSocket/websocket.js'
 import { Player } from '../Player/player.js'
 import { Routes } from 'discord-api-types/v10'
@@ -155,6 +155,11 @@ export function Dashboard() {
           </div>
         )) : <div className={'loading-gear'}><i className="fas fa-cog fa-spin"/></div>}
       </div>
+      {user ? <div className={'nav-link-container'}>
+        <Link to={'/'} className={'logout-button'} onClick={() => { localStorage.removeItem('user') }}>
+          <span><i className="far fa-sign-out"/> Logout</span>
+        </Link>
+      </div> : null}
     </div>
   )
 }
