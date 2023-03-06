@@ -43,10 +43,9 @@ export function Home() {
         element.style.marginBottom = 0 - element.offsetHeight * (1 - getComputedStyle(element).getPropertyValue('--scale')) + 'px'
       })
     }
-    window.addEventListener('resize', resizeElements)
+    window.onload = resizeElements
+    window.onresize = resizeElements
     resizeElements()
-
-    return () => { window.removeEventListener('resize', resizeElements) }
   }, [])
   return (
     <div id={'home'}>
