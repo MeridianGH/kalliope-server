@@ -40,7 +40,7 @@ export function Queue({ tracks }) {
           <div className={'flex-container row nowrap'} style={{ gap: '1em' }}>
             <b>{index + 1}.</b>
             <Thumbnail image={track.thumbnail} size={'3em'}/>
-            {track.title}
+            <a href={track.uri} rel='noreferrer' target='_blank'><b>{track.title}</b></a>
           </div>
           <div className={'music-buttons flex-container'}>
             <button onClick={() => { websocket.sendData('remove', { index: index + 1 }) }}><i className={'fas fa-trash-alt'}/></button>

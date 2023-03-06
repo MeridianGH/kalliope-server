@@ -1,22 +1,28 @@
 .queue-container {
     margin: 5vh 0;
-    min-width: 90vw;
+    width: 90vw;
+    background-color: var(--bg-light);
+    border-radius: 25px;
+    padding: 5vh 5vw;
+    box-sizing: border-box;
+    box-shadow: 5px 5px 2px black;
 }
 
 .queue-buttons-container {
     width: 100%;
     margin-top: 5vh;
-    gap: 2vw;
+    gap: 2vh;
 }
 .queue-input {
     width: 150px;
     height: 30px;
     padding: 5px;
     box-sizing: border-box;
-    background: none;
+    background-color: var(--bg-lighter);
     color: white;
     border: 2px solid gray;
     border-radius: 5px;
+    box-shadow: 5px 5px 2px black;
     font-weight: bold;
     transition: border-color 0.25s ease-in-out;
 }
@@ -31,6 +37,9 @@
 }
 .queue-input-form {
     position: relative;
+}
+.queue-input-form > .queue-input {
+    padding-right: 30px;
 }
 .queue-input-button {
     height: 30px;

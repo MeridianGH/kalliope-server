@@ -140,7 +140,7 @@ export function Dashboard() {
 
   if (player) { return <Player player={player}/> }
   return (
-    <div className={'dashboard flex-container'}>
+    <div className={'dashboard flex-container column'}>
       <button onClick={() => { setPlayer(playerObject) }}>Set Player</button>
       <h1><i className={'fas fa-th'}/> Select a server...</h1>
       <div className={'server-container flex-container row'}>

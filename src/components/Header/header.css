@@ -9,8 +9,8 @@ header {
     gap: 5vh;
 }
 .header-title-logo {
-    width: 3em;
-    height: 3em;
+    width: 4em;
+    height: 4em;
 }
 .header-title {
     font-size: 4em;
@@ -37,6 +37,7 @@ header {
     border: 5px solid white;
     border-radius: 50px;
     color: white;
+    text-align: center;
     background-color: transparent;
     transition: background-color .5s;
     cursor: pointer;

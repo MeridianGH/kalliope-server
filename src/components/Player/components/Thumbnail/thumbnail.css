@@ -3,6 +3,7 @@
     border-radius: 5%;
     position: relative;
     overflow: hidden;
+    flex-shrink: 0;
 }
 
 .thumbnail-backdrop {
