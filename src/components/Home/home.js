@@ -168,51 +168,52 @@ export function Home() {
         <div>
           <p>
             You&apos;ll need to install your own version of Kalliope in order to add it to your server.
-            But don&apos;t worry, it&apos;s really easy and fast:
+            But don&apos;t worry, it&apos;s really easy and fast. In four easy steps you&apos;ll have your own version ready in no time:
           </p>
           <details>
             <summary>
-              <span>1. Install Java 13 (OpenJDK 13.0.2)</span>
+              <span>Prerequisites</span>
               <span className={'icon'}><i className={'fas fa-angle-down'}/></span>
             </summary>
             <span>
-              Download the OpenJDK 13.0.2 installer either from the official <a className={'underline'} href={'https://www.oracle.com/java/technologies/javase/jdk13-archive-downloads.html'}>Oracle Archive website</a> (Account creation required)<br/>
-              <b>OR</b><br/>
-              Download the binaries from the <a className={'underline'} href={'https://jdk.java.net/archive/'}>Java Archives</a> and unzip it to a location you can remember.<br/><br/>
-              Regardless of your method, make sure to add the &apos;/bin&apos; folder to your path variable. If you don&apos;t know how to do that, a quick Google search will help you.<br/><br/>
-              Make sure Java is installed properly by running <span style={{ whiteSpace: 'nowrap' }}>&apos;java --version&apos;</span> in your terminal. If it displays the correct version, you are good to go!
+              Download and install the latest versions of <a className={'underline'} href={'https://nodejs.org/en/download/'}>Node.js</a> and <a className={'underline'} href={'https://www.oracle.com/java/technologies/downloads/'}>Java</a>.<br/><br/>
+              Make sure Java is installed properly by running <code>java --version</code> in your terminal. If it displays the correct version, you are good to go!<br/><br/>
+              If you encounter any issues with playback, try installing OpenJDK 13.0.2 instead of the latest Java version. Instructions on how to do that can be found <a className={'underline'} href={'https://github.com/MeridianGH/Kalliope#installation'}>here</a>.
             </span>
           </details>
           <details>
             <summary>
-              <span>2. Install the latest version of FFmpeg</span>
+              <span>Getting started</span>
               <span className={'icon'}><i className={'fas fa-angle-down'}/></span>
             </summary>
             <span>
-              Go to <a className={'underline'} href={'https://ffmpeg.org/download.html'}>ffmpeg.org</a> and look for the binaries for your system.<br/>
-              There is also a <a className={'underline'} href={'https://www.wikihow.com/Install-FFmpeg-on-Windows'}>concise guide</a> available explaining the installation process on Windows.<br/><br/>
-              Popular Linux distributions usually have FFmpeg packages in their respective package managers.
+              Download and install the latest version of Kalliope using git:
+              <code>
+                git clone https://github.com/MeridianGH/kalliope.git<br/>
+                cd kalliope<br/>
+                npm install<br/>
+              </code>
+              Alternatively use <a className={'underline'} href={'https://desktop.github.com/'}>GitHub Desktop</a> or download as <a className={'underline'} href={'https://github.com/MeridianGH/Kalliope/archive/refs/heads/main.zip'}>.zip</a>.
             </span>
           </details>
           <details>
             <summary>
-              <span>3. Install node.js</span>
+              <span>Configuration</span>
               <span className={'icon'}><i className={'fas fa-angle-down'}/></span>
             </summary>
             <span>
-              Download and install node.js from <a className={'underline'} href={'https://nodejs.org/en/download/'}>nodejs.org</a>.<br/>
-              This should be fairly straight-forward.<br/><br/>
-              Linux packages for most package managers are available <a className={'underline'} href={'https://nodejs.org/en/download/package-manager/'}>here.</a>
+              Rename &apos;config_example.json&apos; to &apos;config.json&apos; and replace the placeholders inside with your info.<br/>
+              Guides on how to get these values are available <a className={'underline'} href={'https://github.com/MeridianGH/Kalliope#configuration'}>here</a>.
             </span>
           </details>
           <details>
             <summary>
-              <span>4. Download and setup Kalliope</span>
+              <span>Run</span>
               <span className={'icon'}><i className={'fas fa-angle-down'}/></span>
             </summary>
             <span>
-              Go to the <a className={'underline'} href={'https://github.com/MeridianGH/Kalliope'}>GitHub repository</a> and either clone or download the code to a folder of your choice.<br/><br/>
-              Follow the installation instructions available in the <a className={'underline'} href={'https://github.com/MeridianGH/Kalliope#installation'}>README</a>.
+              Start the bot using:
+              <code>node .</code>
             </span>
           </details>
         </div>
