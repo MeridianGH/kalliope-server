@@ -14,7 +14,7 @@ section > div {
     width: 75vw;
     box-shadow: 5px 5px 2px black;
     border-radius: 25px;
-    background-color: var(--bg-light);
+    background-color: var(--bg-lvl1);
     padding: 5%;
 }
 @media screen and (min-width: 768px) {
@@ -41,7 +41,7 @@ section p {
 details {
     padding: 2vh;
     border-radius: 5px;
-    background: var(--bg-lighter);
+    background: var(--bg-lvl2);
     box-shadow: 5px 5px 2px black;
     margin-bottom: 2vh;
 }
@@ -82,7 +82,7 @@ details[open] > summary .icon {
     padding: 15px;
     border-radius: 15px;
     border: 2px solid transparent;
-    background-color: var(--bg-lighter);
+    background-color: var(--bg-lvl2);
     box-shadow: 5px 5px 2px black;
     cursor: pointer;
     transition: background-color 0.25s, border-color 0.25s;

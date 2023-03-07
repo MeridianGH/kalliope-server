@@ -1,7 +1,8 @@
 :root {
-    --bg-dark: #121212;
-    --bg-light: #1f1f1f;
-    --bg-lighter: #242424;
+    --bg: #121212;
+    --bg-lvl1: #1d1d1d;
+    --bg-lvl2: #212121;
+    --bg-lvl3: #292929;
 }
 
 html {
@@ -20,7 +21,7 @@ html::-webkit-scrollbar {
     color: white;
     font-family: 'Lato', sans-serif;
     font-size: 1em;
-    background: var(--bg-dark);
+    background: var(--bg);
 }
 @media screen and (min-width: 768px)  { .app { font-size: 1.2em; } }
 @media screen and (min-width: 1600px) { .app { font-size: 1.5em; } }

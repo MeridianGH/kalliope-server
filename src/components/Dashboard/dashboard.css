@@ -9,7 +9,7 @@
     margin-bottom: 10vh;
     box-shadow: 5px 5px 2px black;
     border-radius: 25px;
-    background-color: var(--bg-light);
+    background-color: var(--bg-lvl1);
 }
 
 .loading-gear {
