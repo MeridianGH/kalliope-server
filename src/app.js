@@ -14,7 +14,12 @@ export function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route index element={<Home/>}/>
+        <Route index element={
+          <div>
+            <Navbar displayLinks={true}/>
+            <Home/>
+          </div>
+        }/>
         <Route path={'/dashboard'} element={
           <WebsocketProvider>
             <Navbar/>

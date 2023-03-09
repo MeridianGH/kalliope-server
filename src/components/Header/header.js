@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Navbar } from '../Navbar/navbar.js'
 import './header.css'
 import kalliopeTransparentPNG from '../../assets/kalliope_transparent.png'
 
@@ -16,7 +15,6 @@ export function Header() {
   })
   return (
     <header>
-      <Navbar displayLinks={true}/>
       <div className={'header-container flex-container column nowrap'}>
         <img className={'header-title-logo'} src={kalliopeTransparentPNG} alt={'Logo'}/>
         <h1 className={'header-title'}>Kalliope.</h1>
