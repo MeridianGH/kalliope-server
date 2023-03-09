@@ -139,14 +139,14 @@ export function Home() {
       </section>
       <section id={'commands'}>
         <h1><i className={'fas fa-list-ul'}/> Commands</h1>
-        <div className={'commands-container flex-container row'}>
+        <div className={'commands-container flex-container column'}>
           <p><span>/play</span><span>/search</span><span>/lyrics</span><span>/shuffle</span><span>/pause</span><span>/nowplaying</span><span>/queue</span><span>And more...</span></p>
           <a href={'https://github.com/MeridianGH/Kalliope'}><div className={'dashboard-button'}>View all commands</div></a>
         </div>
       </section>
       <section id={'github'}>
         <h1><i className={'fab fa-github'}/> GitHub</h1>
-        <div className={'flex-container'}>
+        <div className={'flex-container column'}>
           <p>
             Kalliope is open-source! You can find it&apos;s source-code, releases and more info using the link below.<br/>
             However, please be mindful of the license if you&apos;re interested in redistributing code from the repository.<br/><br/>
