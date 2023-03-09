@@ -1,166 +1,85 @@
 import React, { useEffect } from 'react'
 import { Header } from '../Header/header.js'
-import {
-  DiscordActionRow,
-  DiscordAttachments,
-  DiscordButton,
-  DiscordCommand,
-  DiscordEmbed,
-  DiscordEmbedDescription,
-  DiscordEmbedField,
-  DiscordEmbedFields,
-  DiscordEmbedFooter,
-  DiscordMessage,
-  DiscordMessages
-} from '@skyra/discord-components-react'
 import './home.css'
-import kalliopePNG from '../../assets/kalliope.png'
-import playPause from '../../assets/emojis/play_pause.svg'
-import stopButton from '../../assets/emojis/stop_button.svg'
-import trackNext from '../../assets/emojis/track_next.svg'
-import trackPrevious from '../../assets/emojis/track_previous.svg'
-import { Link } from 'react-router-dom'
 
 export function Home() {
-  window.$discordMessage = {
-    profiles: {
-      kalliope: {
-        author: 'Kalliope',
-        avatar: kalliopePNG,
-        bot: true,
-        roleColor: '#ffffff'
-      },
-      meridian: {
-        author: 'Meridian',
-        avatar: 'https://cdn.discordapp.com/avatars/360817252158930954/5ca503af7e9f9b64c1eee2d4f947a29d.png',
-        roleColor: '#ff0000'
+  useEffect(() => {
+    document.querySelector('.features-container').onmousemove = (event) => {
+      for (const card of document.querySelectorAll('.feature-card')) {
+        const rect = card.getBoundingClientRect()
+        const x = event.clientX - rect.left
+        const y = event.clientY - rect.top
+
+        card.style.setProperty('--mouse-x', `${x}px`)
+        card.style.setProperty('--mouse-y', `${y}px`)
       }
     }
-  }
-  useEffect(() => {
-    function resizeElements() {
-      document.querySelectorAll('.discord-messages').forEach((element) => {
-        element.style.marginBottom = 0 - element.offsetHeight * (1 - getComputedStyle(element).getPropertyValue('--scale')) + 'px'
-      })
-    }
-    window.onload = resizeElements
-    window.onresize = resizeElements
-    resizeElements()
   }, [])
   return (
     <div id={'home'}>
       <Header/>
       <section id={'features'}>
         <h1><i className={'fas fa-th'}/> Features</h1>
-        <div>
-          <h2>Full support</h2>
-          <p>
-            Kalliope still offers full support for almost every platform you can imagine:<br/>
-            YouTube, Spotify<span style={{ color: 'gray' }}>*</span>, Twitch and many others!<br/>
-            It also supports playlists, livestreams and HTTP sources.<br/>
-            <span className={'small-text'}>* Spotify queries will be resolved on YouTube.</span>
-          </p>
-          <DiscordMessages>
-            <DiscordMessage profile={'kalliope'}>
-              <DiscordCommand slot={'reply'} profile={'meridian'} command={'/play'}></DiscordCommand>
-              <DiscordEmbed
-                slot={'embeds'}
-                authorImage={'https://cdn.discordapp.com/avatars/360817252158930954/5ca503af7e9f9b64c1eee2d4f947a29d.png'}
-                authorName={'Added to queue.'}
-                embedTitle={'Jim Yosef x RIELL - Animal (Lyric Video)'}
-                url={'https://www.youtube.com/watch?v=QQX2hpmtMJs'}
-                thumbnail={'https://img.youtube.com/vi/QQX2hpmtMJs/maxresdefault.jpg'}
-              >
-                <DiscordEmbedFields slot={'fields'}>
-                  <DiscordEmbedField inline inlineIndex={1} fieldTitle={'Duration'}>2:57</DiscordEmbedField>
-                  <DiscordEmbedField inline inlineIndex={2} fieldTitle={'Author'}>Jim Yosef</DiscordEmbedField>
-                  <DiscordEmbedField inline inlineIndex={3} fieldTitle={'Position'}>0</DiscordEmbedField>
-                </DiscordEmbedFields>
-                <DiscordEmbedFooter slot={'footer'} footerImage={kalliopePNG}>Kalliope.</DiscordEmbedFooter>
-              </DiscordEmbed>
-              <DiscordAttachments slot={'components'}>
-                <DiscordActionRow>
-                  <DiscordButton type={'secondary'} emoji={trackPrevious} emojiName={'⏮️'}></DiscordButton>
-                  <DiscordButton type={'secondary'} emoji={playPause} emojiName={'⏯️'}></DiscordButton>
-                  <DiscordButton type={'secondary'} emoji={trackNext} emojiName={'⏭️'}></DiscordButton>
-                  <DiscordButton type={'secondary'} emoji={stopButton} emojiName={'⏹️'}></DiscordButton>
-                  <DiscordButton url={'/'}>Dashboard</DiscordButton>
-                </DiscordActionRow>
-              </DiscordAttachments>
-            </DiscordMessage>
-          </DiscordMessages>
-        </div>
-        <div>
-          <h2>YouTube Search</h2>
-          <p>
-            Search up to five songs from YouTube and play one directly from Discord, without ever opening a browser!
-            Playing music in your channel was never this easy.
-          </p>
-          <DiscordMessages>
-            <DiscordMessage profile={'kalliope'}>
-              <DiscordCommand slot={'reply'} profile={'meridian'} command={'/search'}></DiscordCommand>
-              <DiscordEmbed
-                slot={'embeds'}
-                authorImage={'https://cdn.discordapp.com/avatars/360817252158930954/5ca503af7e9f9b64c1eee2d4f947a29d.png'}
-                authorName={'Search Results.'}
-                embedTitle={'Here are the search results for your search "riell animal":'}
-                thumbnail={'https://img.youtube.com/vi/QQX2hpmtMJs/maxresdefault.jpg'}
-              >
-                <DiscordEmbedFooter slot={'footer'} footerImage={kalliopePNG}>Kalliope. | This embed expires after one minute.</DiscordEmbedFooter>
-              </DiscordEmbed>
-              <DiscordAttachments slot={'components'}>
-                <DiscordActionRow>
-                  <DiscordButton className={'discord-button-select'}>Select a song... <i className={'fas fa-angle-down'} style={{ marginLeft: '150px' }}/></DiscordButton>
-                </DiscordActionRow>
-              </DiscordAttachments>
-            </DiscordMessage>
-          </DiscordMessages>
-        </div>
-        <div className={'flex-container'}>
-          <h2>Dashboard</h2>
-          <p>
-            Use the web dashboard to control your bot without having to type out commands ever again.
-            You can even use your keyboard&apos;s built-in music buttons to skip songs and pause or resume playback.<span style={{ color: 'gray' } }>*</span><br/>
-            <span className={'small-text'}>* Requires browser permissions. Only available in supported browsers.</span>
-          </p>
-          <Link to={'/dashboard'}><div className={'dashboard-button'}>Dashboard.</div></Link>
-        </div>
-        <div>
-          <h2>Genius Lyrics</h2>
-          <p>
-            Kalliope supports Genius Lyrics! Quite literally actually, because they are directly accessible in Discord itself via a command.<br/>
-            <span className={'small-text'}>* Actual command will show more text, this is just a demo.</span>
-          </p>
-          <DiscordMessages>
-            <DiscordMessage profile={'kalliope'}>
-              <DiscordCommand slot={'reply'} profile={'meridian'} command={'/lyrics'}></DiscordCommand>
-              <DiscordEmbed
-                slot={'embeds'}
-                authorImage={'https://cdn.discordapp.com/avatars/360817252158930954/5ca503af7e9f9b64c1eee2d4f947a29d.png'}
-                authorName={'Lyrics.'}
-                embedTitle={'Jim Yosef x RIELL - Animal (Lyric Video)'}
-                url={'https://www.youtube.com/watch?v=QQX2hpmtMJs'}
-                thumbnail={'https://img.youtube.com/vi/QQX2hpmtMJs/maxresdefault.jpg'}
-              >
-                <DiscordEmbedDescription slot={'description'}>
-                  [Verse]<br/>
-                  Dangerous<br/>
-                  How we toe the line<br/>
-                  Push it every time<br/>
-                  My my (La la la la)<br/>
-                  <br/>
-                  ...<br/>
-                </DiscordEmbedDescription>
-                <DiscordEmbedFooter slot={'footer'} footerImage={kalliopePNG}>Kalliope. | Repeat: ❌ | Provided by genius.com</DiscordEmbedFooter>
-              </DiscordEmbed>
-              <DiscordAttachments slot={'components'}>
-                <DiscordActionRow>
-                  <DiscordButton type={'primary'} disabled>Previous</DiscordButton>
-                  <DiscordButton type={'primary'}>Next</DiscordButton>
-                </DiscordActionRow>
-              </DiscordAttachments>
-            </DiscordMessage>
-          </DiscordMessages>
+        <div className={'features-container'}>
+          <div className={'feature-card'}>
+            <div className={'feature-card-content'}>
+              <i className={'fad fa-stream'}></i>
+              <h2>Full support</h2>
+              <p>
+                Kalliope still offers full support for almost every platform you can imagine:<br/>
+                YouTube, Spotify, Twitch and many others!<br/>
+                It also supports playlists, livestreams and HTTP sources.<br/>
+              </p>
+            </div>
+          </div>
+          <div className={'feature-card'}>
+            <div className={'feature-card-content'}>
+              <i className={'fad fa-headphones'}></i>
+              <h2>High quality</h2>
+              <p>
+                Kalliope is using the well established Lavalink library.<br/>
+                It allows for high quality playback by hosting its own audio server and streaming directly to Discord.<br/>
+              </p>
+            </div>
+          </div>
+          <div className={'feature-card'}>
+            <div className={'feature-card-content'}>
+              <i className={'fad fa-search'}></i>
+              <h2>YouTube Search</h2>
+              <p>
+                Search up to five songs from YouTube and play one directly from Discord, without ever opening a browser!
+                Playing music in your channel was never this easy.
+              </p>
+            </div>
+          </div>
+          <div className={'feature-card'}>
+            <div className={'feature-card-content'}>
+              <i className={'fad fa-window-maximize'}></i>
+              <h2>Dashboard</h2>
+              <p>
+                Use the web dashboard to control your bot without having to type out commands ever again.<br/>
+                You can even use your keyboard&apos;s built-in music buttons to skip songs and pause or resume playback.<br/>
+              </p>
+            </div>
+          </div>
+          <div className={'feature-card'}>
+            <div className={'feature-card-content'}>
+              <i className={'fad fa-list-music'}></i>
+              <h2>Genius Lyrics</h2>
+              <p>
+                Kalliope supports Genius Lyrics! Quite literally actually, because they are directly accessible in Discord itself via a command.<br/>
+              </p>
+            </div>
+          </div>
+          <div className={'feature-card'}>
+            <div className={'feature-card-content'}>
+              <i className={'fad fa-terminal'}></i>
+              <h2>Easy commands</h2>
+              <p>
+                Kalliope uses slash-commands to integrate into Discord, which allows for easy command usage.<br/>
+              </p>
+            </div>
+          </div>
         </div>
       </section>
       <section id={'install'}>

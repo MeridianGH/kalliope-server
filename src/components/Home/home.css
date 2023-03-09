@@ -29,13 +29,88 @@ section h1 {
     margin: 0;
 }
 section h2 {
-    font-size: 2em;
+    font-size: 1.5em;
     text-align: center;
     margin: 0;
 }
 
-section p {
-    font-size: 1.5em;
+.features-container {
+    display: grid;
+    grid-template-columns: auto;
+    grid-auto-rows: 1fr;
+    grid-gap: 2vh;
+}
+@media screen and (min-width: 1024px) { .features-container { grid-template-columns: 1fr 1fr 1fr; } }
+.feature-card {
+    --mouse-x: 0;
+    --mouse-y: 0;
+    background-color: var(--bg-lvl3);
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+.feature-card:hover::before, .features-container:hover > .feature-card::after {
+    opacity: 1;
+}
+.feature-card::before, .feature-card::after {
+    border-radius: inherit;
+    content: "";
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    transition: opacity 500ms;
+    pointer-events: none;
+}
+.feature-card::before {
+    background: radial-gradient(
+            800px circle at var(--mouse-x) var(--mouse-y),
+            rgba(255, 255, 255, 0.06),
+            transparent 40%
+    );
+    z-index: 3;
+}
+.feature-card::after {
+    background: radial-gradient(
+            600px circle at var(--mouse-x) var(--mouse-y),
+            rgba(255, 255, 255, 0.4),
+            transparent 40%
+    );
+    z-index: 1;
+}
+.feature-card > .feature-card-content {
+    background-color: var(--bg-lvl2);
+    color: transparent;
+    border-radius: inherit;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    place-content: center;
+    padding: 10px;
+    margin: 2px;
+    /*aspect-ratio: 1;*/
+    z-index: 2;
+    transition: color 0.5s ease-in-out;
+}
+.feature-card-content > i {
+    font-size: 500%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out;
+}
+.feature-card:hover > .feature-card-content > i {
+    opacity: 0.2;
+}
+.feature-card:hover > .feature-card-content {
+    color: white;
 }
 
 details {
