@@ -1,9 +1,10 @@
 import React from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { createRoot } from 'react-dom/client'
-import { Home } from './components/Home/home.js'
 import { Navbar } from './components/Navbar/navbar.js'
+import { Home } from './components/Home/home.js'
 import { Dashboard } from './components/Dashboard/dashboard.js'
+import { Footer } from './components/Footer/footer.js'
 import { WebsocketProvider } from './components/WebSocket/websocket.js'
 import './app.css'
 import kalliopeTransparentPNG from './assets/kalliope_transparent.png'
@@ -18,12 +19,14 @@ export function App() {
           <div>
             <Navbar displayLinks={true}/>
             <Home/>
+            <Footer/>
           </div>
         }/>
         <Route path={'/dashboard'} element={
           <WebsocketProvider>
             <Navbar/>
             <Dashboard/>
+            <Footer/>
           </WebsocketProvider>
         }/>
       </Routes>
