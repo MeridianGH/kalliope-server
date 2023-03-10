@@ -1,5 +1,5 @@
 .now-playing-container {
-    --dominant-color: white;
+    --dominant-color: var(--accent);
     min-height: 100vh;
     padding-top: 5vh;
     box-sizing: border-box;
@@ -11,7 +11,7 @@
     height: 20px;
     margin: 10px 0;
     border-radius: 10px;
-    background-color: gray;
+    background-color: var(--hover);
     overflow: hidden;
 }
 .progress-bar {
@@ -28,7 +28,7 @@
 .music-buttons > button {
     font-size: 2em;
     background: transparent;
-    color: white;
+    color: var(--text);
     border: none;
     cursor: pointer;
     transition: color 0.25s ease-in-out;
@@ -47,7 +47,7 @@
     margin: 10px 0;
     position: relative;
     border-radius: 5px;
-    background-color: white;
+    background-color: var(--text);
     transition: background-color 0.25s ease-in-out;
 }
 @media screen and (min-width: 768px)  { .volume-slider-container { width: 50vw; } }
@@ -72,7 +72,7 @@
     position: absolute;
     right: 0;
     pointer-events: none;
-    background-color: gray;
+    background-color: var(--hover);
     border-radius: 0 5px 5px 0;
     transition: width 0.1s linear;
 }

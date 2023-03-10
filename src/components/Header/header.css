@@ -34,16 +34,16 @@ header {
 .dashboard-button {
     font-size: 2em;
     padding: 10px 20px;
-    border: 5px solid white;
+    border: 5px solid var(--text);
     border-radius: 50px;
-    color: white;
+    color: var(--text);
     text-align: center;
     background-color: transparent;
-    transition: background-color .5s;
+    transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out;
     cursor: pointer;
 }
-.dashboard-button:hover {
-    background-color: white;
+.dashboard-button:hover, .dashboard-button:active {
+    background-color: var(--text);
     color: black;
 }
 

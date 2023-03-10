@@ -3,6 +3,11 @@
     --bg-lvl1: #1d1d1d;
     --bg-lvl2: #212121;
     --bg-lvl3: #292929;
+
+    --text: #ffffff;
+    --hover: #808080;
+    --accent: #e71d36;
+    --accent-alt: #eb9c0a;
 }
 
 html {
@@ -10,6 +15,8 @@ html {
     /* Hide Scrollbar */
     -ms-overflow-style: none;
     scrollbar-width: none;
+
+    background: var(--bg);
 }
 html::-webkit-scrollbar {
     display: none;
@@ -18,28 +25,27 @@ html::-webkit-scrollbar {
 .app {
     min-height: 100vh;
     min-width: 100vw;
-    color: white;
+    color: var(--text);
     font-family: 'Lato', sans-serif;
     font-size: 1em;
-    background: var(--bg);
 }
 @media screen and (min-width: 768px)  { .app { font-size: 1.2em; } }
 @media screen and (min-width: 1600px) { .app { font-size: 1.5em; } }
 @media screen and (min-width: 2000px) { .app { font-size: 2em;   } }
 
 .small-text {
-    color: gray;
-    font-size: 0.5em;
+    color: var(--hover);
+    font-size: 0.75em;
 }
 
 a {
-    color: white;
+    color: var(--text);
     text-decoration: none;
     background-color: transparent;
     transition: color 0.25s ease-in-out;
 }
 a:hover {
-    color: gray;
+    color: var(--hover);
     text-decoration: none;
     background-color: transparent;
     cursor: pointer;

@@ -10,7 +10,7 @@ export function MediaSession({ track, paused }) {
   function displayAlert() {
     console.warn('Autoplay disabled!')
     const div = document.querySelector('.autoplay-alert')
-    div.innerHTML = '<i class="far fa-exclamation-triangle fa-1.5x"></i><span class="autoplay-text">Autoplay seems to be disabled. Enable Media Autoplay to use media buttons to control the music bot!'
+    div.innerHTML = '<i class="far fa-exclamation-triangle fa-1.5x"/><span class="autoplay-text">Autoplay seems to be disabled. Enable Media Autoplay to use media buttons to control the music bot!'
   }
 
   React.useEffect(() => {

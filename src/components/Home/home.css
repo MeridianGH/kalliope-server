@@ -2,6 +2,7 @@ section {
     width: 100vw;
 
     padding: 5vh 5vw;
+    margin: 100px 0;
     box-sizing: border-box;
 
     display: flex;
@@ -12,15 +13,22 @@ section {
 }
 section > div {
     width: 75vw;
-    box-shadow: 5px 5px 2px black;
-    border-radius: 25px;
-    background-color: var(--bg-lvl1);
-    padding: 5%;
 }
-@media screen and (min-width: 768px) {
-    section > div {
-        margin-bottom: 10vh;
-    }
+section.diagonal {
+    position: relative;
+}
+section.diagonal::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    box-shadow: 0 0 10px black;
+    background: linear-gradient(to right, var(--accent), var(--accent-alt));
+    transform: skewY(-2deg);
+}
+section.diagonal.reverse::after {
+    background: linear-gradient(to left, var(--accent), var(--accent-alt));
+    transform: skewY(2deg);
 }
 
 section h1 {
@@ -42,9 +50,9 @@ section h2 {
 }
 @media screen and (min-width: 1024px) { .features-container { grid-template-columns: 1fr 1fr 1fr; } }
 .feature-card {
-    --mouse-x: 0;
-    --mouse-y: 0;
-    background-color: var(--bg-lvl3);
+    --mouse-x: 50%;
+    --mouse-y: 50%;
+    background-color: var(--accent);
     border-radius: 10px;
     cursor: pointer;
     display: flex;
@@ -57,141 +65,77 @@ section h2 {
 .feature-card::before, .feature-card::after {
     border-radius: inherit;
     content: "";
-    width: 100%;
-    height: 100%;
     position: absolute;
-    left: 0;
-    top: 0;
+    inset: 0;
     opacity: 0;
     transition: opacity 500ms;
     pointer-events: none;
 }
 .feature-card::before {
     background: radial-gradient(
-            800px circle at var(--mouse-x) var(--mouse-y),
-            rgba(255, 255, 255, 0.06),
+            600px circle at var(--mouse-x) var(--mouse-y),
+            rgba(255, 255, 255, 0.1),
             transparent 40%
     );
     z-index: 3;
 }
 .feature-card::after {
     background: radial-gradient(
-            600px circle at var(--mouse-x) var(--mouse-y),
-            rgba(255, 255, 255, 0.4),
+            800px circle at var(--mouse-x) var(--mouse-y),
+            var(--accent-alt),
             transparent 40%
     );
     z-index: 1;
 }
 .feature-card > .feature-card-content {
-    background-color: var(--bg-lvl2);
-    color: transparent;
-    border-radius: inherit;
+    position: relative;
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-    place-content: center;
-    padding: 10px;
-    margin: 2px;
+    padding: 15px;
     z-index: 2;
+    border-radius: inherit;
+    color: var(--text);
     transition: color 0.5s ease-in-out;
 }
-.feature-card-content > i {
-    font-size: 500%;
+.feature-card-content::before {
+    content: "";
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: white;
-    opacity: 1;
-    transition: opacity 0.5s ease-in-out;
+    inset: 4px;
+    z-index: -1;
+    background-color: var(--bg-lvl1);
+    border-radius: inherit;
 }
-.feature-card:hover > .feature-card-content > i {
-    opacity: 0.2;
-}
-.feature-card:hover > .feature-card-content {
-    color: white;
-}
-
-details {
-    padding: 2vh;
-    border-radius: 5px;
-    background: var(--bg-lvl2);
-    box-shadow: 5px 5px 2px black;
-    margin-bottom: 2vh;
-}
-details > summary {
-    display: flex;
-    justify-content: space-between;
-    cursor: pointer;
-}
-details[open] > summary {
-    padding-bottom: 0.5em;
-}
-details > summary > * {
-    max-width: 90%;
-}
-details[open] > summary ~ * {
-    animation: open 0.5s;
-}
-@keyframes open {
-    0%    { opacity: 0; }
-    100%  { opacity: 1; }
-}
-details > summary .icon {
-    width: 1.5em;
-    height: 1.5em;
-    display: flex;
-    place-content: center;
-    place-items: center;
-    transform-origin: 50% 50%;
-    transition: transform 0.5s;
-}
-details[open] > summary .icon {
-    transform: rotate(180deg);
-}
-code {
-    display: block;
-    white-space: nowrap;
-    margin: 1em 0;
-    padding: 0.5em;
-    background-color: var(--bg-lvl3);
-    border-radius: 5px;
-}
-
-.commands-container > p > span {
-    display: inline-block;
-    margin: 15px;
+.feature-card-content > i {
+    font-size: 4em;
+    text-align: center;
     padding: 15px;
-    border-radius: 15px;
-    border: 2px solid transparent;
-    background-color: var(--bg-lvl2);
-    box-shadow: 5px 5px 2px black;
-    cursor: pointer;
-    transition: background-color 0.25s, border-color 0.25s;
-}
-.commands-container > p > span:hover {
-    background-color: transparent;
-    border-color: #ffffff;
+    color: var(--text);
+    --fa-secondary-color: var(--accent);
+    --fa-secondary-opacity: 1;
 }
 
-.discord-messages {
-    --scale: 0.4;
-    transform: scale(var(--scale));
-    transform-origin: 0 0;
+.commands-container {
+    display: flex;
+    flex-wrap: wrap;
+    place-content: center;
+    gap: 3em;
+    padding: 3em;
+}
+.commands-container > code {
+    padding: 1em;
+    position: relative;
+    background-color: var(--bg-lvl1);
     border-radius: 10px;
-    width: calc(75vw * (1 / var(--scale)));
-    margin: 0;
+    transform-style: preserve-3d;
+    cursor: default;
+    user-select: none;
 }
-@media screen and (min-width: 872px) { .discord-messages { --scale: 1; } }
-@media screen and (min-width: 1600px) { .discord-messages { --scale: 1.5; } }
-@media screen and (min-width: 2000px) { .discord-messages { --scale: 2; } }
-.discord-message {
-    background: inherit !important;
-}
-.discord-attachments {
-    margin-top: -10px !important;
-}
-.discord-button-select {
-    background: #202225 !important;
-    color: #a3a6aa !important;
+.commands-container > code::before {
+    content: "";
+    position: absolute;
+    inset: -0.5em;
+    border-radius: inherit;
+    background: linear-gradient(to bottom right, var(--accent), var(--accent-alt));
+    transform: translateZ(-20px);
 }

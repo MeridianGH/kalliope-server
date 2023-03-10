@@ -19,7 +19,7 @@
     padding: 5px;
     box-sizing: border-box;
     background-color: var(--bg-lvl2);
-    color: white;
+    color: var(--text);
     border: 2px solid gray;
     border-radius: 5px;
     box-shadow: 5px 5px 2px black;
@@ -27,7 +27,7 @@
     transition: border-color 0.25s ease-in-out;
 }
 .queue-input:hover {
-    border-color: white;
+    border-color: var(--text);
 }
 .queue-input:focus {
     outline: none;

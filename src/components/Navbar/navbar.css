@@ -17,7 +17,7 @@ nav {
     transition: opacity 0.25s ease-in-out;
 }
 .nav-logo-container:hover {
-    color: white;
+    color: var(--text);
     opacity: 50%;
 }
 .nav-title {
@@ -31,11 +31,10 @@ nav {
 }
 
 .nav-link-container {
-    gap: 20px;
+    gap: 1em;
 }
 .nav-link-container a {
     font-size: 1em;
-    font-weight: lighter;
     text-transform: uppercase;
 }
 
