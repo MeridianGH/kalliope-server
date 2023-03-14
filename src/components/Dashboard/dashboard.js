@@ -143,7 +143,7 @@ export function Dashboard() {
     <div className={'dashboard flex-container column'}>
       <button onClick={() => { setPlayer(playerObject) }}>Set Player</button>
       <h1><i className={'fas fa-th'}/> Select a server...</h1>
-      <div className={'server-container flex-container row'}>
+      <div className={'server-container flex-container'}>
         {/* eslint-disable-next-line no-extra-parens */}
         {user?.guilds && Object.keys(clientGuilds).length != 0 ? user.guilds.filter((guild) => Object.keys(clientGuilds).includes(guild.id)).map((guild, index) => (
           <div className={'server-card flex-container column'} key={index}

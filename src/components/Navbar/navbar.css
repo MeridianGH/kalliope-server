@@ -5,11 +5,16 @@ nav {
     display: none !important; /* Hide by default */
 
     box-sizing: border-box;
-    padding: 20px 5%;
+    padding: 20px 5vw;
 
-    position: absolute;
-    top: 0;
-    left: 0;
+    position: fixed;
+    z-index: 999;
+    background-color: var(--bg);
+    box-shadow: 2px 2px 5px black;
+    transition: background-color 0.25s ease-in-out;
+}
+nav.transparent {
+    background-color: rgba(0, 0, 0, 50%);
 }
 
 .nav-logo-container {
@@ -22,7 +27,7 @@ nav {
 }
 .nav-title {
     font-size: 1em;
-    font-weight: bolder;
+    font-weight: bold;
     margin-left: 10px;
 }
 .nav-logo {

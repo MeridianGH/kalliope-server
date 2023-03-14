@@ -5,7 +5,7 @@
     border-radius: 25px;
     padding: 5vh 5vw;
     box-sizing: border-box;
-    box-shadow: 5px 5px 2px black;
+    box-shadow: 2px 2px 5px black;
 }
 
 .queue-buttons-container {
@@ -22,7 +22,7 @@
     color: var(--text);
     border: 2px solid gray;
     border-radius: 5px;
-    box-shadow: 5px 5px 2px black;
+    box-shadow: 2px 2px 5px black;
     font-weight: bold;
     transition: border-color 0.25s ease-in-out;
 }

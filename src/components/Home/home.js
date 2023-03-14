@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import VanillaTilt from 'vanilla-tilt'
-import { Header } from '../Header/header.js'
 import './home.css'
 
 export function Home() {
@@ -23,7 +22,6 @@ export function Home() {
   }, [])
   return (
     <div id={'home'}>
-      <Header/>
       <section id={'features'}>
         <h1><i className={'fas fa-th'}/> Features</h1>
         <div className={'features-container'}>
@@ -85,12 +83,12 @@ export function Home() {
       </section>
       <section id={'install'} className={'diagonal'}>
         <h1><i className={'fas fa-download'}/> Install</h1>
-        <div>
+        <div className={'flex-container column'}>
           <p>
             You&apos;ll need to install your own version of Kalliope in order to add it to your server.<br/>
             But don&apos;t worry, it&apos;s really easy and fast.<br/><br/>
-            Head on over to <a className={'underline'} href={'https://github.com/MeridianGH/Kalliope#installation'}>GitHub</a> to check out the installation instructions.
           </p>
+          <a href={'https://github.com/MeridianGH/Kalliope#installation'} className={'cta-button'}>Get Started</a>
         </div>
       </section>
       <section id={'commands'}>
@@ -105,7 +103,7 @@ export function Home() {
           <code>/queue</code>
           <code>And more...</code>
         </div>
-        <a href={'https://github.com/MeridianGH/Kalliope#commands'}><div className={'dashboard-button'}>View all commands</div></a>
+        <a href={'https://github.com/MeridianGH/Kalliope#commands'} className={'cta-button'}>View all commands</a>
       </section>
       <section id={'github'} className={'diagonal reverse'}>
         <h1><i className={'fab fa-github'}/> GitHub</h1>
@@ -114,7 +112,7 @@ export function Home() {
             Kalliope is open-source! You can find it&apos;s source-code, releases and more info using the link below.<br/>
             However, please be mindful of the license if you&apos;re interested in redistributing code from the repository.<br/><br/>
           </p>
-          <a href={'https://github.com/MeridianGH/Kalliope'}><div className={'dashboard-button'}>GitHub</div></a>
+          <a href={'https://github.com/MeridianGH/Kalliope'} className={'cta-button'}>GitHub</a>
         </div>
       </section>
     </div>

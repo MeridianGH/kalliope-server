@@ -1,7 +1,7 @@
 section {
     width: 100vw;
 
-    padding: 5vh 5vw;
+    padding: 5vh 10vw;
     margin: 100px 0;
     box-sizing: border-box;
 
@@ -10,9 +10,6 @@ section {
     gap: 5vh;
     place-items: center;
     place-content: center;
-}
-section > div {
-    width: 75vw;
 }
 section.diagonal {
     position: relative;

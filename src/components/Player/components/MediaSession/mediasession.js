@@ -40,7 +40,7 @@ export function MediaSession({ track, paused }) {
       navigator.mediaSession.setActionHandler('previoustrack', () => { websocket.sendData('previous') })
     }
   }, [track, paused, websocket])
-  return <div className={'autoplay-alert flex-container row nowrap'}/>
+  return <div className={'autoplay-alert flex-container nowrap'}/>
 }
 
 MediaSession.propTypes = {

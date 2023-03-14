@@ -1,36 +1,35 @@
 import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import './header.css'
-import kalliopeTransparentPNG from '../../assets/kalliope_transparent.png'
 
 export function Header() {
   useEffect(() => {
+    const header = document.querySelector('header')
     const observer = new IntersectionObserver(([entry]) => {
-      const element = document.querySelector('.scroll-hint')
-      if (!element) { return }
+      const scrollHint = document.querySelector('.scroll-hint')
+      const nav = document.querySelector('nav')
+      if (!scrollHint || !nav) { return }
       // noinspection JSUnresolvedVariable
-      element.style.opacity = entry.isIntersecting ? '1' : '0'
+      scrollHint.style.opacity = entry.isIntersecting ? '1' : '0'
+      entry.isIntersecting ? nav.classList.add('transparent') : nav.classList.remove('transparent')
     }, { threshold: [0.95] })
-    observer.observe(document.querySelector('header'))
-  })
+    observer.observe(header)
+  }, [])
   return (
-    <header>
-      <div className={'header-container flex-container column nowrap'}>
-        <img className={'header-title-logo'} src={kalliopeTransparentPNG} alt={'Logo'}/>
-        <h1 className={'header-title'}>Kalliope.</h1>
-        <p className={'header-slogan'}>A Discord music bot that still supports all platforms.</p>
-        <div className={'source-icons-container flex-container row'}>
-          <i className={'fab fa-youtube'} style={{ color: '#ff0000' }}/>
-          <i className={'fab fa-spotify'} style={{ color: '#1db954' }}/>
-          <i className={'fab fa-soundcloud'} style={{ color: '#ff8800' }}/>
-          <i className={'fab fa-bandcamp'} style={{ color: '#629aa9' }}/>
-          <i className={'fab fa-twitch'} style={{ color: '#9146FF' }}/>
-          <i className={'fab fa-vimeo'} style={{ color: '#19b7ea' }}/>
-          <i className={'fas fa-cloud-music'} style={{ color: '#f0f0f0' }}/>
-        </div>
-        <Link to={'/dashboard'}><div className={'dashboard-button'}>Dashboard.</div></Link>
-        <a className={'scroll-hint'} href={'#features'}><i className={'fas fa-chevron-down'}/> Scroll</a>
+    <header className={'flex-container column nowrap'}>
+      <h1 className={'header-title'}>Kalliope.</h1>
+      <p className={'header-slogan'}>Stream high quality music in your Discord server.</p>
+      <div className={'source-icons-container flex-container'}>
+        <i className={'fab fa-youtube'} style={{ color: '#ff0000' }}/>
+        <i className={'fab fa-spotify'} style={{ color: '#1db954' }}/>
+        <i className={'fab fa-soundcloud'} style={{ color: '#ff8800' }}/>
+        <i className={'fab fa-bandcamp'} style={{ color: '#629aa9' }}/>
+        <i className={'fab fa-twitch'} style={{ color: '#9146FF' }}/>
+        <i className={'fab fa-vimeo'} style={{ color: '#19b7ea' }}/>
+        <i className={'fas fa-cloud-music'} style={{ color: '#f0f0f0' }}/>
       </div>
+      <Link to={'/dashboard'} className={'cta-button'}>Dashboard</Link>
+      <a className={'scroll-hint'} href={'#features'} tabIndex="-1"><i className={'fas fa-chevron-circle-down'}/></a>
     </header>
   )
 }

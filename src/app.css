@@ -7,14 +7,17 @@
     --text: #ffffff;
     --hover: #808080;
     --accent: #e71d36;
-    --accent-alt: #eb9c0a;
+    --accent-alt: #e76a1d;
 }
 
 html {
     scroll-behavior: smooth;
+    scroll-padding: 10vh;
     /* Hide Scrollbar */
     -ms-overflow-style: none;
     scrollbar-width: none;
+
+    color-scheme: dark;
 
     background: var(--bg);
 }
@@ -22,9 +25,14 @@ html::-webkit-scrollbar {
     display: none;
 }
 
+::selection {
+    background-color: var(--accent);
+    color: white;
+}
+
 .app {
+    width: 100vw;
     min-height: 100vh;
-    min-width: 100vw;
     color: var(--text);
     font-family: 'Lato', sans-serif;
     font-size: 1em;
@@ -55,18 +63,33 @@ a.underline {
     text-decoration-thickness: 0.1em;
 }
 
+.cta-button {
+    font-size: 2em;
+    padding: 1rem;
+    border: 5px solid var(--text);
+    border-radius: 1rem;
+    color: var(--text);
+    mix-blend-mode: screen;
+    text-align: center;
+    background-color: transparent;
+    transition: background-color 0.25s ease-in-out, color 0.25s ease-in-out;
+    cursor: pointer;
+}
+.cta-button:hover, .cta-button:active {
+    color: black;
+    background-color: var(--text);
+}
+
 p {
     text-align: center;
 }
 
 .flex-container {
     display: flex;
+    gap: 1rem;
     flex-wrap: wrap;
     place-items: center;
     place-content: center;
-}
-.flex-container.row {
-    flex-direction: row;
 }
 .flex-container.column {
     flex-direction: column;
