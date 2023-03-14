@@ -3,14 +3,14 @@ footer {
     flex-direction: column;
     place-content: center;
     place-items: center;
-    gap: 1em;
-    padding: 1em;
+    gap: 1rem;
+    padding: 1rem;
     background-color: var(--bg-lvl1);
     box-shadow: 0 0 10px black;
 }
 
 .social-icons {
-    gap: 1em;
+    gap: 1rem;
 }
 .social-icons i {
     color: var(--text);

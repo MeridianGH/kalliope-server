@@ -32,9 +32,9 @@
     cursor: pointer;
 }
 .server-card > span {
-    font-size: 0.8em;
+    font-size: 0.8rem;
     width: 200px;
-    height: 1.2em;
+    height: 1.2rem;
     text-align: center;
     cursor: default;
     white-space: nowrap;

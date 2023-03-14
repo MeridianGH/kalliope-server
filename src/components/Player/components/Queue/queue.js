@@ -37,7 +37,7 @@ export function Queue({ tracks }) {
       {/* eslint-disable-next-line no-extra-parens */}
       {tracks.length > 0 ? tracks.map((track, index) => (
         <div className={'queue-track flex-container space-between nowrap'} key={index}>
-          <div className={'flex-container nowrap'} style={{ gap: '1em' }}>
+          <div className={'flex-container nowrap'}>
             <b>{index + 1}.</b>
             <Thumbnail image={track.thumbnail} size={'3em'}/>
             <a href={track.uri} rel='noreferrer' target='_blank'><b>{track.title}</b></a>

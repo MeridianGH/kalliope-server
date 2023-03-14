@@ -26,20 +26,20 @@ nav.transparent {
     opacity: 50%;
 }
 .nav-title {
-    font-size: 1em;
+    font-size: 1rem;
     font-weight: bold;
     margin-left: 10px;
 }
 .nav-logo {
-    width: 1.5em;
-    height: 1.5em;
+    width: 1.5rem;
+    height: 1.5rem;
 }
 
 .nav-link-container {
-    gap: 1em;
+    gap: 1rem;
 }
 .nav-link-container a {
-    font-size: 1em;
+    font-size: 1rem;
     text-transform: uppercase;
 }
 

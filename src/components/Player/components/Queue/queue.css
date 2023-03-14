@@ -53,8 +53,8 @@
 
 .queue-track {
     width: 100%;
-    padding: 1em;
-    margin: 1em;
+    padding: 1rem;
+    margin: 1rem;
     box-sizing: border-box;
     border-bottom: 2px solid white;
 }

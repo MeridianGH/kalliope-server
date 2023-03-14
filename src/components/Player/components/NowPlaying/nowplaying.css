@@ -3,7 +3,7 @@
     min-height: 100vh;
     padding-top: 5vh;
     box-sizing: border-box;
-    gap: 2em;
+    gap: 2rem;
 }
 
 .progress-container {
@@ -26,7 +26,7 @@
     gap: 2vw;
 }
 .music-buttons > button {
-    font-size: 2em;
+    font-size: 2rem;
     background: transparent;
     color: var(--text);
     border: none;
@@ -34,7 +34,7 @@
     transition: color 0.25s ease-in-out;
 }
 .music-buttons > button:first-child, .music-buttons > button:last-child {
-    font-size: 1em;
+    font-size: 1rem;
 }
 .music-buttons > button:hover {
     color: var(--dominant-color);
@@ -93,7 +93,7 @@
 }
 .volume-display {
     width: 100px;
-    height: 2em;
-    margin-top: 0.5em;
+    height: 2rem;
+    margin-top: 0.5rem;
     text-align: center;
 }

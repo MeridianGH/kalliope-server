@@ -15,11 +15,11 @@ header {
     background: inherit;
 }
 .header-title {
-    font-size: 4em;
+    font-size: 4rem;
     margin: 0;
 }
 .header-slogan {
-    font-size: 1.5em;
+    font-size: 1.5rem;
     font-weight: bold;
     margin: 0;
 }
@@ -31,11 +31,11 @@ header {
     background-color: var(--bg-lvl1);
 }
 .source-icons-container i {
-    font-size: 2em;
+    font-size: 2rem;
 }
 
 .scroll-hint {
-    font-size: 1.5em;
+    font-size: 1.5rem;
     position: absolute;
     bottom: 2vh;
     left: 50%;

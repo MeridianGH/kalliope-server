@@ -35,15 +35,15 @@ html::-webkit-scrollbar {
     min-height: 100vh;
     color: var(--text);
     font-family: 'Lato', sans-serif;
-    font-size: 1em;
+    font-size: 1rem;
 }
-@media screen and (min-width: 768px)  { .app { font-size: 1.2em; } }
-@media screen and (min-width: 1600px) { .app { font-size: 1.5em; } }
-@media screen and (min-width: 2000px) { .app { font-size: 2em;   } }
+@media screen and (min-width: 768px)  { .app { font-size: 1.2rem; } }
+@media screen and (min-width: 1600px) { .app { font-size: 1.5rem; } }
+@media screen and (min-width: 2000px) { .app { font-size: 2rem;   } }
 
 .small-text {
     color: var(--hover);
-    font-size: 0.75em;
+    font-size: 0.75rem;
 }
 
 a {
@@ -60,11 +60,11 @@ a:hover {
 }
 a.underline {
     text-decoration: underline;
-    text-decoration-thickness: 0.1em;
+    text-decoration-thickness: 0.1rem;
 }
 
 .cta-button {
-    font-size: 2em;
+    font-size: 2rem;
     padding: 1rem;
     border: 5px solid var(--text);
     border-radius: 1rem;

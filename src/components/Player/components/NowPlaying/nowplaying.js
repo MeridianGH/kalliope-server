@@ -46,7 +46,7 @@ export function NowPlaying({ track, position, paused, repeatMode, initialVolume 
   return (
     <div className={'now-playing-container flex-container column'}>
       <Thumbnail image={track.thumbnail} size={'35vh'}/>
-      <div className={'flex-container nowrap'} style={{ gap: '1em' }}>
+      <div className={'flex-container nowrap'}>
         <span>{msToHMS(position)}</span>
         <div className={'progress-container'}>
           <div className={'progress-bar'} style={{ width: `${track.isStream ? '100%' : position / track.duration * 100 + '%'}` }}/>
