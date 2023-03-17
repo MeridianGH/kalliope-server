@@ -13,9 +13,9 @@ export function Queue({ tracks }) {
     input.current.value = ''
   }
   return (
-    <div className={'queue-container flex-container column nowrap'} id={'queue'}>
+    <div className={'queue-container flex-container column'}>
       <h1>Queue:</h1>
-      <div className={'queue-buttons-container flex-container'}>
+      <div className={'flex-container'}>
         <form onSubmit={handlePlay} className={'queue-input-form music-buttons'}>
           <input type='text' className={'queue-input'} placeholder='Add to queue' ref={input}/>
           <button className={'queue-input-button'}><i className={'fas fa-plus'}/></button>

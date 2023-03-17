@@ -63,6 +63,15 @@ a.underline {
     text-decoration-thickness: 0.1rem;
 }
 
+button {
+    background: none;
+    border: none;
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+    padding: 0;
+}
+
 .cta-button {
     font-size: 2rem;
     padding: 1rem;

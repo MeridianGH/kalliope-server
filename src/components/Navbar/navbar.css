@@ -10,7 +10,7 @@ nav {
     position: fixed;
     z-index: 999;
     background-color: var(--bg);
-    box-shadow: 2px 2px 5px black;
+    box-shadow: 0 2px 5px black;
     transition: background-color 0.25s ease-in-out;
 }
 nav.transparent {
@@ -28,7 +28,6 @@ nav.transparent {
 .nav-title {
     font-size: 1rem;
     font-weight: bold;
-    margin-left: 10px;
 }
 .nav-logo {
     width: 1.5rem;

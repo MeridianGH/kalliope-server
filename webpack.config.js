@@ -34,7 +34,8 @@ export default {
   },
   devServer: {
     static: path.resolve(__dirname, './dist'),
-    historyApiFallback: true
+    historyApiFallback: true,
+    hot: false
   },
   performance: {
     hints: false,

@@ -10,7 +10,7 @@ export function Navbar({ displayLinks = false }) {
       <Link to={'/'} className={'nav-logo-container'}>
         <div className={'flex-container nowrap'}>
           <img className={'nav-logo'} src={kalliopeTransparentPNG} alt={'Logo'}/>
-          <h1 className={'nav-title'}>Kalliope.</h1>
+          <h1 className={'nav-title'}>Kalliope</h1>
         </div>
       </Link>
       {displayLinks ?

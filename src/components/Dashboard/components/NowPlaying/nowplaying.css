@@ -1,9 +1,7 @@
 .now-playing-container {
     --dominant-color: var(--accent);
-    min-height: 100vh;
-    padding-top: 5vh;
-    box-sizing: border-box;
-    gap: 2rem;
+    height: 100vh;
+    padding: 0 10vw;
 }
 
 .progress-container {

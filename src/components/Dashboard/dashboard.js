@@ -1,10 +1,15 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { WebsocketContext } from '../WebSocket/websocket.js'
-import { Player } from '../Player/player.js'
+// import { Player } from '../Player/player.js'
 import { Routes } from 'discord-api-types/v10'
 import './dashboard.css'
 import genericServer from '../../assets/generic_server.png'
+import { Sidebar } from './components/Sidebar/sidebar.js'
+import { NowPlaying } from './components/NowPlaying/nowplaying.js'
+import { Queue } from './components/Queue/queue.js'
+import { MediaSession } from './components/MediaSession/mediasession.js'
+import { Start } from './components/Start/start.js'
 
 const playerObject = {
   'guild': '610498937874546699',
@@ -41,6 +46,7 @@ export function Dashboard() {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')))
   const [player, setPlayer] = useState(null)
   const [clientGuilds, setClientGuilds] = useState({})
+  const [activeTab, setActiveTab] = useState(0)
   const [searchParams] = useSearchParams()
 
   // WebSocket Effect
@@ -72,7 +78,10 @@ export function Dashboard() {
   }, [websocket, user, player, clientGuilds])
   // Login Effect
   useEffect(() => {
-    if (user) { return }
+    if (user) {
+      history.replaceState(null, '', location.href.split('?')[0])
+      return
+    }
     const loginUrl = `https://discordapp.com/api/oauth2/authorize?client_id=1053262351803093032&scope=identify%20guilds&response_type=code&redirect_uri=${encodeURIComponent(window.location.origin + '/dashboard')}`
 
     const code = searchParams.get('code')
@@ -138,19 +147,38 @@ export function Dashboard() {
     })
   })
 
+  const tabs = [
+    <Start key={0}/>,
+    <div key={1} className={'flex-container'}>
+      <button onClick={() => { setPlayer(playerObject); setActiveTab(2) }}>Server</button>
+    </div>,
+    <NowPlaying key={2} player={player}/>,
+    <Queue key={3} tracks={player?.queue ?? []}/>
+  ]
+
+  return (
+    <div>
+      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} user={user} player={!!player}/>
+      <div className={'sidebar-margin'}>{tabs[activeTab]}</div>
+      {player ? <MediaSession track={player.current} paused={player.paused}/> : null}
+    </div>
+  )
+
   if (player) { return <Player player={player}/> }
   return (
     <div className={'dashboard flex-container column'}>
-      <button onClick={() => { setPlayer(playerObject) }}>Set Player</button>
       <h1><i className={'fas fa-th'}/> Select a server...</h1>
       <div className={'server-container flex-container'}>
+        <div className={'server-card flex-container column'}
+          onClick={() => { setPlayer(playerObject) }}>
+          <img src={genericServer} alt={'Server Icon'}></img>
+          <span>Sample guild</span>
+        </div>
         {/* eslint-disable-next-line no-extra-parens */}
-        {user?.guilds && Object.keys(clientGuilds).length != 0 ? user.guilds.filter((guild) => Object.keys(clientGuilds).includes(guild.id)).map((guild, index) => (
+        {user?.guilds ? user.guilds.map((guild, index) => (
           <div className={'server-card flex-container column'} key={index}
             onClick={() => { websocket.sendData('requestPlayerData', { userId: user.id, guildId: guild.id, clientId: clientGuilds[guild.id] }) }}>
-            <img
-              src={guild.icon ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}?size=1024` : genericServer}
-              alt={'Server Icon'}></img>
+            <img src={guild.icon ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}?size=1024` : genericServer} alt={'Server Icon'}></img>
             <span>{guild.name}</span>
           </div>
         )) : <div className={'loading-gear'}><i className="fas fa-cog fa-spin"/></div>}

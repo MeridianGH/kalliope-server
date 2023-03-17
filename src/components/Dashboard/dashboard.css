@@ -1,15 +1,10 @@
 .dashboard {
     min-height: 100vh;
+    padding-top: 15vh;
 }
 
 .server-container {
-    width: 75vw;
-    min-height: 50vh;
-    padding: 2%;
-    margin-bottom: 10vh;
-    box-shadow: 2px 2px 5px black;
-    border-radius: 25px;
-    background-color: var(--bg-lvl1);
+    padding: 0 5vw;
 }
 
 .loading-gear {
@@ -19,36 +14,24 @@
 
 .server-card {
     max-width: 200px;
-    margin: 20px;
-    padding: 0;
-    overflow: hidden;
-}
-.server-card > img {
-    height: 200px;
-    width: 200px;
-    border: 2px solid white;
-    border-radius: 10px;
-    box-sizing: border-box;
+    margin: 1rem;
+    padding: 1rem;
+    border-radius: 1rem;
+    background-color: var(--bg-lvl1);
+    box-shadow: 2px 2px 5px black;
     cursor: pointer;
 }
+.server-card > img {
+    height: 100%;
+    width: 100%;
+    border-radius: inherit;
+}
 .server-card > span {
-    font-size: 0.8rem;
+    font-size: 1rem;
     width: 200px;
-    height: 1.2rem;
     text-align: center;
-    cursor: default;
     white-space: nowrap;
+    overflow: hidden;
     transition-property: margin-left;
     transition-timing-function: ease-in-out;
-}
-.server-card > span:hover {
-    text-overflow: unset;
-    overflow: unset;
-}
-
-.logout-button {
-    position: absolute;
-    top: 0;
-    right: 5%;
-    line-height: 10vh;
 }

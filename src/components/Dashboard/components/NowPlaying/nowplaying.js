@@ -1,11 +1,12 @@
 // noinspection JSUnresolvedVariable
 
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { WebsocketContext } from '../../../WebSocket/websocket.js'
 import { Thumbnail } from '../Thumbnail/thumbnail.js'
 import { FastAverageColor } from 'fast-average-color'
 import './nowplaying.css'
+import { MediaSession } from '../MediaSession/mediasession.js'
 
 function msToHMS(ms) {
   let totalSeconds = ms / 1000
@@ -16,25 +17,35 @@ function msToHMS(ms) {
   return hours === '0' ? `${minutes}:${seconds.padStart(2, '0')}` : `${hours}:${minutes.padStart(2, '0')}:${seconds.padStart(2, '0')}`
 }
 
-export function NowPlaying({ track, position, paused, repeatMode, initialVolume }) {
+export function NowPlaying({ player }) {
   const websocket = useContext(WebsocketContext)
-  const [volume, setVolume] = React.useState(initialVolume)
+  const [position, setPosition] = useState(player.position)
   useEffect(() => {
-    const observer = new IntersectionObserver(([entry]) => {
-      const element = document.querySelector('.scroll-hint')
-      if (!element) { return }
-      element.style.opacity = entry.isIntersecting ? '1' : '0'
-    }, { threshold: [0.95] })
-    observer.observe(document.querySelector('.now-playing-container'))
-
+    setPosition(player.position)
+    const interval = setInterval(() => {
+      if (player && !player.paused && player.current) {
+        setPosition((prevPosition) => {
+          if (prevPosition >= player.current.duration) {
+            clearInterval(interval)
+            return player.current.duration
+          }
+          return prevPosition + 1000
+        })
+      }
+    }, 1000 * (1 / player.timescale ?? 1))
+    return () => { clearInterval(interval) }
+  }, [player])
+  const [volume, setVolume] = React.useState(player.volume)
+  useEffect(() => {
     const slider = document.querySelector('.volume-slider-input')
     const container = document.querySelector('.volume-slider-container')
     slider.ontouchstart = () => { container.classList.add('active') }
     slider.ontouchend = () => { container.classList.remove('active') }
   }, [])
   useEffect(() => {
+    if (!player?.current?.thumbnail) { return }
     const fac = new FastAverageColor()
-    fetch(window.location.origin + '/cors?url=' + encodeURIComponent(track.thumbnail)).then((response) => response.blob()).then((image) => {
+    fetch(window.location.origin + '/cors?url=' + encodeURIComponent(player.current.thumbnail)).then((response) => response.blob()).then((image) => {
       fac.getColorAsync(window.URL.createObjectURL(image), { algorithm: 'dominant', ignoredColor: [[0, 0, 0, 255, 50], [255, 255, 255, 255, 25]] }).then((color) => {
         document.querySelector('.now-playing-container').style.setProperty('--dominant-color', color.hex)
       }).catch((e) => {
@@ -42,27 +53,29 @@ export function NowPlaying({ track, position, paused, repeatMode, initialVolume 
       })
     })
     return () => { fac.destroy() }
-  }, [track])
+  }, [player])
+
+  if (!player?.current) { return <div className={'now-playing-container'}>Nothing currently playing! Join a voice channel and start playback using &apos;/play&apos;!</div> }
   return (
     <div className={'now-playing-container flex-container column'}>
-      <Thumbnail image={track.thumbnail} size={'35vh'}/>
+      <Thumbnail image={player.current.thumbnail} size={'35vh'}/>
       <div className={'flex-container nowrap'}>
         <span>{msToHMS(position)}</span>
         <div className={'progress-container'}>
-          <div className={'progress-bar'} style={{ width: `${track.isStream ? '100%' : position / track.duration * 100 + '%'}` }}/>
+          <div className={'progress-bar'} style={{ width: `${player.current.isStream ? '100%' : position / player.current.duration * 100 + '%'}` }}/>
         </div>
-        <span>{!track.isStream ? msToHMS(track.duration) : '🔴 Live'}</span>
+        <span>{!player.current.isStream ? msToHMS(player.current.duration) : '🔴 Live'}</span>
       </div>
       <div className={'flex-container column'}>
-        <a href={track.uri} rel='noreferrer' target='_blank'><b>{track.title}</b></a>
-        <span>{track.author}</span>
+        <a href={player.current.uri} rel='noreferrer' target='_blank'><b>{player.current.title}</b></a>
+        <span>{player.current.author}</span>
       </div>
       <div className={'music-buttons flex-container nowrap'}>
         <button onClick={() => { websocket.sendData('shuffle') }}><i className={'fas fa-random'}/></button>
         <button onClick={() => { websocket.sendData('previous') }}><i className={'fas fa-angle-left'}/></button>
-        <button onClick={() => { websocket.sendData('pause') }}><i className={paused ? 'fas fa-play' : 'fas fa-pause'}/></button>
+        <button onClick={() => { websocket.sendData('pause') }}><i className={player.paused ? 'fas fa-play' : 'fas fa-pause'}/></button>
         <button onClick={() => { websocket.sendData('skip') }}><i className={'fas fa-angle-right'}/></button>
-        <button onClick={() => { websocket.sendData('repeat') }}><i className={repeatMode === 'none' ? 'fad fa-repeat-alt' : repeatMode === 'track' ? 'fas fa-repeat-1-alt' : 'fas fa-repeat'}/></button>
+        <button onClick={() => { websocket.sendData('repeat') }}><i className={player.repeatMode === 'none' ? 'fad fa-repeat-alt' : player.repeatMode === 'track' ? 'fas fa-repeat-1-alt' : 'fas fa-repeat'}/></button>
       </div>
       <div className={'flex-container column'}>
         <div className={'volume-slider-container'}>
@@ -71,15 +84,8 @@ export function NowPlaying({ track, position, paused, repeatMode, initialVolume 
         </div>
         <div className={'volume-display'}><i className={volume === 0 ? 'fas fa-volume-off' : volume <= 33 ? 'fas fa-volume-down' : volume <= 66 ? 'fas fa-volume' : 'fas fa-volume-up'}/> {volume}</div>
       </div>
-      <a className={'scroll-hint'} href={'#queue'}><i className={'fas fa-chevron-down'}/> Scroll</a>
     </div>
   )
 }
 
-NowPlaying.propTypes = {
-  track: PropTypes.object.isRequired,
-  position: PropTypes.number.isRequired,
-  paused: PropTypes.bool.isRequired,
-  repeatMode: PropTypes.oneOf(['none', 'track', 'queue']).isRequired,
-  initialVolume: PropTypes.number.isRequired
-}
+NowPlaying.propTypes = { player: PropTypes.object }

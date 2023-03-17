@@ -117,7 +117,7 @@ section h2 {
     flex-wrap: wrap;
     place-content: center;
     gap: 3rem;
-    padding: 3rem;
+    padding: 3rem 0;
 }
 .commands-container > code {
     padding: 1rem;

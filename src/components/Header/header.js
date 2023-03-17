@@ -22,9 +22,9 @@ export function Header() {
       <div className={'source-icons-container flex-container'}>
         <i className={'fab fa-youtube'} style={{ color: '#ff0000' }}/>
         <i className={'fab fa-spotify'} style={{ color: '#1db954' }}/>
+        <i className={'fab fa-twitch'} style={{ color: '#9146ff' }}/>
         <i className={'fab fa-soundcloud'} style={{ color: '#ff8800' }}/>
         <i className={'fab fa-bandcamp'} style={{ color: '#629aa9' }}/>
-        <i className={'fab fa-twitch'} style={{ color: '#9146FF' }}/>
         <i className={'fab fa-vimeo'} style={{ color: '#19b7ea' }}/>
         <i className={'fas fa-cloud-music'} style={{ color: '#f0f0f0' }}/>
       </div>
