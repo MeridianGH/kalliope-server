@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { Background } from '../Background/background.js'
 import './header.css'
 
 export function Header() {
@@ -17,6 +18,7 @@ export function Header() {
   }, [])
   return (
     <header className={'flex-container column nowrap'}>
+      <Background style={'gradient'}/>
       <h1 className={'header-title'}>Kalliope.</h1>
       <p className={'header-slogan'}>Stream high quality music in your Discord server.</p>
       <div className={'source-icons-container flex-container'}>

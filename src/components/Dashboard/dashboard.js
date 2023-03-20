@@ -10,6 +10,7 @@ import { NowPlaying } from './components/NowPlaying/nowplaying.js'
 import { Queue } from './components/Queue/queue.js'
 import { MediaSession } from './components/MediaSession/mediasession.js'
 import { Start } from './components/Start/start.js'
+import { Background } from '../Background/background.js'
 
 const playerObject = {
   'guild': '610498937874546699',
@@ -148,7 +149,7 @@ export function Dashboard() {
   })
 
   const tabs = [
-    <Start key={0}/>,
+    <Start key={0} setActiveTab={setActiveTab}/>,
     <div key={1} className={'flex-container'}>
       <button onClick={() => { setPlayer(playerObject); setActiveTab(2) }}>Server</button>
     </div>,
@@ -158,6 +159,7 @@ export function Dashboard() {
 
   return (
     <div>
+      <Background style={'transparent'}/>
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} user={user} player={!!player}/>
       <div className={'sidebar-margin'}>{tabs[activeTab]}</div>
       {player ? <MediaSession track={player.current} paused={player.paused}/> : null}
