@@ -24,6 +24,14 @@
     color: var(--text);
     background-color: transparent;
 }
+.dashboard-link:disabled {
+    color: var(--hover);
+    cursor: default;
+}
+.dashboard-link:disabled:hover {
+    color: var(--hover);
+    background-color: var(--bg-lvl1);
+}
 .dashboard-link::before {
     content: "";
     position: absolute;

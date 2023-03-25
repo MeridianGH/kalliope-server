@@ -7,8 +7,7 @@ export function WebsocketProvider({ children }) {
   const [websocket, setWebsocket] = useState(null)
 
   useEffect(() => {
-    // const ws = new WebSocket(`ws://${location.host}`)
-    const ws = {}
+    const ws = new WebSocket(`ws://${location.host}`)
     setWebsocket(ws)
     return () => { ws.close() }
   }, [])

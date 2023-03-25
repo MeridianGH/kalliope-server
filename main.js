@@ -53,11 +53,13 @@ wss.on('request', (request) => {
     ws.sendData = (type = 'none', data = {}) => {
       data.type = data.type ?? type
       ws.sendUTF(JSON.stringify(data))
+      console.log('sent:', data)
     }
 
     ws.on('message', (message) => {
       if (message.type !== 'utf8') { return }
       const data = JSON.parse(message.utf8Data)
+      console.log('received:', data)
 
       // Verify and store user connection
       if (!data.userId) { return }
@@ -103,6 +105,7 @@ wss.on('request', (request) => {
     ws.on('message', (message) => {
       if (message.type !== 'utf8') { return }
       const data = JSON.parse(message.utf8Data)
+      console.log('received:', data)
 
       // Verify and store client connection
       if (!data.clientId) { return }

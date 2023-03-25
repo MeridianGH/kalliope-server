@@ -20,6 +20,7 @@
 }
 .sidebar-margin {
     margin-left: var(--sidebar-width);
+    height: 100vh;
     transition: margin-left 0.5s ease-in-out;
 }
 .sidebar.collapsed {
@@ -61,10 +62,11 @@
 }
 .menu-toggle {
     position: absolute;
-    width: 2rem;
-    height: 2rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    font-size: 0.8rem;
     text-align: center;
-    top: 50%;
+    top: 2.5rem;
     right: 0;
     transform: translate(50%, -50%);
     border-radius: 50%;
@@ -129,12 +131,15 @@
     opacity: 1;
 }
 .sidebar-link:disabled {
-    color: var(--text);
+    color: var(--hover);
     cursor: default;
-    opacity: 0.5;
 }
 .sidebar-link:disabled::before {
-    background: none;
+    filter: grayscale(100%);
+}
+.sidebar-link.active:disabled::before,
+.sidebar-link:hover:disabled::before {
+    opacity: 0.25;
 }
 
 .sidebar-user {

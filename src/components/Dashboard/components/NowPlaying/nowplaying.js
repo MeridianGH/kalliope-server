@@ -6,7 +6,6 @@ import { WebsocketContext } from '../../../WebSocket/websocket.js'
 import { Thumbnail } from '../Thumbnail/thumbnail.js'
 import { FastAverageColor } from 'fast-average-color'
 import './nowplaying.css'
-import { MediaSession } from '../MediaSession/mediasession.js'
 
 function msToHMS(ms) {
   let totalSeconds = ms / 1000
@@ -19,11 +18,12 @@ function msToHMS(ms) {
 
 export function NowPlaying({ player }) {
   const websocket = useContext(WebsocketContext)
-  const [position, setPosition] = useState(player.position)
+  const [position, setPosition] = useState(player?.position ?? 0)
   useEffect(() => {
+    if (!player?.current) { return }
     setPosition(player.position)
     const interval = setInterval(() => {
-      if (player && !player.paused && player.current) {
+      if (!player.paused) {
         setPosition((prevPosition) => {
           if (prevPosition >= player.current.duration) {
             clearInterval(interval)
@@ -35,9 +35,11 @@ export function NowPlaying({ player }) {
     }, 1000 * (1 / player.timescale ?? 1))
     return () => { clearInterval(interval) }
   }, [player])
-  const [volume, setVolume] = React.useState(player.volume)
+  const [volume, setVolume] = React.useState(player?.volume ?? 50)
   useEffect(() => {
     const slider = document.querySelector('.volume-slider-input')
+    if (!slider) { return }
+
     const container = document.querySelector('.volume-slider-container')
     slider.ontouchstart = () => { container.classList.add('active') }
     slider.ontouchend = () => { container.classList.remove('active') }
@@ -55,7 +57,7 @@ export function NowPlaying({ player }) {
     return () => { fac.destroy() }
   }, [player])
 
-  if (!player?.current) { return <div className={'now-playing-container'}>Nothing currently playing! Join a voice channel and start playback using &apos;/play&apos;!</div> }
+  if (!player?.current) { return <div className={'now-playing-container flex-container'}>Nothing currently playing! Join a voice channel and start playback using &apos;/play&apos;!</div> }
   return (
     <div className={'now-playing-container flex-container column'}>
       <Thumbnail image={player.current.thumbnail} size={'35vh'}/>

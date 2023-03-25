@@ -1,37 +1,8 @@
 .dashboard {
-    min-height: 100vh;
-    padding-top: 15vh;
-}
-
-.server-container {
-    padding: 0 5vw;
+    height: 100vh;
 }
 
 .loading-gear {
     width: 50px;
     height: 50px;
-}
-
-.server-card {
-    max-width: 200px;
-    margin: 1rem;
-    padding: 1rem;
-    border-radius: 1rem;
-    background-color: var(--bg-lvl1);
-    box-shadow: 2px 2px 5px black;
-    cursor: pointer;
-}
-.server-card > img {
-    height: 100%;
-    width: 100%;
-    border-radius: inherit;
-}
-.server-card > span {
-    font-size: 1rem;
-    width: 200px;
-    text-align: center;
-    white-space: nowrap;
-    overflow: hidden;
-    transition-property: margin-left;
-    transition-timing-function: ease-in-out;
 }

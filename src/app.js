@@ -25,7 +25,9 @@ export function App() {
           </div>
         }/>
         <Route path={'/dashboard'} element={
-          <Dashboard/>
+          <WebsocketProvider>
+            <Dashboard/>
+          </WebsocketProvider>
         }/>
       </Routes>
     </BrowserRouter>

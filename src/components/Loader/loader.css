@@ -1,0 +1,32 @@
+.loader {
+    --dot-size: 3rem;
+    position: relative;
+    filter: url('#goo');
+}
+.loader > .dot {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: var(--dot-size);
+    height: var(--dot-size);
+    border-radius: var(--dot-size);
+    background-color: var(--accent);
+    transform: translate(-50%, -50%);
+    animation: color 2s ease-in-out infinite alternate;
+}
+.loader > .dot.animated {
+    animation: color 2s ease-in-out infinite alternate, move 1s ease-in-out infinite alternate;
+}
+@keyframes move {
+	0% { transform: translate(-50%, -50%) translate(-200%, 0); }
+	100% { transform: translate(-50%, -50%) translate(200%, 0); }
+}
+@keyframes color {
+    0% { background-color: var(--accent) }
+    100% { background-color: var(--accent-alt) }
+}
+
+.gooey-filter {
+	visibility: hidden;
+	position: absolute;
+}

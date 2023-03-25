@@ -1,16 +1,16 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router-dom'
 import { WebsocketContext } from '../WebSocket/websocket.js'
-// import { Player } from '../Player/player.js'
 import { Routes } from 'discord-api-types/v10'
 import './dashboard.css'
-import genericServer from '../../assets/generic_server.png'
 import { Sidebar } from './components/Sidebar/sidebar.js'
 import { NowPlaying } from './components/NowPlaying/nowplaying.js'
 import { Queue } from './components/Queue/queue.js'
 import { MediaSession } from './components/MediaSession/mediasession.js'
 import { Start } from './components/Start/start.js'
 import { Background } from '../Background/background.js'
+import { Servers } from './components/Servers/servers.js'
+import { Loader } from '../Loader/loader.js'
 
 const playerObject = {
   'guild': '610498937874546699',
@@ -57,7 +57,12 @@ export function Dashboard() {
       data.type = data.type ?? type
       data.userId = data.userId ?? user.id
       data.guildId = data.guildId ?? player?.guild ?? null
-      websocket.send(JSON.stringify(data))
+      try {
+        websocket.send(JSON.stringify(data))
+      } catch (error) {
+        console.error(error)
+      }
+      console.log('sent:', data)
     }
 
     if (websocket.readyState == 1 && !clientGuilds) { websocket.sendData('requestClientGuilds') }
@@ -65,6 +70,7 @@ export function Dashboard() {
     websocket.onclose = () => { console.warn('WebSocket closed.') }
     websocket.onmessage = (message) => {
       const data = JSON.parse(message?.data)
+      console.log('received:', data)
       switch (data.type) {
         case 'clientGuilds': {
           setClientGuilds(data.guilds)
@@ -87,7 +93,9 @@ export function Dashboard() {
 
     const code = searchParams.get('code')
     if (!code) {
-      window.location.replace(loginUrl)
+      setTimeout(() => {
+        window.location.replace(loginUrl)
+      }, 3000)
       return
     }
 
@@ -136,60 +144,23 @@ export function Dashboard() {
     }
     fetchUser().catch(() => { window.location.replace(loginUrl) })
   }, [searchParams, user])
-  // Scrollable Titles Effect
-  useEffect(() => {
-    const elements = document.querySelectorAll('.server-card > span')
-    elements.forEach((element) => {
-      if (element.offsetWidth < element.scrollWidth) {
-        element.style.transitionDuration = `${(1 - element.offsetWidth / element.scrollWidth) * 3}s`
-        element.onmouseenter = () => { element.style.marginLeft = 2 * (element.offsetWidth - element.scrollWidth) + 'px' }
-        element.onmouseleave = () => { element.style.marginLeft = 0 }
-      }
-    })
-  })
 
   const tabs = [
-    <Start key={0} setActiveTab={setActiveTab}/>,
-    <div key={1} className={'flex-container'}>
-      <button onClick={() => { setPlayer(playerObject); setActiveTab(2) }}>Server</button>
-    </div>,
+    <Start key={0} setActiveTab={setActiveTab} player={!!player}/>,
+    <Servers key={1} setActiveTab={setActiveTab} userId={user?.id} userGuilds={user?.guilds} clientGuilds={clientGuilds}/>,
     <NowPlaying key={2} player={player}/>,
     <Queue key={3} tracks={player?.queue ?? []}/>
   ]
 
   return (
-    <div>
+    <div className={'dashboard'}>
       <Background style={'transparent'}/>
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} user={user} player={!!player}/>
-      <div className={'sidebar-margin'}>{tabs[activeTab]}</div>
-      {player ? <MediaSession track={player.current} paused={player.paused}/> : null}
-    </div>
-  )
-
-  if (player) { return <Player player={player}/> }
-  return (
-    <div className={'dashboard flex-container column'}>
-      <h1><i className={'fas fa-th'}/> Select a server...</h1>
-      <div className={'server-container flex-container'}>
-        <div className={'server-card flex-container column'}
-          onClick={() => { setPlayer(playerObject) }}>
-          <img src={genericServer} alt={'Server Icon'}></img>
-          <span>Sample guild</span>
-        </div>
-        {/* eslint-disable-next-line no-extra-parens */}
-        {user?.guilds ? user.guilds.map((guild, index) => (
-          <div className={'server-card flex-container column'} key={index}
-            onClick={() => { websocket.sendData('requestPlayerData', { userId: user.id, guildId: guild.id, clientId: clientGuilds[guild.id] }) }}>
-            <img src={guild.icon ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}?size=1024` : genericServer} alt={'Server Icon'}></img>
-            <span>{guild.name}</span>
-          </div>
-        )) : <div className={'loading-gear'}><i className="fas fa-cog fa-spin"/></div>}
+      <div className={'sidebar-margin'}>
+        {!user ? <div className={'flex-container'} style={{ height: '100%' }}><Loader/></div> : tabs[activeTab]}
+        {/*<button onClick={() => { setPlayer(playerObject); setActiveTab(2) }}>Server</button>*/}
       </div>
-      {user ? <div className={'nav-link-container'}>
-        <Link to={'/'} className={'logout-button'} onClick={() => { localStorage.removeItem('user') }}>
-          <span><i className="far fa-sign-out"/> Logout</span>
-        </Link>
-      </div> : null}
+      {player ? <MediaSession track={player.current} paused={player.paused}/> : null}
     </div>
   )
 }
