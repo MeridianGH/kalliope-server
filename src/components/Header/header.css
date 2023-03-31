@@ -2,7 +2,7 @@ header {
     width: 100vw;
     height: 100vh;
     gap: 2rem;
-    box-shadow: 5px 5px 2px black;
+    box-shadow: 0 0 10px black;
 }
 
 .header-container {
