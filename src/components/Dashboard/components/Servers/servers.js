@@ -8,6 +8,11 @@ import { Loader } from '../../../Loader/loader.js'
 export function Servers({ setActiveTab, userId, userGuilds = [], clientGuilds }) {
   const websocket = useContext(WebsocketContext)
   useEffect(() => {
+    if (websocket.readyState == 1 && Object.keys(clientGuilds).length == 0) {
+      websocket.sendData('requestClientGuilds')
+    }
+  }, [websocket, clientGuilds])
+  useEffect(() => {
     const elements = document.querySelectorAll('.server-card-text')
     elements.forEach((element) => {
       const span = element.querySelector('span')

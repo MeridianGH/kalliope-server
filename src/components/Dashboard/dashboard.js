@@ -65,15 +65,15 @@ export function Dashboard() {
       console.log('sent:', data)
     }
 
-    if (websocket.readyState == 1 && !clientGuilds) { websocket.sendData('requestClientGuilds') }
-    websocket.onopen = () => { websocket.sendData('requestClientGuilds') }
     websocket.onclose = () => { console.warn('WebSocket closed.') }
     websocket.onmessage = (message) => {
       const data = JSON.parse(message?.data)
       console.log('received:', data)
       switch (data.type) {
         case 'clientGuilds': {
-          setClientGuilds(data.guilds)
+          setTimeout(() => {
+            setClientGuilds(data.guilds)
+          }, Math.floor(Math.random() * 2000 + 1000))
           break
         }
         case 'playerData': {
