@@ -160,7 +160,7 @@ export function Dashboard() {
         {!user ? <div className={'flex-container'} style={{ height: '100%' }}><Loader/></div> : tabs[activeTab]}
         {/*<button onClick={() => { setPlayer(playerObject); setActiveTab(2) }}>Server</button>*/}
       </div>
-      {player ? <MediaSession track={player.current} paused={player.paused}/> : null}
+      {player?.current ? <MediaSession track={player.current} paused={player.paused}/> : null}
     </div>
   )
 }
