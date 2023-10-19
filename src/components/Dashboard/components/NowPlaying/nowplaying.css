@@ -20,6 +20,11 @@
     transition: width 1s linear, background-color 0.25s ease-in-out;
 }
 
+.now-playing-title {
+    display: block;
+    text-align: center;
+}
+
 .music-buttons {
     gap: 2vw;
 }

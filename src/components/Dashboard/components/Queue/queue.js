@@ -32,15 +32,15 @@ export function Queue({ tracks }) {
           <option value={'superfast'}>Superfast</option>
           <option value={'vaporwave'}>Vaporwave</option>
         </select>
-        <button className={'queue-input pointer'} onClick={() => { websocket.sendData('clear') }}><i className={'fas fa-trash-alt'}/> Clear queue</button>
+        <button className={'queue-input pointer'} onClick={() => { websocket.sendData('clear') }}><i className={'fas fa-trash-alt'}/> Clear queue</button>
       </div>
       {/* eslint-disable-next-line no-extra-parens */}
       {tracks.length > 0 ? tracks.map((track, index) => (
         <div className={'queue-track flex-container space-between nowrap'} key={index}>
           <div className={'flex-container nowrap'}>
             <b>{index + 1}.</b>
-            <Thumbnail image={track.thumbnail} size={'3em'}/>
-            <a href={track.uri} rel='noreferrer' target='_blank'><b>{track.title}</b></a>
+            <Thumbnail image={track.info.artworkUrl} size={'3em'}/>
+            <a href={track.info.uri} rel='noreferrer' target='_blank'><b>{track.info.title}</b></a>
           </div>
           <div className={'music-buttons flex-container'}>
             <button onClick={() => { websocket.sendData('remove', { index: index + 1 }) }}><i className={'fas fa-trash-alt'}/></button>

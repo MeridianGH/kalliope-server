@@ -10,7 +10,7 @@ export function Background({ style = 'gradient' }) {
         <mask id={'SvgjsMask1006'}>
           <rect width={'2560'} height={'1440'} fill={'#ffffff'}/>
         </mask>
-        {style == 'gradient' ?
+        {style === 'gradient' ?
           <linearGradient x1={'10.94%'} y1={'-19.44%'} x2={'89.06%'} y2={'119.44%'} gradientUnits={'userSpaceOnUse'} id={'SvgjsLinearGradient1007'}>
             <stop stopColor={'rgba(231, 29, 54, 1)'} offset={'0'}/>
             <stop stopColor={'rgba(231, 106, 29, 1)'} offset={'1'}/>
@@ -18,7 +18,7 @@ export function Background({ style = 'gradient' }) {
           : null}
       </defs>
       <g mask={'url(#SvgjsMask1006)'} fill={'none'}>
-        {style != 'transparent' ? <rect width={'2560'} height={'1440'} x={'0'} y={'0'} fill={style == 'solid' ? 'rgba(231, 29, 54, 1)' : 'url(#SvgjsLinearGradient1007)'}/> : null}
+        {style !== 'transparent' ? <rect width={'2560'} height={'1440'} x={'0'} y={'0'} fill={style === 'solid' ? 'rgba(231, 29, 54, 1)' : 'url(#SvgjsLinearGradient1007)'}/> : null}
         <g transform={'translate(0, 0)'} strokeLinecap={'round'}>
           <path d={'M280 587.78 L280 707.78'} strokeWidth={'30'} stroke={'rgba(0, 0, 0, 0.05)'}/>
           <path d={'M280 752.78 L280 852.22'} strokeWidth={'30'} stroke={'rgba(0, 0, 0, 0.05)'}/>

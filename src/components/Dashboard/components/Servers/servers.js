@@ -8,7 +8,7 @@ import { Loader } from '../../../Loader/loader.js'
 export function Servers({ setActiveTab, userId, userGuilds = [], clientGuilds }) {
   const websocket = useContext(WebsocketContext)
   useEffect(() => {
-    if (websocket.readyState == 1 && Object.keys(clientGuilds).length == 0) {
+    if (websocket.readyState === 1 && Object.keys(clientGuilds).length === 0) {
       websocket.sendData('requestClientGuilds')
     }
   }, [websocket, clientGuilds])
@@ -19,11 +19,11 @@ export function Servers({ setActiveTab, userId, userGuilds = [], clientGuilds })
       if (span.offsetWidth > element.offsetWidth) {
         span.style.transitionDuration = `${(1 - element.offsetWidth / span.offsetWidth) * 3}s`
         element.onmouseenter = () => { span.style.marginLeft = element.offsetWidth - span.offsetWidth + 'px' }
-        element.onmouseleave = () => { span.style.marginLeft = 0 }
+        element.onmouseleave = () => { span.style.marginLeft = '0' }
       }
     })
   }, [])
-  if (!userGuilds || Object.keys(clientGuilds).length == 0) {
+  if (!userGuilds || Object.keys(clientGuilds).length === 0) {
     return (
       <div className={'server-container flex-container'}>
         <Loader/>

@@ -8,7 +8,7 @@ import { logging } from './src/utilities/logging.js'
 const app = express()
 
 const port = 8080
-const domain = 'kalliope.xyz'
+const domain = 'kalliope.cc'
 const host = domain + (port !== 80 ? `:${port}` : '')
 const hostname = 'http://' + host
 
@@ -26,7 +26,7 @@ app.get('/login', (req, res) => {
 
 // CORS Proxy
 app.get('/cors', (req, res) => {
-  if (req.hostname == domain) { return fetch(req.query.url).then((response) => { response.body.pipe(res) }) }
+  if (req.hostname === domain) { return fetch(req.query.url).then((response) => { response.body.pipe(res) }) }
   res.status(403).end()
 })
 
@@ -53,13 +53,13 @@ wss.on('request', (request) => {
     ws.sendData = (type = 'none', data = {}) => {
       data.type = data.type ?? type
       ws.sendUTF(JSON.stringify(data))
-      console.log('sent:', data)
+      console.log('sent to user:', data)
     }
 
     ws.on('message', (message) => {
       if (message.type !== 'utf8') { return }
       const data = JSON.parse(message.utf8Data)
-      console.log('received:', data)
+      console.log('received from user:', data)
 
       // Verify and store user connection
       if (!data.userId) { return }
@@ -69,7 +69,7 @@ wss.on('request', (request) => {
       ws.userId = data.userId
 
       // Return client guilds
-      if (data.type == 'requestClientGuilds') {
+      if (data.type === 'requestClientGuilds') {
         ws.sendData('clientGuilds', { guilds: clientGuilds })
         return
       }
@@ -94,10 +94,12 @@ wss.on('request', (request) => {
   // Client WebSocket
   if (request.host === 'clients.' + host && (request.origin === undefined || request.origin === '*')) {
     const ws = request.accept(null, request.origin)
+    console.log('got client ws request')
 
     ws.sendData = (type = 'none', data = {}) => {
       data.type = data.type ?? type
       ws.sendUTF(JSON.stringify(data))
+      console.log('sent to bot:', data)
     }
 
     let clientId
@@ -105,7 +107,7 @@ wss.on('request', (request) => {
     ws.on('message', (message) => {
       if (message.type !== 'utf8') { return }
       const data = JSON.parse(message.utf8Data)
-      console.log('received:', data)
+      console.log('received from bot:', data)
 
       // Verify and store client connection
       if (!data.clientId) { return }

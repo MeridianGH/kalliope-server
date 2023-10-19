@@ -1,5 +1,5 @@
 .queue-container {
-    height: 100vh;
+    min-height: 100vh;
     padding: 0 10vw;
 }
 
@@ -10,7 +10,7 @@
     box-sizing: border-box;
     background-color: var(--bg-lvl2);
     color: var(--text);
-    border: 2px solid gray;
+    border: 2px solid #808080;
     border-radius: 5px;
     box-shadow: 2px 2px 5px black;
     font-weight: bold;
@@ -30,7 +30,7 @@
     position: relative;
 }
 .queue-input-form > .queue-input {
-    padding-right: 30px;
+    padding-right: 1.5rem;
 }
 .queue-input-button {
     height: 30px;
@@ -38,13 +38,12 @@
     box-sizing: border-box;
     position: absolute;
     bottom: 0;
-    right: 5px;
+    right: 0.5rem;
 }
 
 .queue-track {
     width: 100%;
-    padding: 1rem;
-    margin: 1rem;
+    padding: 1rem 0 2rem 0;
     box-sizing: border-box;
     border-bottom: 2px solid white;
 }
