@@ -20,7 +20,6 @@ export function NowPlaying({ player }) {
   const websocket = useContext(WebsocketContext)
   const [position, setPosition] = useState(player?.position ?? 0)
   useEffect(() => {
-    console.log(player)
     const current = player?.queue?.current
     if (!current) { return }
     setPosition(player.position)

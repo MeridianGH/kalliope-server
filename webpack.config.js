@@ -32,10 +32,12 @@ export default {
     path: path.resolve(__dirname, './dist'),
     filename: 'bundle.js'
   },
+  target: 'web',
   devServer: {
     static: path.resolve(__dirname, './dist'),
     historyApiFallback: true,
-    hot: false
+    hot: true,
+    port: 80
   },
   performance: {
     hints: false,

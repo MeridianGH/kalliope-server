@@ -7,10 +7,10 @@ import { logging } from './src/utilities/logging.js'
 
 const app = express()
 
-const port = 8080
+const port = 80
 const domain = 'kalliope.cc'
 const host = domain + (port !== 80 ? `:${port}` : '')
-const hostname = 'http://' + host
+const hostname = 'https://' + host
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 
@@ -53,13 +53,11 @@ wss.on('request', (request) => {
     ws.sendData = (type = 'none', data = {}) => {
       data.type = data.type ?? type
       ws.sendUTF(JSON.stringify(data))
-      console.log('sent to user:', data)
     }
 
     ws.on('message', (message) => {
       if (message.type !== 'utf8') { return }
       const data = JSON.parse(message.utf8Data)
-      console.log('received from user:', data)
 
       // Verify and store user connection
       if (!data.userId) { return }
@@ -94,12 +92,10 @@ wss.on('request', (request) => {
   // Client WebSocket
   if (request.host === 'clients.' + host && (request.origin === undefined || request.origin === '*')) {
     const ws = request.accept(null, request.origin)
-    console.log('got client ws request')
 
     ws.sendData = (type = 'none', data = {}) => {
       data.type = data.type ?? type
       ws.sendUTF(JSON.stringify(data))
-      console.log('sent to bot:', data)
     }
 
     let clientId
@@ -107,7 +103,6 @@ wss.on('request', (request) => {
     ws.on('message', (message) => {
       if (message.type !== 'utf8') { return }
       const data = JSON.parse(message.utf8Data)
-      console.log('received from bot:', data)
 
       // Verify and store client connection
       if (!data.clientId) { return }
