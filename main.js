@@ -82,7 +82,7 @@ wss.on('request', (request) => {
       logging.warn(`[WebSocket] User websocket closed with reason: ${reasonCode} | ${description}`)
       if (userConnections[ws.guildId]) {
         delete userConnections[ws.guildId][ws.userId]
-        if (Object.keys(userConnections[ws.guildId]).length === 0) { delete userConnections[ws.guildId] }
+        if (Object.keys(userConnections[ws.guildId]).length === 0 && ws.guildId !== 'noGuild') { delete userConnections[ws.guildId] }
       }
     })
 
