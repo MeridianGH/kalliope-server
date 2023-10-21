@@ -36,7 +36,10 @@ export function Dashboard() {
       }
     }
 
-    websocket.onclose = () => { console.warn('WebSocket closed.') }
+    websocket.onclose = () => {
+      console.warn('WebSocket closed.')
+      setPlayer(null)
+    }
     websocket.onmessage = (message) => {
       const data = JSON.parse(message?.data)
       switch (data.type) {
@@ -52,6 +55,8 @@ export function Dashboard() {
         }
       }
     }
+
+    return () => { websocket.close(1001, 'Dashboard component was unloaded.') }
   }, [websocket, user, player, clientGuilds])
   // Login Effect
   useEffect(() => {
