@@ -9,7 +9,7 @@ export function WebsocketProvider({ children }) {
   useEffect(() => {
     const ws = new WebSocket(`wss://${location.host}`)
     setWebsocket(ws)
-    return () => { ws.close(1001, 'Remote peer navigated away from page.') }
+    return () => { ws.close(1000, 'WebSocket Provider was unloaded.') }
   }, [])
 
   return (

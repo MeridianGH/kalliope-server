@@ -56,7 +56,7 @@ export function Dashboard() {
       }
     }
 
-    return () => { websocket.close(1001, 'Dashboard component was unloaded.') }
+    return () => { websocket.close(1000, 'Dashboard component was unloaded.') }
   }, [websocket, user, player, clientGuilds])
   // Login Effect
   useEffect(() => {
