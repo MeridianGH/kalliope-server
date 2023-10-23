@@ -14,7 +14,7 @@ const mode = process.argv[2] ?? 'production'
 const ssl = mode === 'production'
 
 const port = ssl ? 443 : 8080
-const domain = 'localhost'
+const domain = 'kalliope.cc'
 const hostname = `http${ssl ? 's' : ''}://${domain}`
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
