@@ -5,6 +5,8 @@ const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 
 export default {
   entry: path.resolve(__dirname, './src/app.js'),
+  target: 'web',
+  mode: 'production',
   module: {
     rules: [
       {
@@ -32,7 +34,6 @@ export default {
     path: path.resolve(__dirname, './dist'),
     filename: 'bundle.js'
   },
-  target: 'web',
   devServer: {
     static: path.resolve(__dirname, './dist'),
     historyApiFallback: true,

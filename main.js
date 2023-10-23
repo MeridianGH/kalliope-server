@@ -1,5 +1,8 @@
 import express from 'express'
+import https from 'https'
+import http from 'http'
 import url from 'url'
+import fs from 'fs'
 import path from 'path'
 import fetch from 'node-fetch'
 import { server as WebSocketServer } from 'websocket'
@@ -7,15 +10,27 @@ import { logging } from './src/utilities/logging.js'
 
 const app = express()
 
-const port = 80
-const domain = 'kalliope.cc'
-const host = domain + (port !== 80 ? `:${port}` : '')
-const hostname = 'https://' + host
+const mode = process.argv[2] ?? 'production'
+const ssl = mode === 'production'
+
+const port = ssl ? 443 : 8080
+const domain = 'localhost'
+const hostname = `http${ssl ? 's' : ''}://${domain}`
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 
 // Distribute folder
 app.use(express.static('dist'))
+
+// Validate URLs
+app.use((req, res, next) => {
+  try {
+    decodeURIComponent(req.path)
+  } catch (error) {
+    res.redirect(hostname)
+  }
+  next()
+})
 
 // Endpoints
 // Login endpoint
@@ -35,7 +50,10 @@ app.get('*', (req, res) => {
   res.sendFile(path.resolve(__dirname, './dist/index.html'))
 })
 
-const server = app.listen(port, null, null, () => {
+const server = (ssl ? https : http).createServer(ssl ? {
+  cert: fs.readFileSync(`/etc/letsencrypt/live/${domain}/fullchain.pem`),
+  key: fs.readFileSync(`/etc/letsencrypt/live/${domain}/privkey.pem`)
+} : null, app).listen(port, null, null, () => {
   logging.success(`Started server on ${hostname}.`)
 })
 
@@ -90,7 +108,7 @@ wss.on('request', (request) => {
   }
 
   // Client WebSocket
-  if (request.host === 'clients.' + host && (request.origin === undefined || request.origin === '*')) {
+  if (request.host === 'clients.' + domain && (request.origin === undefined || request.origin === '*')) {
     const ws = request.accept(null, request.origin)
 
     ws.sendData = (type = 'none', data = {}) => {
