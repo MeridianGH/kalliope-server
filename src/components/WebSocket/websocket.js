@@ -7,7 +7,7 @@ export function WebsocketProvider({ children }) {
   const [websocket, setWebsocket] = useState(null)
 
   useEffect(() => {
-    const ws = new WebSocket(`ws://${location.host}`)
+    const ws = new WebSocket(`wss://${location.host}`)
     setWebsocket(ws)
 
     function closeWs() { ws.close(1000, 'WebSocket was closed by user.') }

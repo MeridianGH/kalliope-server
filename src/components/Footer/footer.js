@@ -11,7 +11,7 @@ export function Footer() {
         <a href={'https://twitter.com/meridian_0'}><i className={'fab fa-twitter'}/></a>
       </div>
       <span className={'small-text'}>Made with <i className={'fas fa-heart'} style={{ color: 'var(--accent)' }}/> using <i className={'fab fa-react'} style={{ color: '#61dbfb' }}/></span>
-      <a href={'http://kalliope.xyz'} className={'small-text'}>© 2023 | Meridian | All rights reserved.</a>
+      <a href={'https://kalliope.cc'} className={'small-text'}>© 2023 | Meridian | All rights reserved.</a>
     </footer>
   )
 }
