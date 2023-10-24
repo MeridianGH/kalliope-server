@@ -47,7 +47,13 @@ app.get('/cors', (req, res) => {
 
 // Main endpoint
 app.get('*', (req, res) => {
-  if (req.hostname === 'lavalink.' + domain) { return fetch('http://localhost:2333' + req.path).then((response) => { response.body.pipe(res) }) }
+  if (req.hostname === 'lavalink.' + domain) {
+    console.log(req)
+    return fetch('http://127.0.0.1:2333' + req.path).then((response) => {
+      console.log(response)
+      response.body.pipe(res)
+    })
+  }
   if (req.hostname === 'clients.' + domain) { return res.redirect(hostname) }
   res.sendFile(path.resolve(__dirname, './dist/index.html'))
 })
