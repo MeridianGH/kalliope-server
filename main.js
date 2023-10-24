@@ -13,14 +13,14 @@ const app = express()
 const mode = process.argv[2] ?? 'production'
 const ssl = mode === 'production'
 
-const port = ssl ? 443 : 8080
+const port = ssl ? 443 : 80
 const domain = 'kalliope.cc'
 const hostname = `http${ssl ? 's' : ''}://${domain}`
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 
 // Distribute folder
-app.use(express.static('dist'))
+app.use(express.static('dist', { index: '' }))
 
 // Validate URLs
 app.use((req, res, next) => {
@@ -41,12 +41,14 @@ app.get('/login', (req, res) => {
 
 // CORS Proxy
 app.get('/cors', (req, res) => {
-  if (req.hostname === domain) { return fetch(req.query.url).then((response) => { response.body.pipe(res) }) }
-  res.status(403).end()
+  if (req.hostname !== domain) { return res.status(403).end() }
+  fetch(req.query.url).then((response) => { response.body.pipe(res) })
 })
 
-// Allow client-side routing
+// Main endpoint
 app.get('*', (req, res) => {
+  if (req.hostname === 'lavalink.' + domain) { return fetch('http://localhost:2333' + req.path).then((response) => { response.body.pipe(res) }) }
+  if (req.hostname === 'clients.' + domain) { return res.redirect(hostname) }
   res.sendFile(path.resolve(__dirname, './dist/index.html'))
 })
 
