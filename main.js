@@ -5,10 +5,13 @@ import url from 'url'
 import fs from 'fs'
 import path from 'path'
 import fetch from 'node-fetch'
-import { server as WebSocketServer } from 'websocket'
+import httpProxy from 'http-proxy'
+import { WebSocketServer } from 'ws'
+// import { server as WebSocketServer } from 'websocket'
 import { logging } from './src/utilities/logging.js'
 
 const app = express()
+const lavalinkProxy = httpProxy.createProxyServer({ target: { host: 'localhost', port: 2333 }, ws: true })
 
 const mode = process.argv[2] ?? 'production'
 const ssl = mode === 'production'
@@ -47,14 +50,12 @@ app.get('/cors', (req, res) => {
 
 // Main endpoint
 app.get('*', (req, res) => {
-  if (req.hostname === 'lavalink.' + domain) {
-    console.log(req)
-    return fetch('http://127.0.0.1:2333' + req.path).then((response) => {
-      console.log(response)
-      response.body.pipe(res)
-    })
-  }
+  console.log('http req')
   if (req.hostname === 'clients.' + domain) { return res.redirect(hostname) }
+  if (req.hostname === 'lavalink.' + domain) {
+    console.log('proxy req')
+    return lavalinkProxy.web(req, res)
+  }
   res.sendFile(path.resolve(__dirname, './dist/index.html'))
 })
 
@@ -65,75 +66,55 @@ const server = (ssl ? https : http).createServer(ssl ? {
   logging.success(`Started server on ${hostname}.`)
 })
 
+const wsServer = new WebSocketServer({ noServer: true })
+
+server.on('upgrade', (request, socket, head) => {
+  const { origin, host } = request.headers
+  if (host === 'lavalink.' + domain) {
+    console.log('proxied to lavalink')
+    lavalinkProxy.ws(request, socket, head, null, (error) => console.log(error))
+  }
+  if (origin === hostname || host === 'clients.' + domain) {
+    return wsServer.handleUpgrade(request, socket, head, (socket) => {
+      wsServer.emit('connection', socket, request)
+    })
+  }
+  socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n')
+  socket.destroy()
+})
+
 const clientGuilds = {}
 const clientConnections = {}
 const userConnections = { noGuild: {} }
 
-const wss = new WebSocketServer({ httpServer: server })
-// noinspection JSUnresolvedFunction
-wss.on('request', (request) => {
-  // User WebSocket
-  if (request.origin === hostname) {
-    const ws = request.accept(null, request.origin)
+wsServer.on('connection', (ws, req) => {
+  ws.on('message', (message) => {
+    const data = JSON.parse(message.toString())
 
-    ws.sendData = (type = 'none', data = {}) => {
-      data.type = data.type ?? type
-      ws.sendUTF(JSON.stringify(data))
-    }
-
-    ws.on('message', (message) => {
-      if (message.type !== 'utf8') { return }
-      const data = JSON.parse(message.utf8Data)
-
+    // User WebSocket
+    if (req.headers.host === domain) {
       // Verify and store user connection
       if (!data.userId) { return }
       userConnections[data.guildId ?? 'noGuild'] = { ...userConnections[data.guildId ?? 'noGuild'], [data.userId]: ws }
       if (data.guildId && Object.keys(userConnections.noGuild).includes(data.userId)) { delete userConnections.noGuild[data.userId] }
-      ws.guildId = data.guildId ?? 'noGuild'
-      ws.userId = data.userId
 
       // Return client guilds
       if (data.type === 'requestClientGuilds') {
-        ws.sendData('clientGuilds', { guilds: clientGuilds })
+        ws.send(JSON.stringify({ type: 'clientGuilds', guilds: clientGuilds }))
         return
       }
 
       // Forward data to client
       const clientWs = clientConnections[data.clientId ?? clientGuilds[data.guildId]]
       if (!clientWs) { return }
-      clientWs.sendData(null, data)
-    })
-
-    ws.on('close', (reasonCode, description) => {
-      logging.warn(`[WebSocket] User websocket closed with reason: ${reasonCode} | ${description}`)
-      if (userConnections[ws.guildId]) {
-        delete userConnections[ws.guildId][ws.userId]
-        if (Object.keys(userConnections[ws.guildId]).length === 0 && ws.guildId !== 'noGuild') { delete userConnections[ws.guildId] }
-      }
-    })
-
-    return
-  }
-
-  // Client WebSocket
-  if (request.host === 'clients.' + domain && (request.origin === undefined || request.origin === '*')) {
-    const ws = request.accept(null, request.origin)
-
-    ws.sendData = (type = 'none', data = {}) => {
-      data.type = data.type ?? type
-      ws.sendUTF(JSON.stringify(data))
+      clientWs.send(JSON.stringify(data))
     }
 
-    let clientId
-
-    ws.on('message', (message) => {
-      if (message.type !== 'utf8') { return }
-      const data = JSON.parse(message.utf8Data)
-
+    // Client WebSocket
+    if (req.headers.host === 'clients.' + domain) {
       // Verify and store client connection
       if (!data.clientId) { return }
       clientConnections[data.clientId] = ws
-      clientId = data.clientId
 
       // Update clientData
       if (data.type === 'clientData') {
@@ -141,7 +122,7 @@ wss.on('request', (request) => {
           clientGuilds[guild] = data.clientId
         })
         Object.values(userConnections.noGuild).forEach((userWs) => {
-          userWs.sendData('clientGuilds', { guilds: clientGuilds })
+          userWs.send(JSON.stringify({ type: 'clientGuilds', guilds: clientGuilds }))
         })
         return
       }
@@ -149,17 +130,32 @@ wss.on('request', (request) => {
       // Forward data to users
       if (!data.guildId || !userConnections[data.guildId]) { return }
       Object.values(userConnections[data.guildId]).forEach((userWs) => {
-        userWs.sendData(null, data)
+        userWs.send(JSON.stringify(data))
       })
-    })
+    }
+  })
 
-    ws.on('close', (reasonCode, description) => {
-      logging.warn(`[WebSocket] Client connection closed with reason: ${reasonCode} | ${description}`)
+  ws.on('close', (code, reason) => {
+    for (const guildId in userConnections) {
+      const userId = Object.keys(userConnections[guildId]).find((key) => userConnections[guildId][key] === ws)
+      if (userId) {
+        logging.info(`[WebSocket] User websocket closed with reason: ${code} | ${reason}`)
+        delete userConnections[guildId][userId]
+        if (Object.keys(userConnections[guildId]).length === 0 && guildId !== 'noGuild') {
+          delete userConnections[guildId]
+        }
+        return
+      }
+    }
+
+    const clientId = Object.keys(clientConnections).find((key) => clientConnections[key] === ws)
+    if (clientId) {
+      logging.info(`[WebSocket] Client connection closed with reason: ${code} | ${reason}`)
       delete clientConnections[clientId]
-    })
+    }
+  })
 
-    return
-  }
-  // Invalid WebSocket request
-  request.reject('Invalid request.')
+  ws.on('error', (error) => {
+    logging.error(`[WebSocket] Encountered error: ${error}`)
+  })
 })
