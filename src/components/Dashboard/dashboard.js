@@ -36,7 +36,7 @@ export function Dashboard() {
       }
     }
 
-    websocket.onclose = (reasonCode, description) => {
+    websocket.onclose = ({ reasonCode, description }) => {
       console.warn(`WebSocket closed with reason: ${reasonCode} | ${description}`)
       setPlayer(null)
     }
