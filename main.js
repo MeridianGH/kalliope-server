@@ -7,11 +7,10 @@ import path from 'path'
 import fetch from 'node-fetch'
 import httpProxy from 'http-proxy'
 import { WebSocketServer } from 'ws'
-// import { server as WebSocketServer } from 'websocket'
 import { logging } from './src/utilities/logging.js'
 
 const app = express()
-const lavalinkProxy = httpProxy.createProxyServer({ target: { host: 'localhost', port: 2333 }, ws: true })
+const lavalinkProxy = httpProxy.createProxyServer({ target: 'http://localhost:2333', ws: true })
 
 const mode = process.argv[2] ?? 'production'
 const ssl = mode === 'production'
@@ -50,10 +49,9 @@ app.get('/cors', (req, res) => {
 
 // Main endpoint
 app.get('*', (req, res) => {
-  console.log('http req')
   if (req.hostname === 'clients.' + domain) { return res.redirect(hostname) }
   if (req.hostname === 'lavalink.' + domain) {
-    console.log('proxy req')
+    if (req.path === '/' || req.path === '/favicon.ico') { return res.status(418).send('HTTP/1.1 418 I\'m a Teapot') }
     return lavalinkProxy.web(req, res)
   }
   res.sendFile(path.resolve(__dirname, './dist/index.html'))
@@ -71,8 +69,7 @@ const wsServer = new WebSocketServer({ noServer: true })
 server.on('upgrade', (request, socket, head) => {
   const { origin, host } = request.headers
   if (host === 'lavalink.' + domain) {
-    console.log('proxied to lavalink')
-    lavalinkProxy.ws(request, socket, head, null, (error) => console.log(error))
+    return lavalinkProxy.ws(request, socket, head)
   }
   if (origin === hostname || host === 'clients.' + domain) {
     return wsServer.handleUpgrade(request, socket, head, (socket) => {
