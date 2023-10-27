@@ -12,6 +12,8 @@ import { Background } from '../Background/background.js'
 import { Servers } from './components/Servers/servers.js'
 import { Loader } from '../Loader/loader.js'
 
+const { clientId, clientSecret } = require('../../../config.json')
+
 export function Dashboard() {
   document.title = 'Kalliope | Dashboard'
 
@@ -36,8 +38,8 @@ export function Dashboard() {
       }
     }
 
-    websocket.onclose = ({ reasonCode, description }) => {
-      console.warn(`WebSocket closed with reason: ${reasonCode} | ${description}`)
+    websocket.onclose = ({ code, reason }) => {
+      console.warn(`WebSocket closed with reason: ${code} | ${reason}`)
       setPlayer(null)
     }
     websocket.onmessage = (message) => {
@@ -74,8 +76,8 @@ export function Dashboard() {
 
     async function fetchUser() {
       const body = new URLSearchParams({
-        'client_id': '1053262351803093032',
-        'client_secret': 'z3rbrd_dNS-sR6JJ3UvciefXljqwqv0o',
+        'client_id': clientId,
+        'client_secret': clientSecret,
         'code': code,
         'grant_type': 'authorization_code',
         'redirect_uri': `${location.origin}/dashboard`
