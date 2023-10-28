@@ -18,6 +18,7 @@ export function Sidebar({ activeTab = 0, setActiveTab, user, player }) {
       index === activeTab ? link.classList.add('active') : link.classList.remove('active')
     })
   }, [activeTab])
+  // noinspection JSUnresolvedReference
   return (
     <div className={'sidebar'}>
       <button className={'menu-toggle'} onClick={toggleCollapsed}><i className={'fad fa-chevron-left fa-fw'}/></button>
@@ -34,7 +35,7 @@ export function Sidebar({ activeTab = 0, setActiveTab, user, player }) {
       <div className={'sidebar-user'}>
         <img className={'sidebar-icon'} src={user ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}` : kalliopePNG} alt={'Avatar'}/>
         <span>{user?.global_name ?? 'Logging in...'}</span>
-        <Link to={'/'} className={'logout-button'} onClick={() => { localStorage.removeItem('user') }}><i className={'fad fa-sign-out-alt fa-fw'}/></Link>
+        <Link to={'/'} className={'logout-button flex-container'} onClick={() => { localStorage.removeItem('user') }}><i className={'fad fa-sign-out-alt fa-fw'}/></Link>
       </div>
     </div>
   )

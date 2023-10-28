@@ -39,8 +39,8 @@
 .sidebar.collapsed > .menu-toggle {
     transform: translate(50%, -50%) rotate(180deg);
 }
-.sidebar.collapsed > .sidebar-user > span,
-.sidebar.collapsed > .sidebar-user > img {
+.sidebar.collapsed .sidebar-link > span,
+.sidebar.collapsed .sidebar-user > span {
     opacity: 0;
 }
 @media screen and (max-width: 768px) {
@@ -122,6 +122,7 @@
 }
 .sidebar-link > span {
     margin-left: 3rem;
+    transition: opacity 0.5s ease-in-out;
 }
 .sidebar-link::before {
     content: "";
@@ -160,7 +161,6 @@
     transition: opacity 0.5s ease-in-out;
 }
 .sidebar-user > span {
-    margin-right: auto;
     margin-left: 3rem;
     line-height: 3rem;
     cursor: default;
@@ -168,21 +168,13 @@
 }
 .logout-button {
     position: absolute;
-    top: 50%;
-    right: 0;
-    transform: translate(-50%, -50%);
-    transition: color 0.25s ease-in-out;
-}
-.logout-button:before {
-    content: "";
-    position: absolute;
-    top: -50%;
-    right: -50%;
-    width: 3rem;
-    height: 3rem;
-    border-radius: 1rem;
-    background-color: var(--bg-lvl1);
+    inset: 0;
+    opacity: 0;
+    background: var(--bg-lvl1);
+    transition: opacity 0.25s ease-in-out;
 }
 .logout-button:hover {
-    color: var(--accent);
+    color: var(--text);
+    opacity: 0.9;
+    background: var(--bg-lvl1);
 }
