@@ -8,6 +8,8 @@ import fetch from 'node-fetch'
 import httpProxy from 'http-proxy'
 import { WebSocketServer } from 'ws'
 import { logging } from './src/utilities/logging.js'
+import { Routes } from 'discord-api-types/v10'
+import { config } from './config.js'
 
 const app = express()
 const lavalinkProxy = httpProxy.createProxyServer({ target: 'http://localhost:2333', ws: true })
@@ -47,6 +49,29 @@ app.get('/cors', (req, res) => {
   fetch(req.query.url).then((response) => { response.body.pipe(res) })
 })
 
+app.get('/auth', async (req, res) => {
+  if (req.hostname !== domain) { return res.status(401).end() }
+  if (!req.query.code) { return res.status(401).end(400) }
+
+  const body = new URLSearchParams({
+    'client_id': config.clientId,
+    'client_secret': config.clientSecret,
+    'code': req.query.code,
+    'grant_type': 'authorization_code',
+    'redirect_uri': `${hostname}/auth`
+  })
+
+  const token = await fetch('https://discord.com/api' + Routes.oauth2TokenExchange(), {
+    method: 'POST',
+    body: body,
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+  }).then((response) => response.json()).catch((e) => {
+    logging.error('[OAuth Req] Error fetching token while authenticating: ' + e)
+  })
+
+  res.redirect(`${hostname}/dashboard?token=${token.access_token}&type=${token.token_type}`)
+})
+
 // Main endpoint
 app.get('*', (req, res) => {
   if (req.hostname === 'clients.' + domain) { return res.redirect(hostname) }
@@ -60,9 +85,10 @@ app.get('*', (req, res) => {
 const server = (ssl ? https : http).createServer(ssl ? {
   cert: fs.readFileSync(`/etc/letsencrypt/live/${domain}/fullchain.pem`),
   key: fs.readFileSync(`/etc/letsencrypt/live/${domain}/privkey.pem`)
-} : null, app).listen(port, null, null, () => {
-  logging.success(`Started server on ${hostname}.`)
-})
+} : null, app)
+  .listen(port, null, null, () => {
+    logging.success(`Started server on ${hostname}.`)
+  })
 
 const wsServer = new WebSocketServer({ noServer: true })
 

@@ -12,8 +12,6 @@ import { Background } from '../Background/background.js'
 import { Servers } from './components/Servers/servers.js'
 import { Loader } from '../Loader/loader.js'
 
-const { clientId, clientSecret } = require('../../../config.json')
-
 export function Dashboard() {
   document.title = 'Kalliope | Dashboard'
 
@@ -64,10 +62,11 @@ export function Dashboard() {
       history.replaceState(null, '', location.href.split('?')[0])
       return
     }
-    const loginUrl = `https://discordapp.com/api/oauth2/authorize?client_id=1053262351803093032&scope=identify%20guilds&response_type=code&redirect_uri=${encodeURIComponent(window.location.origin + '/dashboard')}`
+    const loginUrl = `https://discordapp.com/api/oauth2/authorize?client_id=1053262351803093032&scope=identify%20guilds&response_type=code&redirect_uri=${encodeURIComponent(window.location.origin + '/auth')}`
 
-    const code = searchParams.get('code')
-    if (!code) {
+    const token = searchParams.get('token')
+    const type = searchParams.get('type')
+    if (!token) {
       setTimeout(() => {
         window.location.replace(loginUrl)
       }, 3000)
@@ -75,43 +74,21 @@ export function Dashboard() {
     }
 
     async function fetchUser() {
-      const body = new URLSearchParams({
-        'client_id': clientId,
-        'client_secret': clientSecret,
-        'code': code,
-        'grant_type': 'authorization_code',
-        'redirect_uri': `${location.origin}/dashboard`
-      })
-
-      const token = await fetch('https://discord.com/api' + Routes.oauth2TokenExchange(), {
-        method: 'POST',
-        body: body,
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-      }).then((response) => response.json()).catch((e) => {
-        console.error('Error while fetching token while authenticating: ' + e)
-      })
-      // noinspection JSUnresolvedVariable
-      if (!token?.access_token) {
-        window.location.replace(loginUrl)
-        return
-      }
+      if (!token) { return window.location.replace(loginUrl) }
 
       const discordUser = await fetch('https://discord.com/api' + Routes.user(), {
         method: 'GET',
-        headers: { authorization: `${token.token_type} ${token.access_token}` }
+        headers: { authorization: `${type} ${token}` }
       }).then((response) => response.json()).catch((e) => {
         console.error('Error while fetching user while authenticating: ' + e)
       })
       const guilds = await fetch('https://discord.com/api' + Routes.userGuilds(), {
         method: 'GET',
-        headers: { authorization: `${token.token_type} ${token.access_token}` }
+        headers: { authorization: `${type} ${token}` }
       }).then((response) => response.json()).catch((e) => {
         console.error('Error while fetching guilds while authenticating: ' + e)
       })
-      if (!discordUser || !guilds) {
-        window.location.replace(loginUrl)
-        return
-      }
+      if (!discordUser || !guilds) { return window.location.replace(loginUrl) }
 
       discordUser.guilds = guilds
       localStorage.setItem('user', JSON.stringify(discordUser))
