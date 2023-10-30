@@ -76,7 +76,7 @@ app.get('/auth', async (req, res) => {
 app.get('*', (req, res) => {
   if (req.hostname === 'clients.' + domain) { return res.redirect(hostname) }
   if (req.hostname === 'lavalink.' + domain) {
-    if (req.path !== '/metrics') { return res.status(418).send('HTTP/1.1 418 I\'m a Teapot') }
+    if (!req.path.startsWith('/v4') || req.path !== '/metrics') { return res.status(418).send('HTTP/1.1 418 I\'m a Teapot') }
     return lavalinkProxy.web(req, res)
   }
   res.sendFile(path.resolve(__dirname, './dist/index.html'))
