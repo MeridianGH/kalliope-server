@@ -51,7 +51,7 @@ app.get('/cors', (req, res) => {
 
 app.get('/auth', async (req, res) => {
   if (req.hostname !== domain) { return res.status(401).end() }
-  if (!req.query.code) { return res.status(401).end(400) }
+  if (!req.query.code) { return res.status(400).end() }
 
   const body = new URLSearchParams({
     'client_id': config.clientId,
@@ -72,12 +72,18 @@ app.get('/auth', async (req, res) => {
   res.redirect(`${hostname}/dashboard?token=${token.access_token}&type=${token.token_type}`)
 })
 
+// Lavalink endpoint
+app.all('/v4/*', (req, res) => {
+  if (req.hostname !== 'lavalink.' + domain) { return res.status(401).end() }
+  lavalinkProxy.web(req, res)
+})
+
 // Main endpoint
 app.get('*', (req, res) => {
   if (req.hostname === 'clients.' + domain) { return res.redirect(hostname) }
   if (req.hostname === 'lavalink.' + domain) {
-    if (!req.path.startsWith('/v4') || req.path !== '/metrics') { return res.status(418).send('HTTP/1.1 418 I\'m a Teapot') }
-    return lavalinkProxy.web(req, res)
+    if (req.path !== '/version' || req.path !== '/metrics') { return res.redirect(hostname) }
+    return lavalinkProxy.web(req, res, null, console.log)
   }
   res.sendFile(path.resolve(__dirname, './dist/index.html'))
 })
