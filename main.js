@@ -10,6 +10,7 @@ import { WebSocketServer } from 'ws'
 import { logging } from './src/utilities/logging.js'
 import { Routes } from 'discord-api-types/v10'
 import { config } from './config.js'
+import os from 'os'
 
 const app = express()
 const lavalinkProxy = httpProxy.createProxyServer({ target: 'http://localhost:2333', ws: true })
@@ -89,8 +90,8 @@ app.get('*', (req, res) => {
 })
 
 const server = (ssl ? https : http).createServer(ssl ? {
-  cert: fs.readFileSync(`/etc/letsencrypt/live/${domain}/fullchain.pem`),
-  key: fs.readFileSync(`/etc/letsencrypt/live/${domain}/privkey.pem`)
+  cert: fs.readFileSync(`${os.homedir()}/.certbot/live/${domain}/fullchain.pem`),
+  key: fs.readFileSync(`${os.homedir()}/.certbot/live/${domain}/privkey.pem`)
 } : null, app)
   .listen(port, null, null, () => {
     logging.success(`Started server on ${hostname}.`)
