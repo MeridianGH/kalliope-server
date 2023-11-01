@@ -17,12 +17,12 @@ html {
     -ms-overflow-style: none;
     scrollbar-width: none;
 
-    color-scheme: dark;
+    &::-webkit-scrollbar {
+        display: none;
+    }
 
+    color-scheme: dark;
     background: var(--bg);
-}
-html::-webkit-scrollbar {
-    display: none;
 }
 
 ::selection {
@@ -51,16 +51,18 @@ a {
     text-decoration: none;
     background-color: transparent;
     transition: color 0.25s ease-in-out;
-}
-a:hover {
-    color: var(--hover);
-    text-decoration: none;
-    background-color: transparent;
-    cursor: pointer;
-}
-a.underline {
-    text-decoration: underline;
-    text-decoration-thickness: 0.1rem;
+
+    &:hover {
+        color: var(--hover);
+        text-decoration: none;
+        background-color: transparent;
+        cursor: pointer;
+    }
+
+    &.underline {
+        text-decoration: underline;
+        text-decoration-thickness: 0.1rem;
+    }
 }
 
 button {
@@ -83,10 +85,12 @@ button {
     background-color: transparent;
     transition: background-color 0.25s ease-in-out, color 0.25s ease-in-out;
     cursor: pointer;
-}
-.cta-button:hover, .cta-button:active {
-    color: black;
-    background-color: var(--text);
+
+    &:hover,
+    &:active {
+        color: black;
+        background-color: var(--text);
+    }
 }
 
 p {
@@ -99,17 +103,21 @@ p {
     flex-wrap: wrap;
     place-items: center;
     place-content: center;
-}
-.flex-container.column {
-    flex-direction: column;
-}
-.flex-container.start {
-    place-content: flex-start;
-    place-items: flex-start;
-}
-.flex-container.space-between {
-    place-content: space-between;
-}
-.flex-container.nowrap {
-    flex-wrap: nowrap;
+
+    &.column {
+        flex-direction: column;
+    }
+
+    &.start {
+        place-content: flex-start;
+        place-items: flex-start;
+    }
+
+    &.space-between {
+        place-content: space-between;
+    }
+
+    &.nowrap {
+        flex-wrap: nowrap;
+    }
 }

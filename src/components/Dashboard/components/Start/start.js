@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
-import './start.css'
+import './start.scss'
 
 export function Start({ setActiveTab, player }) {
   return (
@@ -13,7 +13,7 @@ export function Start({ setActiveTab, player }) {
         <button className={'dashboard-link'} disabled={!player} onClick={() => { setActiveTab(2) }}><i className={'fad fa-turntable'}/><p>Player</p></button>
         <button className={'dashboard-link'} disabled={!player} onClick={() => { setActiveTab(3) }}><i className={'fad fa-list-music'}/><p>Queue</p></button>
       </div>
-      <p>Quick links to the most common sources used:</p>
+      <p>Quick links to the most common sources:</p>
       <div className={'flex-container'}>
         <a href={'https://youtube.com'} target={'_blank'} className={'source'} style={{ backgroundColor: '#ff0000' }} rel="noreferrer"><i className={'fab fa-youtube'}/></a>
         <a href={'https://spotify.com'} target={'_blank'} className={'source'} style={{ backgroundColor: '#1db954' }} rel="noreferrer"><i className={'fab fa-spotify'}/></a>

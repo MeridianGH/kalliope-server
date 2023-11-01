@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import VanillaTilt from 'vanilla-tilt'
-import './home.css'
+import './home.scss'
 
 export function Home() {
   useEffect(() => {

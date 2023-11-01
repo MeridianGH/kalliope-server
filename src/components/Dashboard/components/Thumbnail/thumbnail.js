@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import './thumbnail.css'
+import './thumbnail.scss'
 import imagePlaceholder from '../../../../assets/image_placeholder.png'
 
 export function Thumbnail({ image, size }) {

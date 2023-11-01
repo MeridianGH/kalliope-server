@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { WebsocketContext } from '../../../WebSocket/websocket.js'
-import './servers.css'
+import './servers.scss'
 import genericServer from '../../../../assets/generic_server.png'
 import { Loader } from '../../../Loader/loader.js'
 

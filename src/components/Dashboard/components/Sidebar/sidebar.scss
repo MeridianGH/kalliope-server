@@ -1,0 +1,228 @@
+:root {
+    --sidebar-width: clamp(200px, 20vw, 300px);
+    --sidebar-width-collapsed: 5rem;
+}
+
+.sidebar-margin {
+    margin-left: var(--sidebar-width);
+    height: 100vh;
+    transition: margin-left 0.5s ease-in-out;
+}
+
+.sidebar {
+    position: fixed;
+    z-index: 999;
+    width: var(--sidebar-width);
+    height: 100vh;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-sizing: border-box;
+    background-color: var(--bg-lvl1);
+    font-size: 1.2rem;
+    transition: width 0.5s ease-in-out, background-color 0.5s ease-in-out;
+
+    &:before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        box-shadow: 0 0 10px black;
+        opacity: 1;
+        transition: opacity 0.5s ease-in-out;
+    }
+
+    &.collapsed {
+        width: var(--sidebar-width-collapsed);
+
+        + .sidebar-margin {
+            margin-left: var(--sidebar-width-collapsed);
+        }
+
+        .sidebar-link > span,
+        .sidebar-user > span {
+            opacity: 0;
+        }
+    }
+}
+@media screen and (max-width: 768px) {
+    .sidebar.collapsed {
+        width: 0;
+        background-color: transparent;
+        pointer-events: none;
+
+        &:before {
+            opacity: 0;
+        }
+    }
+    .sidebar + .sidebar-margin,
+    .sidebar.collapsed + .sidebar-margin {
+        margin-left: 0;
+    }
+    .sidebar > .menu-toggle {
+        pointer-events: all;
+    }
+}
+
+.sidebar-links {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    overflow: hidden;
+}
+.menu-toggle {
+    position: absolute;
+    width: 2rem;
+    height: 2rem;
+    font-size: 1rem;
+    text-align: center;
+    top: 2.5rem;
+    right: 0;
+    translate: 50% -50%;
+    border-radius: 0.66rem;
+    background: linear-gradient(to right, var(--accent), var(--accent-alt));
+
+    &:hover {
+        color: var(--hover);
+        > i {
+            &.fa-bars {
+                opacity: 1;
+            }
+            &.fa-chevron-left {
+                opacity: 0;
+            }
+        }
+    }
+
+    > i {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        translate: -50% -50%;
+        transition: opacity 0.25s ease-in-out, color 0.25s ease-in-out;
+    }
+}
+.sidebar:not(.collapsed) > .menu-toggle > i {
+    &.fa-bars {
+        opacity: 0;
+    }
+    &.fa-chevron-left {
+        opacity: 1;
+    }
+}
+.sidebar.collapsed > .menu-toggle > i {
+    &.fa-bars {
+        opacity: 1;
+    }
+    &.fa-chevron-left {
+        opacity: 0;
+    }
+}
+
+.sidebar-icon {
+    position: absolute;
+    top: 50%;
+    left: 1.5rem;
+    width: 2rem;
+    height: 2rem;
+    transform: translate(-50%, -50%);
+    transition: opacity 0.25s ease-in-out;
+}
+.sidebar-title {
+    position: relative;
+    white-space: nowrap;
+    height: 3rem;
+    margin: auto;
+
+    &:hover > img {
+        opacity: 0.5;
+    }
+
+    > span {
+        font-weight: bold;
+        margin-left: 3rem;
+        line-height: 3rem;
+    }
+}
+
+.sidebar-link {
+    position: relative;
+    isolation: isolate;
+    height: 3rem;
+    padding: 0;
+    white-space: nowrap;
+
+    > i {
+        position: absolute;
+        top: 50%;
+        left: 1.5rem;
+        transform: translate(-50%, -50%);
+    }
+
+    > span {
+        margin-left: 3rem;
+        transition: opacity 0.5s ease-in-out;
+    }
+
+    &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        border-radius: 1rem;
+        background: linear-gradient(to bottom right, var(--accent), var(--accent-alt));
+        opacity: 0;
+        transition: opacity 0.25s ease-in-out;
+    }
+
+    &.active::before,
+    &:hover::before {
+        opacity: 1;
+    }
+
+    &:disabled {
+        color: var(--hover);
+        cursor: default;
+
+        &::before {
+            filter: grayscale(100%);
+        }
+    }
+
+    &.active:disabled::before,
+    &:hover:disabled::before {
+        opacity: 0.25;
+    }
+}
+
+.sidebar-user {
+    position: relative;
+    white-space: nowrap;
+    height: 3rem;
+    overflow: hidden;
+
+    > img {
+        border-radius: 50%;
+        transition: opacity 0.5s ease-in-out;
+    }
+
+    > span {
+        margin-left: 3rem;
+        line-height: 3rem;
+        cursor: default;
+        transition: opacity 0.5s ease-in-out;
+    }
+}
+.logout-button {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    background: linear-gradient(to bottom right, var(--accent), var(--accent-alt));
+    transition: opacity 0.25s ease-in-out;
+    border-radius: 1rem;
+
+    &:hover {
+        color: var(--text);
+        opacity: 1;
+    }
+}

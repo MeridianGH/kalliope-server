@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import './background.css'
+import './background.scss'
 
 export function Background({ style = 'gradient' }) {
   return (

@@ -16,21 +16,25 @@
     font-weight: bold;
     font-size: 0.8rem;
     transition: border-color 0.25s ease-in-out;
-}
-.queue-input:hover {
-    border-color: var(--text);
-}
-.queue-input:focus {
-    outline: none;
-}
-.queue-input.pointer {
-    cursor: pointer;
+
+    &:hover {
+        border-color: var(--text);
+    }
+
+    &:focus {
+        outline: none;
+    }
+
+    &.pointer {
+        cursor: pointer;
+    }
 }
 .queue-input-form {
     position: relative;
-}
-.queue-input-form > .queue-input {
-    padding-right: 1.5rem;
+
+    > .queue-input {
+        padding-right: 1.5rem;
+    }
 }
 .queue-input-button {
     height: 30px;

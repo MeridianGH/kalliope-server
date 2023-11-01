@@ -11,23 +11,26 @@
     background-color: var(--bg-lvl1);
     box-shadow: 2px 2px 5px black;
     cursor: pointer;
-}
-.server-card.active {
-    border: 2px solid var(--accent);
-}
-.server-card > img {
-    height: 100%;
-    width: 100%;
-    border-radius: inherit;
+
+    > img {
+        height: 100%;
+        width: 100%;
+        border-radius: inherit;
+    }
+
+    &.active {
+        border: 2px solid var(--accent);
+    }
 }
 .server-card-text {
     width: 200px;
     overflow: hidden;
     text-align: center;
-}
-.server-card-text > span {
-    font-size: 1rem;
-    white-space: nowrap;
-    transition-property: margin-left;
-    transition-timing-function: ease-in-out;
+
+    > span {
+        font-size: 1rem;
+        white-space: nowrap;
+        transition-property: margin-left;
+        transition-timing-function: ease-in-out;
+    }
 }

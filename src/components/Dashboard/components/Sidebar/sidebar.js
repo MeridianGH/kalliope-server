@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
-import './sidebar.css'
+import './sidebar.scss'
 import kalliopeTransparentPNG from '../../../../assets/kalliope_transparent.png'
 import kalliopePNG from '../../../../assets/kalliope.png'
 
@@ -21,7 +21,10 @@ export function Sidebar({ activeTab = 0, setActiveTab, user, player }) {
   // noinspection JSUnresolvedReference
   return (
     <div className={'sidebar'}>
-      <button className={'menu-toggle'} onClick={toggleCollapsed}><i className={'fad fa-chevron-left fa-fw'}/></button>
+      <button className={'menu-toggle'} onClick={toggleCollapsed}>
+        <i className={'fad fa-chevron-left fa-fw'}/>
+        <i className={'fad fa-bars fa-fw'}/>
+      </button>
       <div className={'sidebar-links'}>
         <Link to={'/'} className={'sidebar-title'}>
           <img className={'sidebar-icon'} src={kalliopeTransparentPNG} alt={'Logo'}/>

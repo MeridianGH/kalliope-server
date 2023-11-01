@@ -11,11 +11,13 @@ footer {
 
 .social-icons {
     gap: 1rem;
-}
-.social-icons i {
-    color: var(--text);
-    transition: color 0.25s ease-in-out;
-}
-.social-icons i:hover {
-    color: var(--accent);
+
+    i {
+        color: var(--text);
+        transition: color 0.25s ease-in-out;
+
+        &:hover {
+            color: var(--accent);
+        }
+    }
 }

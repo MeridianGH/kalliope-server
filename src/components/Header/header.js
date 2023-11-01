@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Background } from '../Background/background.js'
-import './header.css'
+import './header.scss'
 
 export function Header() {
   useEffect(() => {

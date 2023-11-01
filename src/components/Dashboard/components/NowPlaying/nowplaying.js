@@ -5,7 +5,7 @@ import PropTypes from 'prop-types'
 import { WebsocketContext } from '../../../WebSocket/websocket.js'
 import { Thumbnail } from '../Thumbnail/thumbnail.js'
 import { FastAverageColor } from 'fast-average-color'
-import './nowplaying.css'
+import './nowplaying.scss'
 
 function msToHMS(ms) {
   let totalSeconds = ms / 1000

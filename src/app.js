@@ -7,7 +7,7 @@ import { Footer } from './components/Footer/footer.js'
 import { Home } from './components/Home/home.js'
 import { Dashboard } from './components/Dashboard/dashboard.js'
 import { WebsocketProvider } from './components/WebSocket/websocket.js'
-import './app.css'
+import './app.scss'
 import kalliopeTransparentPNG from './assets/kalliope_transparent.png'
 
 document.querySelector('link[rel=icon]').href = kalliopeTransparentPNG

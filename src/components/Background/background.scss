@@ -1,0 +1,12 @@
+.background {
+    position: absolute;
+    inset: 0;
+    height: 100vh;
+    z-index: -1;
+}
+
+.dashboard {
+    > .background {
+        position: fixed;
+    }
+}

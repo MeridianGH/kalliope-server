@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
-import './navbar.css'
+import './navbar.scss'
 import kalliopeTransparentPNG from '../../assets/kalliope_transparent.png'
 
 export function Navbar({ displayLinks = false }) {
@@ -10,7 +10,7 @@ export function Navbar({ displayLinks = false }) {
       <Link to={'/'} className={'nav-logo-container'}>
         <div className={'flex-container nowrap'}>
           <img className={'nav-logo'} src={kalliopeTransparentPNG} alt={'Logo'}/>
-          <h1 className={'nav-title'}>Kalliope</h1>
+          <h1 className={'nav-title'}>Kalliope.</h1>
         </div>
       </Link>
       {displayLinks ?
