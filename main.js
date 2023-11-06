@@ -15,12 +15,11 @@ import os from 'os'
 const app = express()
 const lavalinkProxy = httpProxy.createProxyServer({ target: 'http://localhost:2333', ws: true })
 
-const mode = process.argv[2] ?? 'production'
-const ssl = mode === 'production'
+const production = process.argv[2] === 'production'
 
-const port = ssl ? 443 : 80
-const domain = 'kalliope.cc'
-const hostname = `http${ssl ? 's' : ''}://${domain}`
+const port = production ? 443 : 80
+const domain = production ? 'kalliope.cc' : 'localhost'
+const hostname = `http${production ? 's' : ''}://${domain}`
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 
@@ -89,7 +88,7 @@ app.get('*', (req, res) => {
   res.sendFile(path.resolve(__dirname, './dist/index.html'))
 })
 
-const server = (ssl ? https : http).createServer(ssl ? {
+const server = (production ? https : http).createServer(production ? {
   cert: fs.readFileSync(`${os.homedir()}/.certbot/live/${domain}/fullchain.pem`),
   key: fs.readFileSync(`${os.homedir()}/.certbot/live/${domain}/privkey.pem`)
 } : null, app)
@@ -116,6 +115,19 @@ server.on('upgrade', (request, socket, head) => {
 const clientGuilds = {}
 const clientConnections = {}
 const userConnections = { noGuild: {} }
+
+// WebSocket Heartbeat
+const heartbeat = setInterval(() => {
+  wsServer.clients.forEach((ws) => {
+    // noinspection JSUnresolvedReference
+    if (!ws.isAlive) { return ws.terminate() }
+    ws.isAlive = false
+    ws.ping()
+  })
+}, 60 * 1000)
+wsServer.on('close', () => {
+  clearInterval(heartbeat)
+})
 
 wsServer.on('connection', (ws, req) => {
   ws.on('message', (message) => {
@@ -183,6 +195,11 @@ wsServer.on('connection', (ws, req) => {
       logging.info(`[WebSocket] Client connection closed with reason: ${code} | ${reason}`)
       delete clientConnections[clientId]
     }
+  })
+
+  ws.isAlive = true
+  ws.on('pong', () => {
+    ws.isAlive = true
   })
 
   ws.on('error', (error) => {
