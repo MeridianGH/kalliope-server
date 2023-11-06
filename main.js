@@ -15,7 +15,7 @@ import os from 'os'
 const app = express()
 const lavalinkProxy = httpProxy.createProxyServer({ target: 'http://localhost:2333', ws: true })
 
-const production = process.argv[2] === 'production'
+const production = process.argv[2] !== 'dev'
 
 const port = production ? 443 : 80
 const domain = production ? 'kalliope.cc' : 'localhost'
