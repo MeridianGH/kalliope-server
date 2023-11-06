@@ -12,6 +12,7 @@ export function Queue({ tracks }) {
     websocket.sendData('play', { query: input.current.value })
     input.current.value = ''
   }
+  // TODO: Support filter
   return (
     <div className={'queue-container flex-container column'}>
       <h1>Queue:</h1>
@@ -42,7 +43,7 @@ export function Queue({ tracks }) {
             <Thumbnail image={track.info.artworkUrl} size={'3em'}/>
             <a href={track.info.uri} rel='noreferrer' target='_blank'><b>{track.info.title}</b></a>
           </div>
-          <div className={'music-buttons flex-container'}>
+          <div className={'queue-track-buttons flex-container'}>
             <button onClick={() => { websocket.sendData('remove', { index: index + 1 }) }}><i className={'fas fa-trash-alt'}/></button>
             <button onClick={() => { websocket.sendData('skip', { index: index + 1 }) }}><i className={'fas fa-forward'}/></button>
           </div>
