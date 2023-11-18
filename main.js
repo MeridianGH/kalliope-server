@@ -9,8 +9,8 @@ import httpProxy from 'http-proxy'
 import { WebSocketServer } from 'ws'
 import { logging } from './src/utilities/logging.js'
 import { Routes } from 'discord-api-types/v10'
-import { config } from './config.js'
 import os from 'os'
+import 'dotenv/config'
 
 const app = express()
 const lavalinkProxy = httpProxy.createProxyServer({ target: 'http://localhost:2333', ws: true })
@@ -54,8 +54,8 @@ app.get('/auth', async (req, res) => {
   if (!req.query.code) { return res.status(400).end() }
 
   const body = new URLSearchParams({
-    'client_id': config.clientId,
-    'client_secret': config.clientSecret,
+    'client_id': process.env.clientId,
+    'client_secret': process.env.clientSecret,
     'code': req.query.code,
     'grant_type': 'authorization_code',
     'redirect_uri': `${hostname}/auth`
