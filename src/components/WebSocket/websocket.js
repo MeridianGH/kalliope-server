@@ -1,4 +1,4 @@
-/* global production */
+/* global PRODUCTION */
 
 import React, { createContext, useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
@@ -18,7 +18,7 @@ export function WebsocketProvider({ children }) {
   const [webSocket, setWebSocket] = useState(null)
 
   useEffect(() => {
-    const ws = new WebSocket(`ws${production ? 's' : ''}://${location.host}`)
+    const ws = new WebSocket(`ws${PRODUCTION ? 's' : ''}://${location.host}`)
     setWebSocket(ws)
 
     function closeWs() { ws.close(1000, 'WebSocket was closed by user.') }
