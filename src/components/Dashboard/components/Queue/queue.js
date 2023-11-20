@@ -12,7 +12,7 @@ export function Queue({ tracks }) {
     websocket.sendData('play', { query: input.current.value })
     input.current.value = ''
   }
-  // TODO: Support filter
+  // noinspection JSUnresolvedReference
   return (
     <div className={'queue-container flex-container column'}>
       <h1>Queue:</h1>
@@ -33,6 +33,7 @@ export function Queue({ tracks }) {
           <option value={'superfast'}>Superfast</option>
           <option value={'vaporwave'}>Vaporwave</option>
         </select>
+        {/* eslint-disable-next-line no-irregular-whitespace */}
         <button className={'queue-input pointer'} onClick={() => { websocket.sendData('clear') }}><i className={'fas fa-trash-alt'}/> Clear queue</button>
       </div>
       {/* eslint-disable-next-line no-extra-parens */}
