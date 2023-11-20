@@ -30,5 +30,6 @@ jobs:
             git fetch
             git reset --hard FETCH_HEAD
             npm install --omit=dev
+            webpack
             screen -S KalliopeServer -X quit
-            screen -dmS KalliopeServer bash -c "cd ~/KalliopeServer; npm run start"
+            screen -dmS KalliopeServer bash -c "cd ~/KalliopeServer; node ."

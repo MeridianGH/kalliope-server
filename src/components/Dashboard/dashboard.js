@@ -1,3 +1,5 @@
+/* global PRODUCTION */
+
 import React, { useContext, useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { WebSocketContext } from '../WebSocket/websocket.js'
@@ -30,7 +32,7 @@ export function Dashboard() {
       data.type = type
       data.userId = user.id
       data.guildId = player?.guildId ?? data.guildId
-      console.log('send', data)
+      if (PRODUCTION) { console.log('client sent:', data) }
       try {
         webSocket.send(JSON.stringify(data))
       } catch (error) {
@@ -41,7 +43,7 @@ export function Dashboard() {
 
     function onMessage(message) {
       const data = JSON.parse(message?.data)
-      console.log('receive', data)
+      if (PRODUCTION) { console.log('client received:', data) }
       if (data.type === 'guildClientMap') {
         setTimeout(() => {
           setGuildClientMap(data.map)
