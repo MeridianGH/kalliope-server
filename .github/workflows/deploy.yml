@@ -4,7 +4,13 @@ on:
   - push
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build with Webpack
+        uses: ./.github/webpack.yml
   deploy:
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Install SSH Key
