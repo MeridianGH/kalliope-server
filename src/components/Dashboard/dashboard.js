@@ -32,7 +32,7 @@ export function Dashboard() {
       data.type = type
       data.userId = user.id
       data.guildId = player?.guildId ?? data.guildId
-      if (PRODUCTION) { console.log('client sent:', data) }
+      if (!PRODUCTION) { console.log('client sent:', data) }
       try {
         webSocket.send(JSON.stringify(data))
       } catch (error) {
@@ -43,7 +43,7 @@ export function Dashboard() {
 
     function onMessage(message) {
       const data = JSON.parse(message?.data)
-      if (PRODUCTION) { console.log('client received:', data) }
+      if (!PRODUCTION) { console.log('client received:', data) }
       if (data.type === 'guildClientMap') {
         setTimeout(() => {
           setGuildClientMap(data.map)
