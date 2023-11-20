@@ -4,8 +4,8 @@
   "main": "main.js",
   "type": "module",
   "scripts": {
-    "dev": "webpack --mode development && node . dev",
-    "start": "webpack && node .",
+    "dev": "webpack --mode development && node .",
+    "start": "webpack && node . --mode production",
     "serve": "webpack serve --config webpack.config.js --mode development"
   },
   "dependencies": {

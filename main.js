@@ -15,7 +15,7 @@ import 'dotenv/config'
 const app = express()
 const lavalinkProxy = httpProxy.createProxyServer({ target: 'http://localhost:2333', ws: true })
 
-const production = process.argv[2] !== 'dev'
+const production = process.argv[process.argv.indexOf('--mode') + 1] === 'production'
 
 const port = production ? 443 : 80
 const domain = production ? 'kalliope.cc' : 'localhost'

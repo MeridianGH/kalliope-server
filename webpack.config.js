@@ -1,7 +1,9 @@
 import path from 'path'
 import * as url from 'url'
+import webpack from 'webpack'
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
+const production = process.argv[process.argv.indexOf('--mode') + 1] === 'production'
 
 export default {
   entry: path.resolve(__dirname, './src/app.js'),
@@ -34,6 +36,7 @@ export default {
     path: path.resolve(__dirname, './dist'),
     filename: 'bundle.js'
   },
+  plugins: [new webpack.DefinePlugin({ production: JSON.stringify(production) })],
   devServer: {
     static: path.resolve(__dirname, './dist'),
     historyApiFallback: true,
