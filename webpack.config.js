@@ -36,7 +36,7 @@ export default {
     path: path.resolve(__dirname, './dist'),
     filename: 'bundle.js'
   },
-  plugins: [new webpack.DefinePlugin({ production: JSON.stringify(production) })],
+  plugins: [new webpack.DefinePlugin({ PRODUCTION: JSON.stringify(production) })],
   devServer: {
     static: path.resolve(__dirname, './dist'),
     historyApiFallback: true,
