@@ -1,11 +1,11 @@
 import React, { useContext } from 'react'
 import PropTypes from 'prop-types'
-import { WebsocketContext } from '../../../WebSocket/websocket.js'
+import { WebSocketContext } from '../../../WebSocket/websocket.js'
 import './mediasession.scss'
 import nearSilence from './near-silence.mp3'
 
 export function MediaSession({ track, paused }) {
-  const websocket = useContext(WebsocketContext)
+  const webSocket = useContext(WebSocketContext).webSocket
 
   function displayAlert() {
     console.warn('Autoplay disabled!')
@@ -34,12 +34,12 @@ export function MediaSession({ track, paused }) {
       })
       navigator.mediaSession.playbackState = paused ? 'paused' : 'playing'
 
-      navigator.mediaSession.setActionHandler('play', () => { websocket.sendData('pause') })
-      navigator.mediaSession.setActionHandler('pause', () => { websocket.sendData('pause') })
-      navigator.mediaSession.setActionHandler('nexttrack', () => { websocket.sendData('skip') })
-      navigator.mediaSession.setActionHandler('previoustrack', () => { websocket.sendData('previous') })
+      navigator.mediaSession.setActionHandler('play', () => { webSocket.sendData('pause') })
+      navigator.mediaSession.setActionHandler('pause', () => { webSocket.sendData('pause') })
+      navigator.mediaSession.setActionHandler('nexttrack', () => { webSocket.sendData('skip') })
+      navigator.mediaSession.setActionHandler('previoustrack', () => { webSocket.sendData('previous') })
     }
-  }, [track, paused, websocket])
+  }, [track, paused, webSocket])
   return <div className={'autoplay-alert flex-container nowrap'}/>
 }
 

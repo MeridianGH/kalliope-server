@@ -5,7 +5,7 @@ import './sidebar.scss'
 import kalliopeTransparentPNG from '../../../../assets/kalliope_transparent.png'
 import kalliopePNG from '../../../../assets/kalliope.png'
 
-export function Sidebar({ activeTab = 0, setActiveTab, user, player }) {
+export function Sidebar({ activeTab = 0, setActiveTab, user, hasPlayer }) {
   function toggleCollapsed() {
     document.querySelector('.sidebar').classList.toggle('collapsed')
   }
@@ -32,8 +32,8 @@ export function Sidebar({ activeTab = 0, setActiveTab, user, player }) {
         </Link>
         <button className={'sidebar-link'} onClick={() => { linkHandler(0) }}><i className={'fad fa-home fa-fw'}/><span> Home</span></button>
         <button className={'sidebar-link'} onClick={() => { linkHandler(1) }}><i className={'fad fa-th-list fa-fw'}/><span> Servers</span></button>
-        <button className={'sidebar-link'} disabled={!player} onClick={() => { linkHandler(2) }}><i className={'fad fa-turntable fa-fw'}/><span> Player</span></button>
-        <button className={'sidebar-link'} disabled={!player} onClick={() => { linkHandler(3) }}><i className={'fad fa-list-music fa-fw'}/><span> Queue</span></button>
+        <button className={'sidebar-link'} disabled={!hasPlayer} onClick={() => { linkHandler(2) }}><i className={'fad fa-turntable fa-fw'}/><span> Player</span></button>
+        <button className={'sidebar-link'} disabled={!hasPlayer} onClick={() => { linkHandler(3) }}><i className={'fad fa-list-music fa-fw'}/><span> Queue</span></button>
       </div>
       <div className={'sidebar-user'}>
         <img className={'sidebar-icon'} src={user ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}` : kalliopePNG} alt={'Avatar'}/>
@@ -48,5 +48,5 @@ Sidebar.propTypes = {
   activeTab: PropTypes.number.isRequired,
   setActiveTab: PropTypes.func.isRequired,
   user: PropTypes.object.isRequired,
-  player: PropTypes.bool.isRequired
+  hasPlayer: PropTypes.bool.isRequired
 }

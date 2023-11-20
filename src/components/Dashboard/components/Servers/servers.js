@@ -1,17 +1,19 @@
 import React, { useContext, useEffect } from 'react'
 import PropTypes from 'prop-types'
-import { WebsocketContext } from '../../../WebSocket/websocket.js'
+import { WebSocketContext } from '../../../WebSocket/websocket.js'
 import './servers.scss'
 import genericServer from '../../../../assets/generic_server.png'
 import { Loader } from '../../../Loader/loader.js'
 
-export function Servers({ setActiveTab, userId, userGuilds = [], clientGuilds }) {
-  const websocket = useContext(WebsocketContext)
+export function Servers({ setActiveTab, userGuilds = [], guildClientMap }) {
+  const webSocket = useContext(WebSocketContext).webSocket
+
   useEffect(() => {
-    if (websocket.readyState === 1 && Object.keys(clientGuilds).length === 0) {
-      websocket.sendData('requestClientGuilds')
+    if (webSocket.readyState === 1 && Object.keys(guildClientMap).length === 0) {
+      webSocket.sendData('requestGuildClientMap')
     }
-  }, [websocket, clientGuilds])
+  }, [webSocket, guildClientMap])
+
   useEffect(() => {
     const elements = document.querySelectorAll('.server-card-text')
     elements.forEach((element) => {
@@ -23,22 +25,24 @@ export function Servers({ setActiveTab, userId, userGuilds = [], clientGuilds })
       }
     })
   }, [])
-  if (!userGuilds || Object.keys(clientGuilds).length === 0) {
+
+  if (!userGuilds || Object.keys(guildClientMap).length === 0) {
     return (
       <div className={'server-container flex-container'}>
         <Loader/>
       </div>
     )
   }
+
   return (
     <div className={'server-container flex-container'}>
       {/* eslint-disable-next-line no-extra-parens */}
-      {userGuilds.filter((guild) => Object.keys(clientGuilds).includes(guild.id)).map((guild, index) => (
+      {userGuilds.filter((guild) => Object.keys(guildClientMap).includes(guild.id)).map((guild, index) => (
         <div
           key={index}
           className={'server-card flex-container column'}
           onClick={() => {
-            websocket.sendData('requestPlayerData', { userId: userId, guildId: guild.id, clientId: clientGuilds[guild.id] })
+            webSocket.sendData('requestPlayerData', { guildId: guild.id, clientId: guildClientMap[guild.id] })
             setActiveTab(2)
           }}
         >
@@ -52,7 +56,6 @@ export function Servers({ setActiveTab, userId, userGuilds = [], clientGuilds })
 
 Servers.propTypes = {
   setActiveTab: PropTypes.func.isRequired,
-  userId: PropTypes.string,
   userGuilds: PropTypes.array,
-  clientGuilds: PropTypes.object.isRequired
+  guildClientMap: PropTypes.object.isRequired
 }

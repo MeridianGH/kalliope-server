@@ -3,15 +3,15 @@ import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 import './start.scss'
 
-export function Start({ setActiveTab, player }) {
+export function Start({ setActiveTab, hasPlayer }) {
   return (
     <div className={'start-container flex-container column'}>
       <h1>Welcome to the Kalliope Dashboard!</h1>
       <div className={'dashboard-links-container'}>
         <Link to={'/'} className={'dashboard-link'}><i className={'fad fa-door-open'}/><p>Back to homepage</p></Link>
         <button className={'dashboard-link'} onClick={() => { setActiveTab(1) }}><i className={'fad fa-th-list'}/><p>Servers</p></button>
-        <button className={'dashboard-link'} disabled={!player} onClick={() => { setActiveTab(2) }}><i className={'fad fa-turntable'}/><p>Player</p></button>
-        <button className={'dashboard-link'} disabled={!player} onClick={() => { setActiveTab(3) }}><i className={'fad fa-list-music'}/><p>Queue</p></button>
+        <button className={'dashboard-link'} disabled={!hasPlayer} onClick={() => { setActiveTab(2) }}><i className={'fad fa-turntable'}/><p>Player</p></button>
+        <button className={'dashboard-link'} disabled={!hasPlayer} onClick={() => { setActiveTab(3) }}><i className={'fad fa-list-music'}/><p>Queue</p></button>
       </div>
       <p>Quick links to the most common sources:</p>
       <div className={'flex-container'}>
@@ -28,5 +28,5 @@ export function Start({ setActiveTab, player }) {
 
 Start.propTypes = {
   setActiveTab: PropTypes.func.isRequired,
-  player: PropTypes.bool.isRequired
+  hasPlayer: PropTypes.bool.isRequired
 }

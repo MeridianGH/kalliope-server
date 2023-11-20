@@ -15,7 +15,7 @@ import 'dotenv/config'
 const app = express()
 const lavalinkProxy = httpProxy.createProxyServer({ target: 'http://localhost:2333', ws: true })
 
-const production = process.argv[process.argv.indexOf('--mode') + 1] === 'production'
+const production = process.argv[2] !== 'development'
 
 const port = production ? 443 : 80
 const domain = production ? 'kalliope.cc' : 'localhost'
@@ -112,9 +112,30 @@ server.on('upgrade', (request, socket, head) => {
   socket.destroy()
 })
 
-const clientGuilds = {}
-const clientConnections = {}
-const userConnections = { noGuild: {} }
+/**
+ * A map containing client data organized by clientId.
+ * @description Structure: { clientId: { guildIds: string[], userCount: number } }
+ * @type {{[key: string]: { guilds: string[], users: number }}}
+ */
+const clientDataMap = {}
+/**
+ * A map containing the single responsible clientId for each guildId.
+ * @description Structure: { guildId: clientId }
+ * @type {{[key: string]: string}}
+ */
+const guildClientMap = {}
+/**
+ * A map containing the respective WebSocket object for each clientId.
+ * @description Structure: { clientId: ws }
+ * @type {{[key: string]: WebSocket}}
+ */
+const clientConnectionMap = {}
+/**
+ * A map containing WebSocket objects for each connected user organized by guildId.
+ * @description Structure: { guildId: { userId: ws } }
+ * @type {{[key: string]: {[key: string]: WebSocket}}}
+ */
+const userConnectionsByGuildMap = {}
 
 // WebSocket Heartbeat
 const heartbeat = setInterval(() => {
@@ -137,17 +158,23 @@ wsServer.on('connection', (ws, req) => {
     if (req.headers.host === domain) {
       // Verify and store user connection
       if (!data.userId) { return }
-      userConnections[data.guildId ?? 'noGuild'] = { ...userConnections[data.guildId ?? 'noGuild'], [data.userId]: ws }
-      if (data.guildId && Object.keys(userConnections.noGuild).includes(data.userId)) { delete userConnections.noGuild[data.userId] }
+      userConnectionsByGuildMap[data.guildId ?? 'noGuild'] = { ...userConnectionsByGuildMap[data.guildId ?? 'noGuild'], [data.userId]: ws }
+      // eslint-disable-next-line dot-notation
+      if (data.guildId && Object.keys(userConnectionsByGuildMap['noGuild'] ?? {}).includes(data.userId)) { delete userConnectionsByGuildMap['noGuild'][data.userId] }
 
-      // Return client guilds
-      if (data.type === 'requestClientGuilds') {
-        ws.send(JSON.stringify({ type: 'clientGuilds', guilds: clientGuilds }))
+      // Return guildClientMap
+      if (data.type === 'requestGuildClientMap') {
+        ws.send(JSON.stringify({ type: 'guildClientMap', map: guildClientMap }))
+        return
+      }
+      // Return clientDataMap
+      if (data.type === 'requestClientDataMap') {
+        ws.send(JSON.stringify({ type: 'clientDataMap', map: clientDataMap }))
         return
       }
 
       // Forward data to client
-      const clientWs = clientConnections[data.clientId ?? clientGuilds[data.guildId]]
+      const clientWs = clientConnectionMap[data.clientId ?? guildClientMap[data.guildId]]
       if (!clientWs) { return }
       clientWs.send(JSON.stringify(data))
     }
@@ -156,44 +183,47 @@ wsServer.on('connection', (ws, req) => {
     if (req.headers.host === 'clients.' + domain) {
       // Verify and store client connection
       if (!data.clientId) { return }
-      clientConnections[data.clientId] = ws
+      clientConnectionMap[data.clientId] = ws
 
       // Update clientData
       if (data.type === 'clientData') {
-        data.guilds.forEach((guild) => {
-          clientGuilds[guild] = data.clientId
+        data.guilds.forEach((guildId) => {
+          guildClientMap[guildId] = data.clientId
         })
-        Object.values(userConnections.noGuild).forEach((userWs) => {
-          userWs.send(JSON.stringify({ type: 'clientGuilds', guilds: clientGuilds }))
+        clientDataMap[data.clientId] = { guilds: data.guilds, users: data.users }
+        // eslint-disable-next-line dot-notation
+        Object.values(userConnectionsByGuildMap['noGuild'] ?? {}).forEach((userWs) => {
+          userWs.send(JSON.stringify({ type: 'guildClientMap', map: guildClientMap }))
+          userWs.send(JSON.stringify({ type: 'clientDataMap', map: clientDataMap }))
         })
         return
       }
 
       // Forward data to users
-      if (!data.guildId || !userConnections[data.guildId]) { return }
-      Object.values(userConnections[data.guildId]).forEach((userWs) => {
+      if (!data.guildId || !userConnectionsByGuildMap[data.guildId]) { return }
+      Object.values(userConnectionsByGuildMap[data.guildId]).forEach((userWs) => {
         userWs.send(JSON.stringify(data))
       })
     }
   })
 
   ws.on('close', (code, reason) => {
-    for (const guildId in userConnections) {
-      const userId = Object.keys(userConnections[guildId]).find((key) => userConnections[guildId][key] === ws)
+    for (const guildId in userConnectionsByGuildMap) {
+      const userId = Object.keys(userConnectionsByGuildMap[guildId]).find((key) => userConnectionsByGuildMap[guildId][key] === ws)
       if (userId) {
         logging.info(`[WebSocket] User websocket closed with reason: ${code} | ${reason}`)
-        delete userConnections[guildId][userId]
-        if (Object.keys(userConnections[guildId]).length === 0 && guildId !== 'noGuild') {
-          delete userConnections[guildId]
+        delete userConnectionsByGuildMap[guildId][userId]
+        if (Object.keys(userConnectionsByGuildMap[guildId]).length === 0 && guildId !== 'noGuild') {
+          delete userConnectionsByGuildMap[guildId]
         }
         return
       }
     }
 
-    const clientId = Object.keys(clientConnections).find((key) => clientConnections[key] === ws)
+    const clientId = Object.keys(clientConnectionMap).find((key) => clientConnectionMap[key] === ws)
     if (clientId) {
       logging.info(`[WebSocket] Client connection closed with reason: ${code} | ${reason}`)
-      delete clientConnections[clientId]
+      delete clientConnectionMap[clientId]
     }
   })
 
