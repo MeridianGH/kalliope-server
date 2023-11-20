@@ -7,7 +7,7 @@ jobs:
   webpack:
     uses: ./.github/workflows/webpack.yml
   deploy:
-    needs: build
+    needs: webpack
     runs-on: ubuntu-latest
     steps:
       - name: Install SSH Key
