@@ -18,6 +18,7 @@ export function WebsocketProvider({ children }) {
   const [webSocket, setWebSocket] = useState(null)
 
   useEffect(() => {
+    console.log(PRODUCTION)
     const ws = new WebSocket(`ws${PRODUCTION ? 's' : ''}://${location.host}`)
     setWebSocket(ws)
 

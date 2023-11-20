@@ -4,6 +4,7 @@ import webpack from 'webpack'
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 const production = process.argv[process.argv.indexOf('--mode') + 1] === 'production'
+console.log(process.argv)
 
 export default {
   entry: path.resolve(__dirname, './src/app.js'),
