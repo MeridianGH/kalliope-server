@@ -4,8 +4,8 @@
     "node": true,
     "es6": true
   },
-  "extends": ["eslint:recommended", "plugin:react/recommended", "plugin:react-hooks/recommended"],
-  "ignorePatterns": ["**/*.ejs"],
+  "extends": ["eslint:recommended", "plugin:jsdoc/recommended", "plugin:react/recommended", "plugin:react-hooks/recommended"],
+  "ignorePatterns": ["**/bundle.js"],
   "parserOptions": {
     "ecmaVersion": "latest",
     "sourceType": "module",
@@ -16,6 +16,7 @@
   "plugins": ["react"],
   "root": true,
   "rules": {
+    "jsdoc/require-jsdoc": "off",
     "array-bracket-newline": ["warn", { "multiline": true }],
     "arrow-body-style": ["warn", "as-needed"],
     "arrow-parens": "warn",
