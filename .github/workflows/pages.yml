@@ -19,10 +19,9 @@ jobs:
       - name: Generate documentation
         run: |
           npm run docs
-          cd docs
-          touch .nojekyll
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: docs
+          branch: docs
