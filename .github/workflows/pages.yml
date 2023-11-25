@@ -21,8 +21,9 @@ jobs:
 
       - name: Override /docs in .gitignore
         run: |
+          ls
           echo "!docs/" >> .gitignore
-          tree ./
+          ls
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
