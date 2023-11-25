@@ -50,6 +50,9 @@
     "switch-colon-spacing": "warn"
   },
   "settings": {
+    "jsdoc": {
+      "mode": "jsdoc"
+    },
     "react": {
       "createClass": "createReactClass",
       "pragma": "React",

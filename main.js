@@ -115,25 +115,25 @@ server.on('upgrade', (request, socket, head) => {
 /**
  * A map containing client data organized by clientId.
  * @description Structure: { clientId: { guildIds: string[], userCount: number } }
- * @type {{[key: string]: { guilds: string[], users: number }}}
+ * @type {Object<string, {guilds: string[], users: number}>}
  */
 const clientDataMap = {}
 /**
  * A map containing the single responsible clientId for each guildId.
  * @description Structure: { guildId: clientId }
- * @type {{[key: string]: string}}
+ * @type {Object<string, string>}
  */
 const guildClientMap = {}
 /**
  * A map containing the respective WebSocket object for each clientId.
  * @description Structure: { clientId: ws }
- * @type {{[key: string]: WebSocket}}
+ * @type {Object<string, WebSocket>}
  */
 const clientConnectionMap = {}
 /**
  * A map containing WebSocket objects for each connected user organized by guildId.
  * @description Structure: { guildId: { userId: ws } }
- * @type {{[key: string]: {[key: string]: WebSocket}}}
+ * @type {Object<string, Object<string, WebSocket>>}
  */
 const userConnectionsByGuildMap = {}
 
@@ -156,8 +156,17 @@ wsServer.on('connection', (ws, req) => {
 
     // User WebSocket
     if (req.headers.host === domain) {
-      // Verify and store user connection
-      if (!data.userId) { return }
+      // Stats page
+      if (!data.userId) {
+        if (data.type === 'requestClientDataMap') {
+          ws.send(JSON.stringify({ type: 'clientDataMap', map: clientDataMap }))
+          return
+        }
+        // Return if no user has been set and no "user-less" request occurred
+        return
+      }
+
+      // Store user connection
       userConnectionsByGuildMap[data.guildId ?? 'noGuild'] = { ...userConnectionsByGuildMap[data.guildId ?? 'noGuild'], [data.userId]: ws }
       // eslint-disable-next-line dot-notation
       if (data.guildId && Object.keys(userConnectionsByGuildMap['noGuild'] ?? {}).includes(data.userId)) { delete userConnectionsByGuildMap['noGuild'][data.userId] }
@@ -181,6 +190,7 @@ wsServer.on('connection', (ws, req) => {
 
     // Client WebSocket
     if (req.headers.host === 'clients.' + domain) {
+      if (!production) { console.log('received from client:', data) }
       // Verify and store client connection
       if (!data.clientId) { return }
       clientConnectionMap[data.clientId] = ws
@@ -211,7 +221,7 @@ wsServer.on('connection', (ws, req) => {
     for (const guildId in userConnectionsByGuildMap) {
       const userId = Object.keys(userConnectionsByGuildMap[guildId]).find((key) => userConnectionsByGuildMap[guildId][key] === ws)
       if (userId) {
-        logging.info(`[WebSocket] User websocket closed with reason: ${code} | ${reason}`)
+        if (!production) { logging.info(`[WebSocket] User websocket closed with reason: ${code} | ${reason}`) }
         delete userConnectionsByGuildMap[guildId][userId]
         if (Object.keys(userConnectionsByGuildMap[guildId]).length === 0 && guildId !== 'noGuild') {
           delete userConnectionsByGuildMap[guildId]
@@ -222,7 +232,7 @@ wsServer.on('connection', (ws, req) => {
 
     const clientId = Object.keys(clientConnectionMap).find((key) => clientConnectionMap[key] === ws)
     if (clientId) {
-      logging.info(`[WebSocket] Client connection closed with reason: ${code} | ${reason}`)
+      if (!production) { logging.info(`[WebSocket] Client connection closed with reason: ${code} | ${reason}`) }
       delete clientConnectionMap[clientId]
     }
   })

@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "webpack --mode development && node . development",
     "start": "webpack && node .",
-    "serve": "webpack serve --config webpack.config.js --mode development"
+    "serve": "webpack serve --config webpack.config.js --mode development",
+    "docs": "jsdoc -c jsdoc.json"
   },
   "dependencies": {
     "@babel/core": "^7.19.6",
@@ -37,10 +38,12 @@
     "ws": "^8.14.2"
   },
   "devDependencies": {
+    "clean-jsdoc-theme": "^4.2.17",
     "eslint": "^8.26.0",
     "eslint-plugin-jsdoc": "^46.9.0",
     "eslint-plugin-react": "^7.31.10",
     "eslint-plugin-react-hooks": "^4.6.0",
+    "jsdoc": "^4.0.2",
     "webpack-dev-server": "^4.11.1"
   }
 }
