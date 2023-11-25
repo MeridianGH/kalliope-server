@@ -2,6 +2,7 @@ name: Deploy via SSH
 
 on:
   - push
+  - workflow_dispatch
 
 jobs:
   webpack:
