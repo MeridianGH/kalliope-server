@@ -16,8 +16,7 @@ jobs:
 
       - name: Install Node Dependencies
         run: |
-          rm package*.json
-          npm i jsdoc      
+          npm i jsdoc --package-lock=false
 
       - name: Generate documentation
         run: |
