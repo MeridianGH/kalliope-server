@@ -11,13 +11,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Install Node Dependencies
         run: |
           rm package*.json
-          npm i jsdoc
-      
-      - name: Checkout repository
-        uses: actions/checkout@v4
+          npm i jsdoc      
 
       - name: Generate documentation
         run: |
