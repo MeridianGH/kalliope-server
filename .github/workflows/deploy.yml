@@ -1,8 +1,8 @@
 name: Deploy via SSH
 
 on:
-  - push
-  - workflow_dispatch
+  push:
+    branches: ['main']
 
 jobs:
   webpack:
@@ -30,7 +30,7 @@ jobs:
             cd KalliopeServer
             git fetch
             git reset --hard FETCH_HEAD
-            npm install --omit=dev
+            npm ci --omit=dev
             npx webpack
             screen -S KalliopeServer -X quit
             screen -dmS KalliopeServer bash -c "cd ~/KalliopeServer; node ."
