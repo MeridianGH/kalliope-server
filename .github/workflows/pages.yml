@@ -5,7 +5,8 @@ on:
     branches: ['main']
 
 permissions:
-  contents: write
+  pages: write
+  id-token: write
 
 jobs:
   build:
@@ -23,6 +24,10 @@ jobs:
           cd docs
           touch .nojekyll
 
-      - uses: actions/upload-pages-artifact@v2
+      - name: Build GH Pages Artifact
+        uses: actions/upload-pages-artifact@v2
         with:
-          path: .
+          path: docs/
+
+      - name: Publish to GH Pages
+        uses: actions/deploy-pages@v2
