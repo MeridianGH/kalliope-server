@@ -12,7 +12,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install Node Dependencies
-        run: npm i jsdoc
+        run: |
+          rm package*.json
+          npm i jsdoc
       
       - name: Checkout repository
         uses: actions/checkout@v4
