@@ -1,20 +1,21 @@
 name: Build Docs
 
 on:
-  - push
-  - workflow_dispatch
+  push:
+    branches: ['main']
 
 permissions:
   contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
       - name: Install Node Dependencies
         run: npm i jsdoc
+      
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Generate documentation
         run: |
