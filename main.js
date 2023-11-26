@@ -113,6 +113,7 @@ server.on('upgrade', (request, socket, head) => {
 })
 
 /**
+ * @note this is an invalid tag
  * A map containing client data organized by clientId.
  * @description Structure: { clientId: { guildIds: string[], userCount: number } }
  * @type {Object<string, {guilds: string[], users: number}>}
