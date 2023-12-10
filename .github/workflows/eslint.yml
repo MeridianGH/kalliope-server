@@ -1,8 +1,11 @@
 name: ESLint
 
 on:
-  - push
-  - pull_request
+  push:
+    branches: ['main']
+
+  pull_request:
+    types: [opened, synchronize]
 
 jobs:
   lint:
@@ -10,10 +13,10 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install Node Dependencies
-        run: npm install
+        run: npm ci
 
       - name: Run ESLint
         run: npx eslint .
