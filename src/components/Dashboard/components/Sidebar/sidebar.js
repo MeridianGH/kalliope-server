@@ -47,6 +47,6 @@ export function Sidebar({ activeTab = 0, setActiveTab, user, hasPlayer }) {
 Sidebar.propTypes = {
   activeTab: PropTypes.number.isRequired,
   setActiveTab: PropTypes.func.isRequired,
-  user: PropTypes.object.isRequired,
+  user: PropTypes.object,
   hasPlayer: PropTypes.bool.isRequired
 }
