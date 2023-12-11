@@ -37,6 +37,7 @@ export default {
     filename: 'bundle.js'
   },
   plugins: [new webpack.DefinePlugin({ PRODUCTION: JSON.stringify(production) })],
+  devtool: 'source-map',
   devServer: {
     static: path.resolve(__dirname, './dist'),
     historyApiFallback: true,
