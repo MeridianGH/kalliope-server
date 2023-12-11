@@ -7,21 +7,35 @@ import nearSilence from './near-silence.mp3'
 export function MediaSession({ track, paused }) {
   const webSocket = useContext(WebSocketContext).webSocket
 
-  function displayAlert() {
-    console.warn('Autoplay disabled!')
-    const div = document.querySelector('.autoplay-alert')
-    div.innerHTML = '<i class="far fa-exclamation-triangle fa-1.5x"/><span class="autoplay-text">Autoplay seems to be disabled. Enable Media Autoplay to use media buttons to control the music bot!'
-  }
-
   React.useEffect(() => {
-    if ('mediaSession' in navigator) {
-      const audio = new Audio(nearSilence)
-      audio.volume = 0.00001
-      audio.load()
-      audio.play().then(() => { setTimeout(() => audio.pause(), 100) }).catch(() => { displayAlert() })
-    } else {
-      displayAlert()
+    function playAudio() {
+      const audio = document.querySelector('audio')
+      return audio.play()
+        .then(() => { setTimeout(() => audio.pause(), 100) })
+        .catch(() => { displayAlert() })
     }
+    function displayAlert() {
+      console.warn('Autoplay disabled!')
+      const div = document.querySelector('.media-session')
+      const alert = document.createElement('button')
+      alert.classList.add('autoplay-alert', 'flex-container', 'nowrap')
+      alert.innerHTML = '<i class="far fa-exclamation-triangle fa-1.5x"></i><span class="autoplay-text">Autoplay seems to be disabled. Enable Media Autoplay or click this message to use media buttons to control the music bot!'
+      alert.addEventListener('click', () => { playAudio().then(() => alert.remove()) })
+      div.appendChild(alert)
+    }
+
+    if (!('mediaSession' in navigator)) {
+      displayAlert()
+      return
+    }
+
+    const audio = document.createElement('audio')
+    audio.src = nearSilence
+    document.querySelector('.media-session').appendChild(audio)
+    audio.volume = 0.00001
+    audio.load()
+    // noinspection JSIgnoredPromiseFromCall
+    playAudio()
   }, [])
   React.useEffect(() => {
     function htmlDecode(input) { return new DOMParser().parseFromString(input, 'text/html').documentElement.textContent }
@@ -40,7 +54,7 @@ export function MediaSession({ track, paused }) {
       navigator.mediaSession.setActionHandler('previoustrack', () => { webSocket.sendData('previous') })
     }
   }, [track, paused, webSocket])
-  return <div className={'autoplay-alert flex-container nowrap'}/>
+  return <div className={'media-session'}/>
 }
 
 MediaSession.propTypes = {
