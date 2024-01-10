@@ -54,8 +54,8 @@ app.get('/auth', async (req, res) => {
   if (!req.query.code) { return res.status(400).end() }
 
   const body = new URLSearchParams({
-    'client_id': process.env.clientId,
-    'client_secret': process.env.clientSecret,
+    'client_id': process.env.CLIENT_ID,
+    'client_secret': process.env.CLIENT_SECRET,
     'code': req.query.code,
     'grant_type': 'authorization_code',
     'redirect_uri': `${hostname}/auth`
