@@ -96,6 +96,10 @@ const server = (production ? https : http).createServer(production ? {
     logging.success(`Started server on ${hostname}.`)
   })
 
+/**
+ * The WebSocket Server managing all connections.
+ * @type {WebSocket.Server<typeof WebSocket.WebSocket>}
+ */
 const wsServer = new WebSocketServer({ noServer: true })
 
 server.on('upgrade', (request, socket, head) => {
@@ -115,25 +119,25 @@ server.on('upgrade', (request, socket, head) => {
 /**
  * A map containing client data organized by clientId.
  * @description Structure: { clientId: { guildIds: string[], userCount: number } }
- * @type {Object<string, {guilds: string[], users: number}>}
+ * @type {{[key: string]: {guilds: string[], users: number}}}
  */
 const clientDataMap = {}
 /**
  * A map containing the single responsible clientId for each guildId.
  * @description Structure: { guildId: clientId }
- * @type {Object<string, string>}
+ * @type {{[key: string]: string}}
  */
 const guildClientMap = {}
 /**
  * A map containing the respective WebSocket object for each clientId.
  * @description Structure: { clientId: ws }
- * @type {Object<string, WebSocket>}
+ * @type {{[key: string]: WebSocket}}
  */
 const clientConnectionMap = {}
 /**
  * A map containing WebSocket objects for each connected user organized by guildId.
  * @description Structure: { guildId: { userId: ws } }
- * @type {Object<string, Object<string, WebSocket>>}
+ * @type {{[key: string]: {[key: string]: WebSocket}}}
  */
 const userConnectionsByGuildMap = {}
 
@@ -152,10 +156,32 @@ wsServer.on('close', () => {
 
 wsServer.on('connection', (ws, req) => {
   ws.on('message', (message) => {
+    /**
+     * @typedef {{type: 'clientData' | 'playerData', clientId: string, guilds?: string[], users?: number, guildId?: string}} ClientMessage
+     * @typedef {{
+     *  type: 'requestClientDataMap' | 'requestGuildClientMap' | 'requestPlayerData' | string,
+     *  userId: string,
+     *  clientId: string,
+     *  guildId: string
+     * }} UserMessage
+     * @typedef {ClientMessage | UserMessage} WebSocketMessage
+     */
+    /**
+     * @type {WebSocketMessage}
+     */
     const data = JSON.parse(message.toString())
 
+    /**
+     *
+     * @param {WebSocketMessage} [data] The data to check.
+     * @returns {data is UserMessage} If the data is from a user.
+     */
+    function isUserMessage(data) {
+      return data ? req.headers.host === domain : false
+    }
+
     // User WebSocket
-    if (req.headers.host === domain) {
+    if (isUserMessage(data)) {
       // Stats page
       if (!data.userId) {
         if (data.type === 'requestClientDataMap') {
