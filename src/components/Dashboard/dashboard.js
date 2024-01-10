@@ -88,16 +88,22 @@ export function Dashboard() {
       const discordUser = await fetch('https://discord.com/api' + Routes.user(), {
         method: 'GET',
         headers: { authorization: `${type} ${token}` }
-      }).then((response) => response.json()).catch((e) => {
-        console.error('Error while fetching user while authenticating: ' + e)
+      }).then(async (response) => {
+        if (!response.ok) { throw (await response.json()).message }
+        return response.json()
+      }).catch((e) => {
+        console.error('Error while fetching user during authentication: ' + e)
       })
       const guilds = await fetch('https://discord.com/api' + Routes.userGuilds(), {
         method: 'GET',
         headers: { authorization: `${type} ${token}` }
-      }).then((response) => response.json()).catch((e) => {
-        console.error('Error while fetching guilds while authenticating: ' + e)
+      }).then(async (response) => {
+        if (!response.ok) { throw (await response.json()).message }
+        return response.json()
+      }).catch((e) => {
+        console.error('Error while fetching guilds during authentication: ' + e)
       })
-      if (!discordUser || !guilds) { return window.location.replace(loginUrl) }
+      if (!discordUser || !guilds) { throw 'Failed to fetch user or guild.' }
 
       discordUser.guilds = guilds
       localStorage.setItem('user', JSON.stringify(discordUser))
