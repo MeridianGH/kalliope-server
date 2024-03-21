@@ -4,7 +4,7 @@ import { WebSocketContext } from '../../../WebSocket/websocket.js'
 import { Thumbnail } from '../Thumbnail/thumbnail.js'
 import './queue.scss'
 
-export function Queue({ tracks }) {
+export function Queue({ current, tracks }) {
   const webSocket = useContext(WebSocketContext).webSocket
   const input = React.createRef()
   const handlePlay = (event) => {
@@ -16,6 +16,18 @@ export function Queue({ tracks }) {
   return (
     <div className={'queue-container flex-container column'}>
       <h1>Queue:</h1>
+      <h4 className={'queue-current-title'}>Now playing:</h4>
+      {current ?
+        <div className={'flex-container'}>
+          <Thumbnail image={current.info.artworkUrl} size={'3em'}/>
+          <div className={'queue-current flex-container column start'}>
+            <a href={current.info.uri} rel="noreferrer" target="_blank"><b
+              className={'now-playing-title'}>{current.info.title}</b></a>
+            <span>{current.info.author}</span>
+          </div>
+        </div>
+        : <span>Nothing currently playing!</span>
+      }
       <div className={'flex-container'}>
         <form onSubmit={handlePlay} className={'queue-input-form music-buttons'}>
           <input type='text' className={'queue-input'} placeholder='Add to queue' ref={input}/>
@@ -54,4 +66,7 @@ export function Queue({ tracks }) {
   )
 }
 
-Queue.propTypes = { tracks: PropTypes.arrayOf(PropTypes.object).isRequired }
+Queue.propTypes = {
+  current: PropTypes.object,
+  tracks: PropTypes.arrayOf(PropTypes.object).isRequired
+}
