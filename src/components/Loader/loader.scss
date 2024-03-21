@@ -1,34 +1,46 @@
+// Code is mostly from https://uiball.com/ldrs/
+
 .loader {
-  --dot-size: 3rem;
-  position: relative;
-  filter: url('#goo');
+  --uib-size: 100px;
+  --uib-color: var(--accent);
+  --uib-speed: 1.5s;
+  --uib-stroke: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: var(--uib-size);
+  height: calc(var(--uib-size) * 0.9);
 
-  > .dot {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: var(--dot-size);
-    height: var(--dot-size);
-    border-radius: var(--dot-size);
-    background-color: var(--accent);
-    transform: translate(-50%, -50%);
-    animation: color 2s ease-in-out infinite alternate;
+  .bar {
+    width: var(--uib-stroke);
+    height: 100%;
+    background-color: var(--uib-color);
+    border-radius: calc(var(--uib-size) / 2);
+    transition: background-color 0.3s ease;
 
-    &.animated {
-      animation: color 2s ease-in-out infinite alternate, move 1s ease-in-out infinite alternate;
+    &:nth-child(1) {
+      animation: grow var(--uib-speed) ease-in-out calc(var(--uib-speed) * -0.45)
+      infinite;
+    }
+
+    &:nth-child(2) {
+      animation: grow var(--uib-speed) ease-in-out calc(var(--uib-speed) * -0.3)
+      infinite;
+    }
+
+    &:nth-child(3) {
+      animation: grow var(--uib-speed) ease-in-out calc(var(--uib-speed) * -0.15)
+      infinite;
+    }
+
+    &:nth-child(4) {
+      animation: grow var(--uib-speed) ease-in-out infinite;
+    }
+
+    @keyframes grow {
+      0%,
+      100% { height: 30%; }
+      50% { height: 100%; }
     }
   }
-}
-@keyframes move {
-	0% { transform: translate(-50%, -50%) translate(-200%, 0); }
-	100% { transform: translate(-50%, -50%) translate(200%, 0); }
-}
-@keyframes color {
-    0% { background-color: var(--accent) }
-    100% { background-color: var(--accent-alt) }
-}
-
-.gooey-filter {
-	visibility: hidden;
-	position: absolute;
 }

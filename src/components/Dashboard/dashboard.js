@@ -99,9 +99,7 @@ export function Dashboard() {
       const data = JSON.parse(message?.data)
       if (!PRODUCTION) { console.log('client received:', data) }
       if (data.type === 'guildClientMap') {
-        setTimeout(() => {
-          setGuildClientMap(data.map)
-        }, Math.floor(Math.random() * 2000 + 1000))
+        setGuildClientMap(data.map)
       } else if (data.type === 'playerData') {
         setPlayer(data.player)
       }
@@ -132,7 +130,7 @@ export function Dashboard() {
     if (!token) {
       setTimeout(() => {
         window.location.replace(loginUrl)
-      }, 3000)
+      }, 1000)
       return
     }
 
