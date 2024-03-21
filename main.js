@@ -31,7 +31,8 @@ app.use((req, res, next) => {
   try {
     decodeURIComponent(req.path)
   } catch (error) {
-    res.redirect(hostname)
+    console.warn(error, req.url)
+    return res.redirect(hostname)
   }
   next()
 })
