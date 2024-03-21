@@ -14,12 +14,66 @@ import { Background } from '../Background/background.js'
 import { Servers } from './components/Servers/servers.js'
 import { Loader } from '../Loader/loader.js'
 
+const playerObject = {
+  'guildId': '610498937874546699',
+  'voiceChannelId': '658690208295944232',
+  'textChannelId': '658690163290931220',
+  'paused': false,
+  'volume': 50,
+  'position': 48660,
+  'repeatMode': 'off',
+  'queue': {
+    'tracks': [
+      {
+        'info': {
+          'identifier': 'bgyO9bNbfb8',
+          'title': 'Jim Yosef x RIELL - Hate You (Official Lyric Video)',
+          'author': 'Jim Yosef',
+          'duration': 200000,
+          'artworkUrl': 'https://i.ytimg.com/vi/bgyO9bNbfb8/maxresdefault.jpg',
+          'uri': 'https://www.youtube.com/watch?v=bgyO9bNbfb8',
+          'sourceName': 'youtube',
+          'isSeekable': true,
+          'isStream': false,
+          'isrc': null
+        },
+        'requester': {
+          'displayName': 'Meridian',
+          'displayAvatarURL': 'https://cdn.discordapp.com/avatars/360817252158930954/5ca503af7e9f9b64c1eee2d4f947a29d.webp'
+        }
+      }
+    ],
+    'current': {
+      'info': {
+        'identifier': 'QQX2hpmtMJs',
+        'title': 'Jim Yosef x RIELL - Animal (Lyric Video)',
+        'author': 'Jim Yosef',
+        'duration': 177000,
+        'artworkUrl': 'https://i.ytimg.com/vi/QQX2hpmtMJs/maxresdefault.jpg',
+        'uri': 'https://www.youtube.com/watch?v=QQX2hpmtMJs',
+        'sourceName': 'youtube',
+        'isSeekable': true,
+        'isStream': false,
+        'isrc': null
+      },
+      'requester': {
+        'displayName': 'Meridian',
+        'displayAvatarURL': 'https://cdn.discordapp.com/avatars/360817252158930954/5ca503af7e9f9b64c1eee2d4f947a29d.webp'
+      }
+    }
+  },
+  'filters': {
+    'current': 'none',
+    'timescale': 1
+  }
+}
+
 export function Dashboard() {
   document.title = 'Kalliope | Dashboard'
 
   const webSocketContext = useContext(WebSocketContext)
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')))
-  const [player, setPlayer] = useState(null)
+  const [player, setPlayer] = useState(!PRODUCTION ? playerObject : null)
   const [guildClientMap, setGuildClientMap] = useState({})
   const [activeTab, setActiveTab] = useState(0)
   const [searchParams] = useSearchParams()
