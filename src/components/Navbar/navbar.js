@@ -6,7 +6,7 @@ import kalliopeTransparentPNG from '../../assets/kalliope_transparent.png'
 
 export function Navbar({ displayLinks = false }) {
   return (
-    <nav className={'flex-container space-between nowrap'}>
+    <nav className={'navbar flex-container space-between nowrap'}>
       <Link to={'/'} className={'nav-logo-container'}>
         <div className={'flex-container nowrap'}>
           <img className={'nav-logo'} src={kalliopeTransparentPNG} alt={'Logo'}/>
