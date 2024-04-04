@@ -38,7 +38,7 @@ export function Sidebar({ activeTab = 0, setActiveTab, user, hasPlayer }) {
       <div className={'sidebar-user'}>
         <img className={'sidebar-icon'} src={user ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}` : kalliopePNG} alt={'Avatar'}/>
         <span>{user?.global_name ?? 'Logging in...'}</span>
-        <Link to={'/'} className={'logout-button flex-container'} onClick={() => { localStorage.removeItem('user') }}><i className={'fad fa-sign-out-alt fa-fw'}/></Link>
+        <Link to={'/'} className={'sidebar-link logout-button'} onClick={() => { localStorage.removeItem('user') }}><i className={'fad fa-sign-out-alt fa-fw'}/><span> Logout</span></Link>
       </div>
     </div>
   )
