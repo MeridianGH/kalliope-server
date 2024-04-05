@@ -31,7 +31,7 @@ app.use((req, res, next) => {
   try {
     decodeURIComponent(req.path)
   } catch (error) {
-    console.warn(error, req.url)
+    console.log('Error decoding URL: ' + req.path.toString())
     return res.redirect(hostname)
   }
   next()
@@ -83,7 +83,7 @@ app.all('/v4/*', (req, res) => {
 app.get('*', (req, res) => {
   if (req.hostname === 'clients.' + domain) { return res.redirect(hostname) }
   if (req.hostname === 'lavalink.' + domain) {
-    if (req.path !== '/version' || req.path !== '/metrics') { return res.redirect(hostname) }
+    if (req.path !== '/version' && req.path !== '/metrics') { return res.redirect(hostname) }
     return lavalinkProxy.web(req, res, null, console.log)
   }
   res.sendFile(path.resolve(__dirname, './dist/index.html'))
