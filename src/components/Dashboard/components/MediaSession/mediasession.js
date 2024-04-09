@@ -4,7 +4,7 @@ import { WebSocketContext } from '../../../WebSocket/websocket.js'
 import './mediasession.scss'
 import nearSilence from './near-silence.mp3'
 
-export function MediaSession({ track, paused }) {
+export function MediaSession({ guildId, track, paused }) {
   const webSocket = useContext(WebSocketContext).webSocket
 
   React.useEffect(() => {
@@ -40,6 +40,10 @@ export function MediaSession({ track, paused }) {
   React.useEffect(() => {
     function htmlDecode(input) { return new DOMParser().parseFromString(input, 'text/html').documentElement.textContent }
     if ('mediaSession' in navigator) {
+      if (!track) {
+        navigator.mediaSession.metadata = null
+        return
+      }
       navigator.mediaSession.metadata = new MediaMetadata({
         title: htmlDecode(track.title),
         artist: htmlDecode(track.author),
@@ -48,16 +52,17 @@ export function MediaSession({ track, paused }) {
       })
       navigator.mediaSession.playbackState = paused ? 'paused' : 'playing'
 
-      navigator.mediaSession.setActionHandler('play', () => { webSocket.sendData('pause') })
-      navigator.mediaSession.setActionHandler('pause', () => { webSocket.sendData('pause') })
-      navigator.mediaSession.setActionHandler('nexttrack', () => { webSocket.sendData('skip') })
-      navigator.mediaSession.setActionHandler('previoustrack', () => { webSocket.sendData('previous') })
+      navigator.mediaSession.setActionHandler('play', () => { webSocket.sendData('pause', guildId) })
+      navigator.mediaSession.setActionHandler('pause', () => { webSocket.sendData('pause', guildId) })
+      navigator.mediaSession.setActionHandler('nexttrack', () => { webSocket.sendData('skip', guildId) })
+      navigator.mediaSession.setActionHandler('previoustrack', () => { webSocket.sendData('previous', guildId) })
     }
-  }, [track, paused, webSocket])
+  }, [track, paused, webSocket, guildId])
   return <div className={'media-session'}/>
 }
 
 MediaSession.propTypes = {
-  track: PropTypes.object.isRequired,
-  paused: PropTypes.bool.isRequired
+  guildId: PropTypes.string.isRequired,
+  track: PropTypes.object,
+  paused: PropTypes.bool
 }

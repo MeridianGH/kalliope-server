@@ -4,7 +4,9 @@ import webpack from 'webpack'
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 const production = process.argv[process.argv.indexOf('--mode') + 1] !== 'development'
+const isDevServer = process.env.WEBPACK_SERVE === 'true'
 
+// noinspection JSUnusedGlobalSymbols
 export default {
   entry: path.resolve(__dirname, './src/app.js'),
   target: 'web',
@@ -36,7 +38,12 @@ export default {
     path: path.resolve(__dirname, './dist'),
     filename: 'bundle.js'
   },
-  plugins: [new webpack.DefinePlugin({ PRODUCTION: JSON.stringify(production) })],
+  plugins: [
+    new webpack.DefinePlugin({
+      PRODUCTION: JSON.stringify(production),
+      DEV_SERVER: JSON.stringify(isDevServer)
+    })
+  ],
   devtool: 'source-map',
   devServer: {
     static: path.resolve(__dirname, './dist'),

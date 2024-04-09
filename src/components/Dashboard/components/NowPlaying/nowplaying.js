@@ -77,15 +77,15 @@ export function NowPlaying({ player }) {
         <span>{current.info.author}</span>
       </div>
       <div className={'music-buttons flex-container nowrap'}>
-        <button onClick={() => { webSocket.sendData('shuffle') }}><i className={'fas fa-random'}/></button>
-        <button onClick={() => { webSocket.sendData('previous') }}><i className={'fas fa-angle-left'}/></button>
-        <button onClick={() => { webSocket.sendData('pause') }}><i className={player.paused ? 'fas fa-play' : 'fas fa-pause'}/></button>
-        <button onClick={() => { webSocket.sendData('skip') }}><i className={'fas fa-angle-right'}/></button>
-        <button onClick={() => { webSocket.sendData('repeat') }}><i className={player.repeatMode === 'off' ? 'fad fa-repeat-alt' : player.repeatMode === 'track' ? 'fas fa-repeat-1-alt' : 'fas fa-repeat'}/></button>
+        <button onClick={() => { webSocket.sendData('shuffle', player.guildId) }}><i className={'fas fa-random'}/></button>
+        <button onClick={() => { webSocket.sendData('previous', player.guildId) }}><i className={'fas fa-angle-left'}/></button>
+        <button onClick={() => { webSocket.sendData('pause', player.guildId) }}><i className={player.paused ? 'fas fa-play' : 'fas fa-pause'}/></button>
+        <button onClick={() => { webSocket.sendData('skip', player.guildId) }}><i className={'fas fa-angle-right'}/></button>
+        <button onClick={() => { webSocket.sendData('repeat', player.guildId) }}><i className={player.repeatMode === 'off' ? 'fad fa-repeat-alt' : player.repeatMode === 'track' ? 'fas fa-repeat-1-alt' : 'fas fa-repeat'}/></button>
       </div>
       <div className={'flex-container column'}>
         <div className={'volume-slider-container'}>
-          <input className={'volume-slider-input'} type={'range'} defaultValue={volume.toString()} step={'1'} min={'0'} max={'100'} onInput={(event) => { setVolume(event.target.value) }} onMouseUp={(event) => { webSocket.sendData('volume', { volume: event.target.value }) }}/>
+          <input className={'volume-slider-input'} type={'range'} defaultValue={volume.toString()} step={'1'} min={'0'} max={'100'} onInput={(event) => { setVolume(event.target.value) }} onMouseUp={(event) => { webSocket.sendData('volume', player.guildId, { volume: event.target.value }) }}/>
           <div className={'volume-slider-range'} style={{ width: `${100 - volume}%`, borderRadius: volume === 0 ? '5px' : '0 5px 5px 0' }}></div>
         </div>
         <div className={'volume-display'}><i className={volume === 0 ? 'fas fa-volume-off' : volume <= 33 ? 'fas fa-volume-down' : volume <= 66 ? 'fas fa-volume' : 'fas fa-volume-up'}/> {volume}</div>

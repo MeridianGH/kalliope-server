@@ -4,14 +4,16 @@ import { WebSocketContext } from '../../../WebSocket/websocket.js'
 import { Thumbnail } from '../Thumbnail/thumbnail.js'
 import './queue.scss'
 
-export function Queue({ current, tracks }) {
+export function Queue({ guildId, current, tracks }) {
   const webSocket = useContext(WebSocketContext).webSocket
   const input = React.createRef()
   const handlePlay = (event) => {
     event.preventDefault()
-    webSocket.sendData('play', { query: input.current.value })
+    if (!guildId) { return }
+    webSocket.sendData('play', guildId, { query: input.current.value })
     input.current.value = ''
   }
+
   // noinspection JSUnresolvedReference
   return (
     <div className={'queue-container flex-container column'}>
@@ -33,7 +35,7 @@ export function Queue({ current, tracks }) {
           <input type='text' className={'queue-input'} placeholder='Add to queue' ref={input}/>
           <button className={'queue-input-button'}><i className={'fas fa-plus'}/></button>
         </form>
-        <select className={'queue-input pointer'} name="filter" id={'filter'} onChange={(event) => { webSocket.sendData('filter', { filter: event.target.value }) }}>
+        <select className={'queue-input pointer'} name="filter" id={'filter'} onChange={(event) => { webSocket.sendData('filter', guildId, { filter: event.target.value }) }}>
           <option disabled hidden>Select a filter...</option>
           <option value={'none'}>No Filter</option>
           <option value={'bassboost'}>Bass Boost</option>
@@ -46,7 +48,7 @@ export function Queue({ current, tracks }) {
           <option value={'vaporwave'}>Vaporwave</option>
         </select>
         {/* eslint-disable-next-line no-irregular-whitespace */}
-        <button className={'queue-input pointer'} onClick={() => { webSocket.sendData('clear') }}><i className={'fas fa-trash-alt'}/> Clear queue</button>
+        <button className={'queue-input pointer'} onClick={() => { webSocket.sendData('clear', guildId) }}><i className={'fas fa-trash-alt'}/> Clear queue</button>
       </div>
       {/* eslint-disable-next-line no-extra-parens */}
       {tracks.length > 0 ? tracks.map((track, index) => (
@@ -57,8 +59,8 @@ export function Queue({ current, tracks }) {
             <a href={track.info.uri} rel='noreferrer' target='_blank'><b>{track.info.title}</b></a>
           </div>
           <div className={'queue-track-buttons flex-container'}>
-            <button onClick={() => { webSocket.sendData('remove', { index: index + 1 }) }}><i className={'fas fa-trash-alt'}/></button>
-            <button onClick={() => { webSocket.sendData('skip', { index: index + 1 }) }}><i className={'fas fa-forward'}/></button>
+            <button onClick={() => { webSocket.sendData('remove', guildId, { index: index + 1 }) }}><i className={'fas fa-trash-alt'}/></button>
+            <button onClick={() => { webSocket.sendData('skip', guildId, { index: index + 1 }) }}><i className={'fas fa-forward'}/></button>
           </div>
         </div>
       )) : <div className={'queue-track flex-container'}>No upcoming songs! Add songs with &apos;/play&apos; or by using the field above.</div>}
@@ -67,6 +69,7 @@ export function Queue({ current, tracks }) {
 }
 
 Queue.propTypes = {
+  guildId: PropTypes.string.isRequired,
   current: PropTypes.object,
   tracks: PropTypes.arrayOf(PropTypes.object).isRequired
 }

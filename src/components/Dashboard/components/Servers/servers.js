@@ -42,7 +42,7 @@ export function Servers({ setActiveTab, userGuilds = [], guildClientMap }) {
           key={index}
           className={'server-card flex-container column'}
           onClick={() => {
-            webSocket.sendData('requestPlayerData', { guildId: guild.id, clientId: guildClientMap[guild.id] })
+            webSocket.sendData('requestPlayerData', guild.id, { clientId: guildClientMap[guild.id] })
             setActiveTab(2)
           }}
         >
