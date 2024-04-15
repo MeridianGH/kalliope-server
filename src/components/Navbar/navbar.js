@@ -4,18 +4,20 @@ import { Link } from 'react-router-dom'
 import './navbar.scss'
 import kalliopeTransparentPNG from '../../assets/kalliope_transparent.png'
 
-export function Navbar({ displayLinks = false }) {
+export function Navbar({ displayLinks = false, hideOnMobile = true }) {
   return (
-    <nav className={'navbar flex-container space-between nowrap'}>
+    <nav className={`navbar flex-container space-between nowrap ${hideOnMobile ? 'hideOnMobile' : ''}`}>
       <Link to={'/'} className={'nav-logo-container'}>
         <div className={'flex-container nowrap'}>
           <img className={'nav-logo'} src={kalliopeTransparentPNG} alt={'Logo'}/>
           <h1 className={'nav-title'}>Kalliope.</h1>
         </div>
       </Link>
-      {displayLinks ?
+      {displayLinks && hideOnMobile ?
         <div className={'nav-link-container flex-container nowrap'}>
           <Link to={'/dashboard'}>Dashboard</Link>
+          <Link to={'/statistics'}>Statistics</Link>
+          <div className={'nav-separator'}/>
           <a href={'#features'}>Features</a>
           <a href={'#install'}>Install</a>
           <a href={'#commands'}>Commands</a>
@@ -26,4 +28,7 @@ export function Navbar({ displayLinks = false }) {
   )
 }
 
-Navbar.propTypes = { displayLinks: PropTypes.bool }
+Navbar.propTypes = {
+  displayLinks: PropTypes.bool,
+  hideOnMobile: PropTypes.bool
+}
