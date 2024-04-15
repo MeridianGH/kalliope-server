@@ -131,6 +131,11 @@ server.on('upgrade', (request, socket, head) => {
  */
 const clientDataMap = {}
 /**
+ * A list containing all guild IDs with active players.
+ * @type {Set<string>}
+ */
+const playerList = new Set()
+/**
  * A map containing the single responsible clientId for each guildId.
  * @description Structure: { guildId: clientId }
  * @type {{[key: string]: string}}
@@ -153,7 +158,10 @@ const userConnectionsByGuildMap = {}
 const heartbeat = setInterval(() => {
   wsServer.clients.forEach((ws) => {
     // noinspection JSUnresolvedReference
-    if (!ws.isAlive) { return ws.terminate() }
+    if (!ws.isAlive) {
+      logging.warn('[WebSocket] Peer did not respond to heartbeat in 60s. Terminating WebSocket...')
+      return ws.terminate()
+    }
     ws.isAlive = false
     ws.ping()
   })
@@ -165,13 +173,23 @@ wsServer.on('close', () => {
 wsServer.on('connection', (ws, req) => {
   ws.on('message', (message) => {
     /**
-     * @typedef {{type: 'clientData' | 'playerData', clientId: string, guilds?: string[], users?: number, guildId?: string}} ClientMessage
+     * @typedef {{ type: 'playerData', clientId: string, guildId: string, player: object }} PlayerDataMessage
+     */
+    /**
+     * @typedef {{type: 'clientData', clientId: string, guilds: string[], users: number}} ClientDataMessage
+     */
+    /**
+     * @typedef {ClientDataMessage | PlayerDataMessage} ClientMessage
+     */
+    /**
      * @typedef {{
      *  type: 'requestClientDataMap' | 'requestGuildClientMap' | 'requestPlayerData' | string,
      *  userId: string,
      *  clientId: string,
      *  guildId: string
      * }} UserMessage
+     */
+    /**
      * @typedef {ClientMessage | UserMessage} WebSocketMessage
      */
     /**
@@ -190,20 +208,22 @@ wsServer.on('connection', (ws, req) => {
 
     // User WebSocket
     if (isUserMessage(data)) {
-      // Stats page
-      if (!data.userId) {
-        if (data.type === 'requestClientDataMap') {
-          ws.send(JSON.stringify({ type: 'clientDataMap', map: clientDataMap }))
-          return
-        }
-        // Return if no user has been set and no "user-less" request occurred
-        return
-      }
+      if (!data.userId) { return }
 
       // Store user connection
+      Object.keys(userConnectionsByGuildMap).forEach((guildId) => {
+        if ((data.guildId ?? 'noGuild') === guildId) { return } // Return acts as continue in forEach
+        Object.keys(userConnectionsByGuildMap[guildId]).forEach((userId) => {
+          if (data.userId === userId) {
+            console.log('Deleted WS from ' + guildId)
+            delete userConnectionsByGuildMap[guildId][userId]
+            if (Object.keys(userConnectionsByGuildMap[guildId]).length === 0) {
+              delete userConnectionsByGuildMap[guildId]
+            }
+          }
+        })
+      })
       userConnectionsByGuildMap[data.guildId ?? 'noGuild'] = { ...userConnectionsByGuildMap[data.guildId ?? 'noGuild'], [data.userId]: ws }
-      // eslint-disable-next-line dot-notation
-      if (data.guildId && Object.keys(userConnectionsByGuildMap['noGuild'] ?? {}).includes(data.userId)) { delete userConnectionsByGuildMap['noGuild'][data.userId] }
 
       // Return guildClientMap
       if (data.type === 'requestGuildClientMap') {
@@ -215,6 +235,11 @@ wsServer.on('connection', (ws, req) => {
         ws.send(JSON.stringify({ type: 'clientDataMap', map: clientDataMap }))
         return
       }
+      // Return playerList
+      if (data.type === 'requestPlayerList') {
+        ws.send(JSON.stringify({ type: 'playerList', list: Array.from(playerList) }))
+        return
+      }
 
       // Forward data to client
       const clientWs = clientConnectionMap[data.clientId ?? guildClientMap[data.guildId]]
@@ -224,23 +249,42 @@ wsServer.on('connection', (ws, req) => {
 
     // Client WebSocket
     if (req.headers.host === 'clients.' + domain) {
-      if (!production) { console.log('received from client:', data) }
+      // if (!production) { console.log('received from client:', data) }
       // Verify and store client connection
       if (!data.clientId) { return }
       clientConnectionMap[data.clientId] = ws
 
       // Update clientData
       if (data.type === 'clientData') {
-        data.guilds.forEach((guildId) => {
-          guildClientMap[guildId] = data.clientId
-        })
-        clientDataMap[data.clientId] = { guilds: data.guilds, users: data.users }
+        let changed = false
+        if (data.guilds.length > 0) {
+          data.guilds.forEach((guildId) => {
+            if (guildClientMap[guildId] !== data.clientId) {
+              guildClientMap[guildId] = data.clientId
+              changed = true
+            }
+          })
+          const { type, clientId, ...clientData } = data
+          clientDataMap[data.clientId] = { ...clientDataMap[data.clientId], ...clientData }
+        }
         // eslint-disable-next-line dot-notation
         Object.values(userConnectionsByGuildMap['noGuild'] ?? {}).forEach((userWs) => {
-          userWs.send(JSON.stringify({ type: 'guildClientMap', map: guildClientMap }))
+          if (changed) { userWs.send(JSON.stringify({ type: 'guildClientMap', map: guildClientMap })) }
           userWs.send(JSON.stringify({ type: 'clientDataMap', map: clientDataMap }))
         })
         return
+      }
+
+      if (data.type === 'playerData') {
+        if (data.player) {
+          playerList.add(data.guildId)
+        } else {
+          playerList.delete(data.guildId)
+        }
+        // eslint-disable-next-line dot-notation
+        Object.values(userConnectionsByGuildMap['noGuild'] ?? {}).forEach((userWs) => {
+          userWs.send(JSON.stringify({ type: 'playerList', list: Array.from(playerList) }))
+        })
       }
 
       // Forward data to users
@@ -255,7 +299,7 @@ wsServer.on('connection', (ws, req) => {
     for (const guildId in userConnectionsByGuildMap) {
       const userId = Object.keys(userConnectionsByGuildMap[guildId]).find((key) => userConnectionsByGuildMap[guildId][key] === ws)
       if (userId) {
-        if (!production) { logging.info(`[WebSocket] User websocket closed with reason: ${code} | ${reason}`) }
+        if (!production) { logging.info(`[WebSocket] User websocket closed with reason: ${code} | ${reason ?? 'Unknown reason'}`) }
         delete userConnectionsByGuildMap[guildId][userId]
         if (Object.keys(userConnectionsByGuildMap[guildId]).length === 0 && guildId !== 'noGuild') {
           delete userConnectionsByGuildMap[guildId]
@@ -266,8 +310,17 @@ wsServer.on('connection', (ws, req) => {
 
     const clientId = Object.keys(clientConnectionMap).find((key) => clientConnectionMap[key] === ws)
     if (clientId) {
-      if (!production) { logging.info(`[WebSocket] Client connection closed with reason: ${code} | ${reason}`) }
+      if (!production) { logging.info(`[WebSocket] Client connection closed with reason: ${code} | ${reason ?? 'Unknown reason'}`) }
       delete clientConnectionMap[clientId]
+      delete clientDataMap[clientId]
+      Object.keys(guildClientMap).forEach((guildId) => {
+        if (guildClientMap[guildId] === clientId) { delete guildClientMap[guildId] }
+      })
+      // eslint-disable-next-line dot-notation
+      Object.values(userConnectionsByGuildMap['noGuild'] ?? {}).forEach((userWs) => {
+        userWs.send(JSON.stringify({ type: 'guildClientMap', map: guildClientMap }))
+        userWs.send(JSON.stringify({ type: 'clientDataMap', map: clientDataMap }))
+      })
     }
   })
 

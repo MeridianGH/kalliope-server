@@ -19,7 +19,7 @@ export function MediaSession({ guildId, track, paused }) {
       const div = document.querySelector('.media-session')
       const alert = document.createElement('button')
       alert.classList.add('autoplay-alert', 'flex-container', 'nowrap')
-      alert.innerHTML = '<i class="far fa-exclamation-triangle fa-1.5x"></i><span class="autoplay-text">Autoplay seems to be disabled. Enable Media Autoplay or click this message to use media buttons to control the music bot!'
+      alert.innerHTML = '<i class="far fa-exclamation-triangle fa-1.5x"></i><span class="autoplay-text">This website does not have permissions to automatically play media. Enable Media Autoplay or click this message to use media buttons to control the music bot!'
       alert.addEventListener('click', () => { playAudio().then(() => alert.remove()) })
       div.appendChild(alert)
     }
@@ -40,7 +40,7 @@ export function MediaSession({ guildId, track, paused }) {
   React.useEffect(() => {
     function htmlDecode(input) { return new DOMParser().parseFromString(input, 'text/html').documentElement.textContent }
     if ('mediaSession' in navigator) {
-      if (!track) {
+      if (!webSocket || !guildId || !track) {
         navigator.mediaSession.metadata = null
         return
       }
@@ -62,7 +62,7 @@ export function MediaSession({ guildId, track, paused }) {
 }
 
 MediaSession.propTypes = {
-  guildId: PropTypes.string.isRequired,
+  guildId: PropTypes.string,
   track: PropTypes.object,
   paused: PropTypes.bool
 }

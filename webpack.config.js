@@ -10,7 +10,7 @@ const isDevServer = process.env.WEBPACK_SERVE === 'true'
 export default {
   entry: path.resolve(__dirname, './src/app.js'),
   target: 'web',
-  mode: 'production',
+  mode: production ? 'production' : 'development',
   module: {
     rules: [
       {

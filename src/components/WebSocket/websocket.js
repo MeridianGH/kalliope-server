@@ -23,7 +23,7 @@ export function WebsocketProvider({ children }) {
     const ws = !DEV_SERVER ? new WebSocket(`ws${PRODUCTION ? 's' : ''}://${location.host}`) : new EventTarget()
     ws.sendData = (type = 'none', guildId, data = {}) => {
       data.type = type
-      data.userId = user?.id ?? null
+      data.userId = user?.id
       data.guildId = guildId
       if (!PRODUCTION) { console.log('client sent:', data) }
       try {
@@ -34,7 +34,9 @@ export function WebsocketProvider({ children }) {
     }
     setWebSocket(ws)
 
-    function closeWs() { ws.close(1000, 'WebSocket was closed by user.') }
+    function closeWs() {
+      if (!DEV_SERVER) { ws.close(1000, 'WebSocket was closed by user.') }
+    }
     window.addEventListener('unload', closeWs, { once: true })
     return closeWs
   }, [user?.id])

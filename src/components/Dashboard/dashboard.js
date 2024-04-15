@@ -1,4 +1,4 @@
-/* global PRODUCTION */
+/* global PRODUCTION, DEV_SERVER */
 
 import React, { useContext, useEffect, useState } from 'react'
 import { WebSocketContext } from '../WebSocket/websocket.js'
@@ -19,8 +19,12 @@ const playerObject = {
   'textChannelId': '658690163290931220',
   'paused': false,
   'volume': 50,
-  'position': 48660,
+  'position': 10000,
   'repeatMode': 'off',
+  'settings': {
+    'sponsorblock': true,
+    'sponsorblockSupport': true
+  },
   'queue': {
     'tracks': [
       {
@@ -58,7 +62,8 @@ const playerObject = {
       'requester': {
         'displayName': 'Meridian',
         'displayAvatarURL': 'https://cdn.discordapp.com/avatars/360817252158930954/5ca503af7e9f9b64c1eee2d4f947a29d.webp'
-      }
+      },
+      'segments': null
     }
   },
   'filters': {
@@ -71,27 +76,31 @@ export function Dashboard() {
   document.title = 'Kalliope | Dashboard'
 
   const user = useDiscordLogin()
-  const webSocketContext = useContext(WebSocketContext)
+  const webSocket = useContext(WebSocketContext).webSocket
   const [player, setPlayer] = useState(!PRODUCTION ? playerObject : null)
-  const [guildClientMap, setGuildClientMap] = useState({})
+  const [guildClientMap, setGuildClientMap] = useState(null)
+  const [playerList, setPlayerList] = useState(null)
   const [activeTab, setActiveTab] = useState(0)
 
   // WebSocket Effect
   useEffect(() => {
-    const webSocket = webSocketContext.webSocket
-    if (!webSocket || !user) { return }
+    if (!webSocket) { return }
 
     function onMessage(message) {
       const data = JSON.parse(message?.data)
       if (!PRODUCTION) { console.log('client received:', data) }
       if (data.type === 'guildClientMap') {
         setGuildClientMap(data.map)
+      } else if (data.type === 'playerList') {
+        setPlayerList(new Set(data.list))
       } else if (data.type === 'playerData') {
         setPlayer(data.player)
       }
     }
 
     function onClose() {
+      setGuildClientMap(null)
+      setPlayerList(null)
       setPlayer(null)
     }
 
@@ -102,13 +111,13 @@ export function Dashboard() {
       webSocket.removeEventListener('message', onMessage)
       webSocket.removeEventListener('close', onClose)
     }
-  }, [webSocketContext, user, player?.guildId])
+  }, [webSocket])
 
   const tabs = [
     <Start key={0} setActiveTab={setActiveTab} hasPlayer={!!player}/>,
-    <Servers key={1} setActiveTab={setActiveTab} userGuilds={user?.guilds} guildClientMap={guildClientMap}/>,
+    <Servers key={1} setActiveTab={setActiveTab} userGuilds={user?.guilds} guildClientMap={guildClientMap} playerList={playerList}/>,
     <NowPlaying key={2} player={player}/>,
-    <Queue key={3} guildId={player?.guildId} current={player?.queue?.current} tracks={player?.queue?.tracks ?? []}/>
+    <Queue key={3} guildId={player?.guildId} current={player?.queue?.current} tracks={player?.queue?.tracks ?? []} settings={player?.settings}/>
   ]
 
   return (

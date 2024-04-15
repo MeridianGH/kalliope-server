@@ -4,7 +4,7 @@ import { WebSocketContext } from '../../../WebSocket/websocket.js'
 import { Thumbnail } from '../Thumbnail/thumbnail.js'
 import './queue.scss'
 
-export function Queue({ guildId, current, tracks }) {
+export function Queue({ guildId, current, tracks, settings }) {
   const webSocket = useContext(WebSocketContext).webSocket
   const input = React.createRef()
   const handlePlay = (event) => {
@@ -32,10 +32,12 @@ export function Queue({ guildId, current, tracks }) {
       }
       <div className={'flex-container'}>
         <form onSubmit={handlePlay} className={'queue-input-form music-buttons'}>
-          <input type='text' className={'queue-input'} placeholder='Add to queue' ref={input}/>
+          <input type="text" className={'queue-input'} placeholder="Add to queue" ref={input}/>
           <button className={'queue-input-button'}><i className={'fas fa-plus'}/></button>
         </form>
-        <select className={'queue-input pointer'} name="filter" id={'filter'} onChange={(event) => { webSocket.sendData('filter', guildId, { filter: event.target.value }) }}>
+        <select className={'queue-input pointer'} name="filter" id={'filter'} onChange={(event) => {
+          webSocket.sendData('filter', guildId, { filter: event.target.value })
+        }}>
           <option disabled hidden>Select a filter...</option>
           <option value={'none'}>No Filter</option>
           <option value={'bassboost'}>Bass Boost</option>
@@ -48,7 +50,32 @@ export function Queue({ guildId, current, tracks }) {
           <option value={'vaporwave'}>Vaporwave</option>
         </select>
         {/* eslint-disable-next-line no-irregular-whitespace */}
-        <button className={'queue-input pointer'} onClick={() => { webSocket.sendData('clear', guildId) }}><i className={'fas fa-trash-alt'}/> Clear queue</button>
+        <button className={'queue-input pointer'} onClick={() => {
+          webSocket.sendData('clear', guildId)
+        }}><i className={'fas fa-trash-alt'}/> Clear queue
+        </button>
+      </div>
+      <div className={'flex-container'}>
+        <label className={'queue-input pointer'} onClick={(event) => {
+          event.preventDefault()
+          webSocket.sendData('autoplay', guildId)
+        }}>
+          <div className={'queue-input-toggle'}>
+            <input type={'checkbox'} checked={settings?.autoplay} readOnly={true}/>
+            <span/>
+          </div>
+          Autoplay
+        </label>
+        {settings?.sponsorblockSupport ? <label className={'queue-input pointer'} onClick={(event) => {
+          event.preventDefault()
+          webSocket.sendData('autoplay', guildId)
+        }}>
+          <div className={'queue-input-toggle'}>
+            <input type={'checkbox'} checked={settings?.sponsorblock} readOnly={true}/>
+            <span/>
+          </div>
+          SponsorBlock
+        </label> : ''}
       </div>
       {/* eslint-disable-next-line no-extra-parens */}
       {tracks.length > 0 ? tracks.map((track, index) => (
@@ -69,7 +96,8 @@ export function Queue({ guildId, current, tracks }) {
 }
 
 Queue.propTypes = {
-  guildId: PropTypes.string.isRequired,
+  guildId: PropTypes.string,
   current: PropTypes.object,
-  tracks: PropTypes.arrayOf(PropTypes.object).isRequired
+  tracks: PropTypes.arrayOf(PropTypes.object).isRequired,
+  settings: PropTypes.object
 }

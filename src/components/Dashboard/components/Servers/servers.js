@@ -5,12 +5,15 @@ import './servers.scss'
 import genericServer from '../../../../assets/generic_server.png'
 import { Loader } from '../../../Loader/loader.js'
 
-export function Servers({ setActiveTab, userGuilds = [], guildClientMap }) {
+export function Servers({ setActiveTab, userGuilds = [], guildClientMap, playerList }) {
   const webSocket = useContext(WebSocketContext).webSocket
 
   useEffect(() => {
-    if (webSocket.readyState === 1 && Object.keys(guildClientMap).length === 0) {
+    if (webSocket.readyState === 1 && !guildClientMap) {
       webSocket.sendData('requestGuildClientMap')
+    }
+    if (webSocket.readyState === 1) {
+      webSocket.sendData('requestPlayerList')
     }
   }, [webSocket, guildClientMap])
 
@@ -26,7 +29,7 @@ export function Servers({ setActiveTab, userGuilds = [], guildClientMap }) {
     })
   }, [])
 
-  if (!userGuilds || Object.keys(guildClientMap).length === 0) {
+  if (!userGuilds || !guildClientMap) {
     return (
       <div className={'server-container flex-container'}>
         <Loader/>
@@ -34,13 +37,21 @@ export function Servers({ setActiveTab, userGuilds = [], guildClientMap }) {
     )
   }
 
+  if (Object.keys(guildClientMap).length === 0) {
+    return (
+      <div className={'server-container flex-container'}>
+        <p>You have no servers in common with any instance of Kalliope.<br/>Host your own instance now using the <a href={'https://github.com/MeridianGH/Kalliope#installation'} className={'underline'}>instructions</a> and make sure it&apos;s properly configured.</p>
+      </div>
+    )
+  }
+
   return (
     <div className={'server-container flex-container'}>
       {/* eslint-disable-next-line no-extra-parens */}
-      {userGuilds.filter((guild) => Object.keys(guildClientMap).includes(guild.id)).map((guild, index) => (
+      {userGuilds.filter((guild) => Object.keys(guildClientMap ?? {}).includes(guild.id)).map((guild, index) => (
         <div
           key={index}
-          className={'server-card flex-container column'}
+          className={`server-card ${playerList?.has(guild.id) ? 'playing' : ''} flex-container column`}
           onClick={() => {
             webSocket.sendData('requestPlayerData', guild.id, { clientId: guildClientMap[guild.id] })
             setActiveTab(2)
@@ -57,5 +68,6 @@ export function Servers({ setActiveTab, userGuilds = [], guildClientMap }) {
 Servers.propTypes = {
   setActiveTab: PropTypes.func.isRequired,
   userGuilds: PropTypes.array,
-  guildClientMap: PropTypes.object.isRequired
+  guildClientMap: PropTypes.object,
+  playerList: PropTypes.object
 }
