@@ -4,7 +4,6 @@ import React, { useContext, useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { WebSocketContext } from '../../../WebSocket/websocket.js'
 import { Thumbnail } from '../Thumbnail/thumbnail.js'
-import { FastAverageColor } from 'fast-average-color'
 import './nowplaying.scss'
 
 function msToHMS(ms) {
@@ -50,14 +49,17 @@ export function NowPlaying({ player }) {
 
   useEffect(() => {
     if (!player?.queue?.current?.info.artworkUrl) { return }
-    const fac = new FastAverageColor()
-    fetch(window.location.origin + '/cors?url=' + encodeURIComponent(player.queue.current.info.artworkUrl)).then((response) => response.blob()).then((image) => {
-      // noinspection JSCheckFunctionSignatures
-      fac.getColorAsync(window.URL.createObjectURL(image), { algorithm: 'dominant', ignoredColor: [[0, 0, 0, 255, 50], [255, 255, 255, 255, 25]] }).then((color) => {
-        document.querySelector('.now-playing-container').style.setProperty('--dominant-color', color.hex)
-      }).catch((e) => { console.warn(e.message) })
-    })
-    return () => { fac.destroy() }
+
+    fetch(window.location.origin + '/colors', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        url: player?.queue?.current?.info.artworkUrl,
+        preventSimilar: getComputedStyle(document.documentElement).getPropertyValue('--hover')
+      })
+    }).then((res) => res.json()).then((body) => {
+      document.querySelector('.now-playing-container').style.setProperty('--dominant-color', body.color ?? 'var(--accent)')
+    }).catch((error) => console.warn(error))
   }, [player])
 
   const current = player?.queue?.current

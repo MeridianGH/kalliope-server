@@ -29,6 +29,7 @@
     "react-router-dom": "^6.8.0",
     "sass": "^1.69.5",
     "sass-loader": "^13.3.2",
+    "skia-canvas": "^1.0.1",
     "style-loader": "^3.3.1",
     "url-loader": "^4.1.1",
     "vanilla-tilt": "^1.8.0",

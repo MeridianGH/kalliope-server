@@ -10,6 +10,7 @@ import { WebSocketServer } from 'ws'
 import { logging } from './src/utilities/logging.js'
 import { Routes } from 'discord-api-types/v10'
 import os from 'os'
+import { findDominantColor, preventSimilarColor } from './src/utilities/colors.js'
 import 'dotenv/config'
 
 const app = express()
@@ -44,10 +45,16 @@ app.get('/login', (req, res) => {
   res.redirect(loginUrl)
 })
 
-// CORS Proxy
-app.get('/cors', (req, res) => {
+// Colors API
+const colors = {}
+app.post('/colors', express.json(), async (req, res) => {
   if (req.hostname !== domain) { return res.status(401).end() }
-  fetch(req.query.url).then((response) => { response.body.pipe(res) })
+
+  const color = colors[url] ?? await findDominantColor(req.body.url)
+  colors[url] = color
+  const notDark = preventSimilarColor(color, '#121212', true)
+  const corrected = preventSimilarColor(notDark, req.body.preventSimilar, true)
+  res.send({ color: corrected })
 })
 
 app.get('/auth', async (req, res) => {
