@@ -1,27 +1,20 @@
-import React, { useContext, useEffect } from 'react'
-import PropTypes from 'prop-types'
-import { Track } from '../../../types/types'
-import { WebSocketContext } from '../../../contexts/websocketContext'
-import nearSilence from './near-silence.mp3'
-import './mediasession.scss'
-import { useToasts } from '../../../hooks/toastHook'
+import { Track } from '../types/types'
+import { useContext, useEffect } from 'react'
+import { WebSocketContext } from '../contexts/websocketContext'
+import { useToasts } from './toastHook'
+import nearSilence from '../assets/near-silence.mp3'
 
-export interface MediaSessionProps {
-  guildId?: string,
-  track?: Track,
-  paused?: boolean
-}
-
-export function MediaSession({ guildId, track, paused }: MediaSessionProps) {
+export function useMediaSession(guildId?: string, track?: Track, paused?: boolean) {
   const webSocket = useContext(WebSocketContext)
   const toasts = useToasts()
 
   useEffect(() => {
     async function playAudio() {
-      const audio = document.querySelector('audio')
       try {
-        await audio?.play()
-        setTimeout(() => audio?.pause(), 100)
+        const audio = new Audio(nearSilence)
+        audio.volume = 0.00001
+        await audio.play()
+        setTimeout(() => audio.pause(), 100)
       } catch {
         displayAlert()
       }
@@ -30,7 +23,7 @@ export function MediaSession({ guildId, track, paused }: MediaSessionProps) {
       console.warn('Autoplay disabled!')
       toasts.persistent(
         'error',
-        'Autoplay disabled! Click this message to enable media notifications or allow autoplay.',
+        'Autoplay disabled! Close this message to enable media notifications or enable autoplay for this website in your browser.',
         (toast) => { playAudio().then(() => { toasts.remove(toast.id) }) }
       )
     }
@@ -40,15 +33,9 @@ export function MediaSession({ guildId, track, paused }: MediaSessionProps) {
       return
     }
 
-    // const audio = React.createElement('audio', { src: nearSilence, volume: 0.00001 })
-    const audio = document.createElement('audio')
-    audio.src = nearSilence
-    document.querySelector('.media-session')?.appendChild(audio)
-    audio.volume = 0.00001
-    audio.load()
     // noinspection JSIgnoredPromiseFromCall
     playAudio()
-  }, [])
+  }, [toasts])
   useEffect(() => {
     function htmlDecode(input: string) { return new DOMParser().parseFromString(input, 'text/html').documentElement.textContent }
     if ('mediaSession' in navigator) {
@@ -70,11 +57,4 @@ export function MediaSession({ guildId, track, paused }: MediaSessionProps) {
       navigator.mediaSession.setActionHandler('previoustrack', () => { webSocket.sendData('previous', { guildId: guildId }) })
     }
   }, [track, paused, webSocket, guildId])
-  return <div className={'media-session'}/>
-}
-
-MediaSession.propTypes = {
-  guildId: PropTypes.string,
-  track: PropTypes.object,
-  paused: PropTypes.bool
 }

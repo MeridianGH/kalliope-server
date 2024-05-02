@@ -3,10 +3,10 @@ import { GuildClientMapType, Nullable, Player, PlayerListType, ServerMessage } f
 import { useDiscordLogin } from '../../hooks/loginHook'
 import { WebSocketContext } from '../../contexts/websocketContext'
 import { useToasts } from '../../hooks/toastHook'
+import { useMediaSession } from '../../hooks/mediaSessionHook'
 import { Sidebar } from './Sidebar/sidebar'
 import { NowPlaying } from './NowPlaying/nowplaying'
 import { Queue } from './Queue/queue'
-import { MediaSession } from './MediaSession/mediasession'
 import { Start } from './Start/start'
 import { Background } from '../Background/background'
 import { Servers } from './Servers/servers'
@@ -83,6 +83,8 @@ export function Dashboard() {
   const [playerList, setPlayerList] = useState<Nullable<PlayerListType>>(null)
   const [activeTab, setActiveTab] = useState(0)
 
+  useMediaSession(player?.guildId, player?.queue.current, player?.paused)
+
   // WebSocket Effect
   useEffect(() => {
     if (!webSocket) { return }
@@ -135,7 +137,6 @@ export function Dashboard() {
       <div className={'sidebar-margin'}>
         {!user ? <div className={'flex-container'} style={{ height: '100%' }}><Loader/></div> : tabs[activeTab]}
       </div>
-      <MediaSession guildId={player?.guildId} track={player?.queue?.current} paused={player?.paused}/>
     </div>
   )
 }
