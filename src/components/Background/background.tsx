@@ -2,15 +2,15 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import './background.scss'
 
-export interface backgroundProps {
+export interface BackgroundProps {
   style?: 'solid' | 'gradient' | 'transparent'
 }
 
 /**
  * @category Components
- * @param props {backgroundProps}
+ * @param props {BackgroundProps}
  */
-export function Background({ style = 'gradient' }: backgroundProps) {
+export function Background({ style = 'gradient' }: BackgroundProps) {
   return (
     // eslint-disable-next-line react/no-unknown-property
     <svg className={'background'} xmlns={'http://www.w3.org/2000/svg'} version={'1.1'} width={'100%'} height={'100%'} preserveAspectRatio={'xMidYMid slice'} viewBox={'0 0 2560 1440'}>

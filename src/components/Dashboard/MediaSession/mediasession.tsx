@@ -1,9 +1,10 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { Track } from '../../../types/types'
-import { WebSocketContext } from '../../../context/websocket'
+import { WebSocketContext } from '../../../contexts/websocketContext'
 import nearSilence from './near-silence.mp3'
 import './mediasession.scss'
+import { useToasts } from '../../../hooks/toastHook'
 
 export interface MediaSessionProps {
   guildId?: string,
@@ -13,8 +14,9 @@ export interface MediaSessionProps {
 
 export function MediaSession({ guildId, track, paused }: MediaSessionProps) {
   const webSocket = useContext(WebSocketContext)
+  const toasts = useToasts()
 
-  React.useEffect(() => {
+  useEffect(() => {
     async function playAudio() {
       const audio = document.querySelector('audio')
       try {
@@ -26,17 +28,11 @@ export function MediaSession({ guildId, track, paused }: MediaSessionProps) {
     }
     function displayAlert() {
       console.warn('Autoplay disabled!')
-      const div = document.querySelector('.media-session')
-      const alert = document.createElement('button')
-      alert.classList.add('autoplay-alert', 'flex-container', 'nowrap')
-      alert.innerHTML =
-        '<i class="far fa-exclamation-triangle fa-1.5x"></i>' +
-        '<span class="autoplay-text">' +
-          'This website does not have permissions to automatically play media.' +
-          'Enable Media Autoplay or click this message to use media buttons to control the music bot!' +
-        '</span>'
-      alert.addEventListener('click', () => { playAudio().then(() => alert.remove()) })
-      div?.appendChild(alert)
+      toasts.persistent(
+        'error',
+        'Autoplay disabled! Click this message to enable media notifications or allow autoplay.',
+        (toast) => { playAudio().then(() => { toasts.remove(toast.id) }) }
+      )
     }
 
     if (!('mediaSession' in navigator)) {
@@ -44,6 +40,7 @@ export function MediaSession({ guildId, track, paused }: MediaSessionProps) {
       return
     }
 
+    // const audio = React.createElement('audio', { src: nearSilence, volume: 0.00001 })
     const audio = document.createElement('audio')
     audio.src = nearSilence
     document.querySelector('.media-session')?.appendChild(audio)
@@ -52,7 +49,7 @@ export function MediaSession({ guildId, track, paused }: MediaSessionProps) {
     // noinspection JSIgnoredPromiseFromCall
     playAudio()
   }, [])
-  React.useEffect(() => {
+  useEffect(() => {
     function htmlDecode(input: string) { return new DOMParser().parseFromString(input, 'text/html').documentElement.textContent }
     if ('mediaSession' in navigator) {
       if (!webSocket || !guildId || !track) {
@@ -67,10 +64,10 @@ export function MediaSession({ guildId, track, paused }: MediaSessionProps) {
       })
       navigator.mediaSession.playbackState = paused ? 'paused' : 'playing'
 
-      navigator.mediaSession.setActionHandler('play', () => { webSocket.sendData('pause', guildId) })
-      navigator.mediaSession.setActionHandler('pause', () => { webSocket.sendData('pause', guildId) })
-      navigator.mediaSession.setActionHandler('nexttrack', () => { webSocket.sendData('skip', guildId) })
-      navigator.mediaSession.setActionHandler('previoustrack', () => { webSocket.sendData('previous', guildId) })
+      navigator.mediaSession.setActionHandler('play', () => { webSocket.sendData('pause', { guildId: guildId }) })
+      navigator.mediaSession.setActionHandler('pause', () => { webSocket.sendData('pause', { guildId: guildId }) })
+      navigator.mediaSession.setActionHandler('nexttrack', () => { webSocket.sendData('skip', { guildId: guildId }) })
+      navigator.mediaSession.setActionHandler('previoustrack', () => { webSocket.sendData('previous', { guildId: guildId }) })
     }
   }, [track, paused, webSocket, guildId])
   return <div className={'media-session'}/>

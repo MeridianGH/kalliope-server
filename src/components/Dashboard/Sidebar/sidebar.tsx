@@ -7,9 +7,9 @@ import kalliopePNG from '../../../assets/kalliope.png'
 import './sidebar.scss'
 
 export interface SidebarProps {
-  activeTab: number
-  setActiveTab: (tab: number) => void
-  user: User
+  activeTab: number,
+  setActiveTab: (tab: number) => void,
+  user: User,
   hasPlayer: boolean
 }
 

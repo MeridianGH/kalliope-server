@@ -1,16 +1,16 @@
 import React, { useContext, useEffect } from 'react'
 import PropTypes from 'prop-types'
-import { guildClientMapType, playerListType, User } from '../../../types/types'
-import { WebSocketContext } from '../../../context/websocket'
+import { GuildClientMapType, PlayerListType, User } from '../../../types/types'
+import { WebSocketContext } from '../../../contexts/websocketContext'
 import { Loader } from '../../Loader/loader'
 import genericServer from '../../../assets/generic_server.png'
 import './servers.scss'
 
 export interface ServersProps {
-  setActiveTab: (tab: number) => void
-  userGuilds: User['guilds']
-  guildClientMap: guildClientMapType
-  playerList: playerListType
+  setActiveTab: (tab: number) => void,
+  userGuilds: User['guilds'],
+  guildClientMap: GuildClientMapType,
+  playerList: PlayerListType
 }
 
 export function Servers({ setActiveTab, userGuilds = [], guildClientMap, playerList }: ServersProps) {
@@ -62,7 +62,7 @@ export function Servers({ setActiveTab, userGuilds = [], guildClientMap, playerL
           key={index}
           className={`server-card ${playerList?.has(guild.id) ? 'playing' : ''} flex-container column`}
           onClick={() => {
-            webSocket?.sendData('requestPlayerData', guild.id, { clientId: guildClientMap[guild.id] })
+            webSocket?.sendData('requestPlayerData', { guildId: guild.id, clientId: guildClientMap[guild.id] })
             setActiveTab(2)
           }}
         >

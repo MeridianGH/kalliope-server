@@ -13,19 +13,18 @@ export function useDiscordLogin() {
       history.replaceState(null, '', location.href.split('?')[0])
       return
     }
-    const loginUrl = `https://discordapp.com/api/oauth2/authorize?client_id=1053262351803093032&scope=identify%20guilds&response_type=code&redirect_uri=${encodeURIComponent(window.location.origin + '/auth')}`
 
     const token = searchParams.get('token')
     const type = searchParams.get('type')
     if (!token) {
       setTimeout(() => {
-        window.location.replace(loginUrl)
+        window.location.replace(window.location.origin + '/login')
       }, 3000)
       return
     }
 
     async function fetchUser() {
-      if (!token) { return window.location.replace(loginUrl) }
+      if (!token) { return window.location.replace(window.location.origin + '/login') }
 
       const discordUser = await fetch('https://discord.com/api' + Routes.user(), {
         method: 'GET',
@@ -51,7 +50,7 @@ export function useDiscordLogin() {
       localStorage.setItem('user', JSON.stringify(discordUser))
       setUser(discordUser)
     }
-    fetchUser().catch(() => { window.location.replace(loginUrl) })
+    fetchUser().catch(() => { window.location.replace(window.location.origin + '/login') })
   }, [searchParams, user])
 
   return user

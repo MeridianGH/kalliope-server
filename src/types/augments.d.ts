@@ -1,10 +1,10 @@
-import { Nullable, PartialNullable, WebSocketData } from './types'
+import { UserMessage, UserMessageTypes } from './types'
 
 declare global {
   const PRODUCTION: boolean
   const DEV_SERVER: boolean
 
   export interface WebSocket {
-    sendData: (type: string, guildId?: Nullable<string>, data?: PartialNullable<WebSocketData>) => void
+    sendData<T extends UserMessageTypes>(type: T, data?: Omit<UserMessage<T>, 'type' | 'userId'>): void
   }
 }

@@ -1,29 +1,38 @@
 import React, { FormEvent, useContext } from 'react'
 import PropTypes from 'prop-types'
 import { Nullable, Player, Track } from '../../../types/types'
-import { WebSocketContext } from '../../../context/websocket'
+import { WebSocketContext } from '../../../contexts/websocketContext'
+import { useToasts } from '../../../hooks/toastHook'
 import { Thumbnail } from '../Thumbnail/thumbnail'
 import './queue.scss'
 
 export interface QueueProps {
-  guildId: Nullable<string>
-  current: Nullable<Track>
-  tracks: Nullable<Track[]>
+  guildId: Nullable<string>,
+  current: Nullable<Track>,
+  tracks: Nullable<Track[]>,
   settings: Nullable<Player['settings']>
 }
 
 export function Queue({ guildId, current, tracks, settings }: QueueProps) {
   const webSocket = useContext(WebSocketContext)
+  const toasts = useToasts()
   const inputRef = React.createRef<HTMLInputElement>()
+
   const handlePlay = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (!guildId) { return }
     const input = inputRef.current
-    webSocket?.sendData('play', guildId, { query: input?.value })
+    const query = input?.value
+    if (!query) { return }
+    webSocket?.sendData('play', { query: query, guildId: guildId })
+    toasts.info(`Adding "${query}" to the queue...`)
     if (input) { input.value = '' }
   }
 
-  // noinspection JSUnresolvedReference
+  if (!guildId) {
+    return <div className={'queue-container flex-container column'}>Please select a valid guild!</div>
+  }
+
   return (
     <div className={'queue-container flex-container column'}>
       <h1>Queue:</h1>
@@ -45,7 +54,8 @@ export function Queue({ guildId, current, tracks, settings }: QueueProps) {
           <button className={'queue-input-button'}><i className={'fas fa-plus'}/></button>
         </form>
         <select className={'queue-input pointer'} name="filter" id={'filter'} onChange={(event) => {
-          webSocket?.sendData('filter', guildId, { filter: event.target.value })
+          webSocket?.sendData('filter', { filter: event.target.value, guildId: guildId })
+          toasts.info('Changing filter...')
         }}>
           <option disabled hidden>Select a filter...</option>
           <option value={'none'}>No Filter</option>
@@ -59,14 +69,15 @@ export function Queue({ guildId, current, tracks, settings }: QueueProps) {
           <option value={'vaporwave'}>Vaporwave</option>
         </select>
         <button className={'queue-input pointer'} onClick={() => {
-          webSocket?.sendData('clear', guildId)
+          webSocket?.sendData('clear', { guildId: guildId })
+          toasts.info('Clearing the queue...')
         }}><i className={'fas fa-trash-alt'}/> Clear queue
         </button>
       </div>
       <div className={'flex-container'}>
         <label className={'queue-input pointer'} onClick={(event) => {
           event.preventDefault()
-          webSocket?.sendData('autoplay', guildId)
+          webSocket?.sendData('autoplay', { guildId: guildId })
         }}>
           <div className={'queue-input-toggle'}>
             <input type={'checkbox'} checked={settings?.autoplay} readOnly={true}/>
@@ -76,7 +87,7 @@ export function Queue({ guildId, current, tracks, settings }: QueueProps) {
         </label>
         {settings?.sponsorblockSupport ? <label className={'queue-input pointer'} onClick={(event) => {
           event.preventDefault()
-          webSocket?.sendData('autoplay', guildId)
+          webSocket?.sendData('autoplay', { guildId: guildId })
         }}>
           <div className={'queue-input-toggle'}>
             <input type={'checkbox'} checked={settings?.sponsorblock} readOnly={true}/>
@@ -94,8 +105,8 @@ export function Queue({ guildId, current, tracks, settings }: QueueProps) {
             <a href={track.info.uri} rel='noreferrer' target='_blank'><b>{track.info.title}</b></a>
           </div>
           <div className={'queue-track-buttons flex-container'}>
-            <button onClick={() => { webSocket?.sendData('remove', guildId, { index: index + 1 }) }}><i className={'fas fa-trash-alt'}/></button>
-            <button onClick={() => { webSocket?.sendData('skip', guildId, { index: index + 1 }) }}><i className={'fas fa-forward'}/></button>
+            <button onClick={() => { webSocket?.sendData('remove', { index: index + 1, guildId: guildId }) }}><i className={'fas fa-trash-alt'}/></button>
+            <button onClick={() => { webSocket?.sendData('skip', { index: index + 1, guildId: guildId }) }}><i className={'fas fa-forward'}/></button>
           </div>
         </div>
       )) : <div className={'queue-track flex-container'}>No upcoming songs! Add songs with &apos;/play&apos; or by using the field above.</div>}

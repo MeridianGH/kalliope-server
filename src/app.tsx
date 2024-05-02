@@ -6,10 +6,11 @@ import { Header } from './components/Header/header'
 import { Home } from './components/Home/home'
 import { Footer } from './components/Footer/footer'
 import { Dashboard } from './components/Dashboard/dashboard'
-import { WebsocketProvider } from './context/websocket'
+import { WebsocketProvider } from './contexts/websocketContext'
 import { Statistics } from './components/Statistics/statistics'
 import kalliopeTransparentPNG from './assets/kalliope_transparent.png'
 import './app.scss'
+import { ToastProvider } from './contexts/toastContext';
 
 (document.querySelector('link[rel=icon]') as HTMLLinkElement).href = kalliopeTransparentPNG
 
@@ -26,9 +27,11 @@ export function App() {
           </div>
         }/>
         <Route path={'/dashboard'} element={
-          <WebsocketProvider>
-            <Dashboard/>
-          </WebsocketProvider>
+          <ToastProvider>
+            <WebsocketProvider>
+              <Dashboard/>
+            </WebsocketProvider>
+          </ToastProvider>
         }/>
         <Route path={'/statistics'} element={
           <WebsocketProvider>

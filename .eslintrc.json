@@ -56,6 +56,10 @@
     "@typescript-eslint/semi": ["warn", "never"],
     "space-before-blocks": "warn",
     "space-before-function-paren": ["warn", { "anonymous": "never", "named": "never", "asyncArrow": "always" }],
-    "switch-colon-spacing": "warn"
+    "switch-colon-spacing": "warn",
+    "@typescript-eslint/member-delimiter-style": ["warn", {
+      "singleline": { "delimiter": "comma", "requireLast": false },
+      "multiline": { "delimiter": "comma", "requireLast": false }
+    }]
   }
 }

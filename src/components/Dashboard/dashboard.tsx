@@ -1,7 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { guildClientMapType, Nullable, Player, playerListType } from '../../types/types'
-import { WebSocketContext } from '../../context/websocket'
+import { GuildClientMapType, Nullable, Player, PlayerListType, ServerMessage } from '../../types/types'
 import { useDiscordLogin } from '../../hooks/loginHook'
+import { WebSocketContext } from '../../contexts/websocketContext'
+import { useToasts } from '../../hooks/toastHook'
 import { Sidebar } from './Sidebar/sidebar'
 import { NowPlaying } from './NowPlaying/nowplaying'
 import { Queue } from './Queue/queue'
@@ -76,9 +77,10 @@ export function Dashboard() {
 
   const user = useDiscordLogin()
   const webSocket = useContext(WebSocketContext)
+  const toasts = useToasts()
   const [player, setPlayer] = useState<Nullable<Player>>(!PRODUCTION ? playerObject : null)
-  const [guildClientMap, setGuildClientMap] = useState<Nullable<guildClientMapType>>(null)
-  const [playerList, setPlayerList] = useState<Nullable<playerListType>>(null)
+  const [guildClientMap, setGuildClientMap] = useState<Nullable<GuildClientMapType>>(null)
+  const [playerList, setPlayerList] = useState<Nullable<PlayerListType>>(null)
   const [activeTab, setActiveTab] = useState(0)
 
   // WebSocket Effect
@@ -86,7 +88,7 @@ export function Dashboard() {
     if (!webSocket) { return }
 
     function onMessage(message: MessageEvent) {
-      const data = JSON.parse(message?.data)
+      const data: ServerMessage = JSON.parse(message?.data)
       if (!PRODUCTION) { console.log('client received:', data) }
       if (data.type === 'guildClientMap') {
         setGuildClientMap(data.map)
@@ -94,6 +96,13 @@ export function Dashboard() {
         setPlayerList(new Set(data.list))
       } else if (data.type === 'playerData') {
         setPlayer(data.player)
+        let toast = ''
+        switch (data.isResponseTo) {
+          case 'play':
+            toast = `Added ${data.player.queue}`
+            break
+        }
+        if (toast !== '') { toasts.success(toast) }
       }
     }
 
@@ -110,7 +119,7 @@ export function Dashboard() {
       webSocket.removeEventListener('message', onMessage)
       webSocket.removeEventListener('close', onClose)
     }
-  }, [webSocket])
+  }, [toasts, webSocket])
 
   const tabs = [
     <Start key={0} setActiveTab={setActiveTab} hasPlayer={!!player}/>,

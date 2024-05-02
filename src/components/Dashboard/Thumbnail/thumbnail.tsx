@@ -5,7 +5,7 @@ import imagePlaceholder from '../../../assets/image_placeholder.png'
 import './thumbnail.scss'
 
 export interface ThumbnailProps {
-  image: Nullable<string>
+  image: Nullable<string>,
   size: `${number}${'%' | 'px' | 'em' | 'vh' | 'vw'}`
 }
 

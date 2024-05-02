@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
-import { Nullable } from '../types/types'
+import { Nullable, UserMessage } from '../types/types'
 import { useDiscordLogin } from '../hooks/loginHook'
 
 export const WebSocketContext = createContext<Nullable<WebSocket>>(null)
@@ -12,13 +12,12 @@ export function WebsocketProvider({ children }) {
   useEffect(() => {
     if (DEV_SERVER) { return }
     const ws = new WebSocket(`ws${PRODUCTION ? 's' : ''}://${location.host}`)
-    ws.sendData = (type = 'none', guildId, data = {}) => {
-      data.type = type
-      data.userId = user?.id
-      data.guildId = guildId
-      if (!PRODUCTION) { console.log('client sent:', data) }
+
+    ws.sendData = (type, data) => {
+      const message = Object.assign({ type: type, userId: user?.id }, data) as UserMessage<typeof type>
+      if (!PRODUCTION) { console.log('client sent:', message) }
       try {
-        ws.send(JSON.stringify(data))
+        ws.send(JSON.stringify(message))
       } catch (error) {
         console.error(error)
       }

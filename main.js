@@ -35,7 +35,7 @@ app.use((req, res, next) => {
 // Endpoints
 // Login endpoint
 app.get('/login', (_, res) => {
-    const loginUrl = `https://discordapp.com/api/oauth2/authorize?client_id=1053262351803093032&scope=identify%20guilds&response_type=code&redirect_uri=${encodeURIComponent(`${hostname}/callback`)}`;
+    const loginUrl = `https://discordapp.com/api/oauth2/authorize?client_id=1053262351803093032&scope=identify%20guilds&response_type=code&redirect_uri=${encodeURIComponent(`${hostname}/auth`)}`;
     res.redirect(loginUrl);
 });
 // Colors API
@@ -56,6 +56,9 @@ app.get('/auth', async (req, res) => {
     }
     if (!req.query.code || !(typeof req.query.code === 'string')) {
         return res.status(400).end();
+    }
+    if (!process.env.CLIENT_ID || !process.env.CLIENT_SECRET) {
+        logging.error('[OAuth Req] Client ID or secret not set. OAuth will fail.');
     }
     const body = new URLSearchParams({
         'client_id': process.env.CLIENT_ID ?? '',

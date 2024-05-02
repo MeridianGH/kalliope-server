@@ -8,14 +8,14 @@ const production = process.argv[2] !== 'development';
  */
 const clientDataMap = {};
 /**
- * A list containing all guild IDs with active players.
- */
-const playerList = new Set();
-/**
  * A map containing the single responsible clientId for each guildId.
  * @description Structure: { guildId: clientId }
  */
 const guildClientMap = {};
+/**
+ * A list containing all guild IDs with active players.
+ */
+const playerList = new Set();
 /**
  * A map containing the respective WebSocket object for each clientId.
  * @description Structure: { clientId: ws }
@@ -71,9 +71,10 @@ export function createWebSocketServer(domain) {
                 if (!data.userId) {
                     return;
                 }
+                const guildId = 'guildId' in data ? data.guildId : 'noGuild';
                 // Store user connection
                 Object.keys(userConnectionsByGuildMap).forEach((guildId) => {
-                    if ((data.guildId ?? 'noGuild') === guildId) {
+                    if (('guildId' in data ? data.guildId : 'noGuild') === guildId) {
                         return;
                     } // Return acts as continue in forEach
                     Object.keys(userConnectionsByGuildMap[guildId]).forEach((userId) => {
@@ -85,15 +86,15 @@ export function createWebSocketServer(domain) {
                         }
                     });
                 });
-                userConnectionsByGuildMap[data.guildId ?? 'noGuild'] = { ...userConnectionsByGuildMap[data.guildId ?? 'noGuild'], [data.userId]: ws };
-                // Return guildClientMap
-                if (data.type === 'requestGuildClientMap') {
-                    ws.send(JSON.stringify({ type: 'guildClientMap', map: guildClientMap }));
-                    return;
-                }
+                userConnectionsByGuildMap['guildId' in data ? data.guildId : 'noGuild'] = { ...userConnectionsByGuildMap['guildId' in data ? data.guildId : 'noGuild'], [data.userId]: ws };
                 // Return clientDataMap
                 if (data.type === 'requestClientDataMap') {
                     ws.send(JSON.stringify({ type: 'clientDataMap', map: clientDataMap }));
+                    return;
+                }
+                // Return guildClientMap
+                if (data.type === 'requestGuildClientMap') {
+                    ws.send(JSON.stringify({ type: 'guildClientMap', map: guildClientMap }));
                     return;
                 }
                 // Return playerList

@@ -1,6 +1,13 @@
 import { logging } from './utilities/logging.js'
 import { ServerOptions, WebSocket, WebSocketServer } from 'ws'
-import { clientDataMapType, guildClientMapType, Nullable, playerListType } from './src/types/types'
+import {
+  ClientDataMapType,
+  ClientMessage,
+  GuildClientMapType,
+  Nullable,
+  PlayerListType,
+  UserMessage
+} from './src/types/types'
 import 'dotenv/config'
 
 const production = process.argv[2] !== 'development'
@@ -12,16 +19,16 @@ type userConnectionByGuildMapType = Nullable<{ [guildId: string]: { [userId: str
  * A map containing client data organized by clientId.
  * @description Structure: { clientId: { guilds: string[], users: number } }
  */
-const clientDataMap: NonNullable<clientDataMapType> = {}
-/**
- * A list containing all guild IDs with active players.
- */
-const playerList: NonNullable<playerListType> = new Set<string>()
+const clientDataMap: NonNullable<ClientDataMapType> = {}
 /**
  * A map containing the single responsible clientId for each guildId.
  * @description Structure: { guildId: clientId }
  */
-const guildClientMap: NonNullable<guildClientMapType> = {}
+const guildClientMap: NonNullable<GuildClientMapType> = {}
+/**
+ * A list containing all guild IDs with active players.
+ */
+const playerList: NonNullable<PlayerListType> = new Set<string>()
 /**
  * A map containing the respective WebSocket object for each clientId.
  * @description Structure: { clientId: ws }
@@ -77,15 +84,6 @@ export function createWebSocketServer(domain: string) {
     ws.isAlive = true
 
     ws.on('message', (message) => {
-      type PlayerDataMessage = { type: 'playerData'; clientId: string; guildId: string; player: object }
-      type ClientDataMessage = { type: 'clientData'; clientId: string; guilds: string[]; users: number }
-      type ClientMessage = ClientDataMessage | PlayerDataMessage
-      type UserMessage = {
-        type: 'requestClientDataMap' | 'requestGuildClientMap' | 'requestPlayerData' | string
-        userId: string
-        clientId: string
-        guildId: string
-      }
       type WebSocketMessage = ClientMessage | UserMessage
       const data: WebSocketMessage = JSON.parse(message.toString())
 
@@ -97,9 +95,11 @@ export function createWebSocketServer(domain: string) {
         // User WebSocket
         if (!data.userId) { return }
 
+        const websocketGuildId = 'guildId' in data ? data.guildId : 'noGuild'
+
         // Store user connection
         Object.keys(userConnectionsByGuildMap).forEach((guildId) => {
-          if ((data.guildId ?? 'noGuild') === guildId) { return } // Return acts as continue in forEach
+          if (websocketGuildId === guildId) { return } // Return acts as continue in forEach
           Object.keys(userConnectionsByGuildMap[guildId]).forEach((userId) => {
             if (data.userId === userId) {
               delete userConnectionsByGuildMap[guildId][userId]
@@ -109,16 +109,16 @@ export function createWebSocketServer(domain: string) {
             }
           })
         })
-        userConnectionsByGuildMap[data.guildId ?? 'noGuild'] = { ...userConnectionsByGuildMap[data.guildId ?? 'noGuild'], [data.userId]: ws }
+        userConnectionsByGuildMap[websocketGuildId] = { ...userConnectionsByGuildMap[websocketGuildId], [data.userId]: ws }
 
-        // Return guildClientMap
-        if (data.type === 'requestGuildClientMap') {
-          ws.send(JSON.stringify({ type: 'guildClientMap', map: guildClientMap }))
-          return
-        }
         // Return clientDataMap
         if (data.type === 'requestClientDataMap') {
           ws.send(JSON.stringify({ type: 'clientDataMap', map: clientDataMap }))
+          return
+        }
+        // Return guildClientMap
+        if (data.type === 'requestGuildClientMap') {
+          ws.send(JSON.stringify({ type: 'guildClientMap', map: guildClientMap }))
           return
         }
         // Return playerList
@@ -128,7 +128,7 @@ export function createWebSocketServer(domain: string) {
         }
 
         // Forward data to client
-        const clientWs = clientConnectionMap[data.clientId ?? guildClientMap[data.guildId]]
+        const clientWs = clientConnectionMap['clientId' in data ? data.clientId : guildClientMap[websocketGuildId]]
         if (!clientWs) { return }
         clientWs.send(JSON.stringify(data))
       } else if (req.headers.host === 'clients.' + domain) {

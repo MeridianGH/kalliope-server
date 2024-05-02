@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { WebSocketContext } from '../../context/websocket'
+import { WebSocketContext } from '../../contexts/websocketContext'
 import { Navbar } from '../Navbar/navbar'
 import { Loader } from '../Loader/loader'
 import { Background } from '../Background/background'
 import './statistics.scss'
-import { clientDataMapType, playerListType } from '../../types/types'
+import { ClientDataMapType, PlayerListType } from '../../types/types'
 
 const clientDataMapObject = {
   '1031853575732740217': {
@@ -22,8 +22,8 @@ export function Statistics() {
   document.title = 'Kalliope | Statistics'
 
   const webSocket = useContext(WebSocketContext)
-  const [clientDataMap, setClientDataMap] = useState<clientDataMapType>(DEV_SERVER ? clientDataMapObject : null)
-  const [playerList, setPlayerList] = useState<playerListType>(new Set())
+  const [clientDataMap, setClientDataMap] = useState<ClientDataMapType>(DEV_SERVER ? clientDataMapObject : null)
+  const [playerList, setPlayerList] = useState<PlayerListType>(new Set())
 
   useEffect(() => {
     if (!webSocket) { return }
@@ -90,7 +90,7 @@ export function Statistics() {
                         {new Date(data.readyTimestamp).toLocaleString()}
                       </p>
                       <button onClick={(event) => {
-                        webSocket?.sendData('requestClientData', null, { clientId: clientId })
+                        webSocket?.sendData('requestClientData', { clientId: clientId, guildId: 'unused' })
                         event.currentTarget.animate([{ rotate: '0deg' }, { rotate: '360deg' }], { duration: 500, easing: 'ease-in-out' })
                       }}>
                         <i className="fas fa-redo"></i>
