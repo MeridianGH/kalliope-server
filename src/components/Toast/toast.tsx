@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useToasts } from '../../hooks/toastHook'
 import './toast.scss'
+import { flushSync } from 'react-dom'
 
 export interface ToastProps {
   id: number,
@@ -15,6 +16,7 @@ export function Toast({ id, type = 'info', message, persistent = false, onDismis
   const timeoutRef = useRef<number | undefined>()
   const progressRef = useRef<HTMLDivElement>(null)
   const [dismissed, setDismissed] = useState<boolean>(false)
+  const [remainingTime, setRemainingTime] = useState<number>()
 
   const handleDismiss = useCallback((force= false) => {
     if (!persistent || force) {
@@ -27,21 +29,26 @@ export function Toast({ id, type = 'info', message, persistent = false, onDismis
   }, [persistent, onDismiss, toasts, id, type, message])
 
   function handleMouseEnter() {
-    if (!progressRef.current) { return }
+    if (persistent || !progressRef.current) { return }
     progressRef.current.style.animationPlayState = 'paused'
+    setRemainingTime(progressRef.current.offsetWidth / (progressRef.current.parentElement?.offsetWidth ?? 1) * 5000)
     clearTimeout(timeoutRef.current)
   }
   function handleMouseLeave() {
-    if (!progressRef.current) { return }
+    if (persistent || !progressRef.current) { return }
     progressRef.current.style.animationPlayState = 'running'
-    const remaining = progressRef.current.offsetWidth / (progressRef.current.parentElement?.offsetWidth ?? 1) * 5000
-    timeoutRef.current = setTimeout(() => handleDismiss(), remaining)
+    timeoutRef.current = setTimeout(handleDismiss, remainingTime)
   }
 
   useEffect(() => {
-    timeoutRef.current = setTimeout(() => handleDismiss(), 5000)
-    return () => { clearTimeout(timeoutRef.current) }
-  }, [handleDismiss])
+    if (persistent) { return }
+    const remaining = progressRef.current ? progressRef.current.offsetWidth / (progressRef.current.parentElement?.offsetWidth ?? 1) * 5000 : 5000
+    timeoutRef.current = setTimeout(handleDismiss, remaining)
+    return () => {
+      clearTimeout(timeoutRef.current)
+      setRemainingTime(remaining)
+    }
+  }, [handleDismiss, persistent])
 
   const icon =
         type === 'info' ? 'fa-info-circle' :
