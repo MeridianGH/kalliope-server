@@ -98,13 +98,15 @@ export function Dashboard() {
         setPlayerList(new Set(data.list))
       } else if (data.type === 'playerData') {
         setPlayer(data.player)
-        let toast = ''
-        switch (data.isResponseTo) {
-          case 'play':
-            toast = `Added ${data.player.queue}`
-            break
+        if (data.responseTo?.userId === user.id) {
+          let toast = ''
+          switch (data.responseTo.type) {
+            case 'play':
+              toast = `Successfully added "${data.player.queue.tracks.at(-1)?.info.title}" to the queue.`
+              break
+          }
+          if (toast !== '') { toasts.success(toast) }
         }
-        if (toast !== '') { toasts.success(toast) }
       }
     }
 
@@ -121,7 +123,7 @@ export function Dashboard() {
       webSocket.removeEventListener('message', onMessage)
       webSocket.removeEventListener('close', onClose)
     }
-  }, [toasts, webSocket])
+  }, [toasts, user.id, webSocket])
 
   const tabs = [
     <Start key={0} setActiveTab={setActiveTab} hasPlayer={!!player}/>,

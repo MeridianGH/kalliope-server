@@ -3,30 +3,25 @@ import { ToastContainer } from '../components/ToastContainer/toastContainer'
 import { ToastProps } from '../components/Toast/toast'
 
 type toastContextType = {
-  info: (message: ToastProps['message']) => void,
-  success: (message: ToastProps['message']) => void,
-  warn: (message: ToastProps['message']) => void,
-  error: (message: ToastProps['message']) => void,
-  persistent: (type: ToastProps['type'], message: ToastProps['message'], onDismiss?: ToastProps['onDismiss']) => void,
+  info: (message: ToastProps['message']) => number,
+  success: (message: ToastProps['message']) => number,
+  warn: (message: ToastProps['message']) => number,
+  error: (message: ToastProps['message']) => number,
+  persistent: (type: ToastProps['type'], message: ToastProps['message']) => number,
   remove: (id: ToastProps['id']) => void
 }
 
 export const ToastContext = createContext<toastContextType | undefined>(undefined)
 
-type toastReducerAddAction = { type: 'ADD', payload: Omit<ToastProps, 'id'> }
+type toastReducerAddAction = { type: 'ADD', payload: ToastProps }
 type toastReducerRemoveAction = { type: 'REMOVE', payload: number }
 type toastReducerActionType = toastReducerAddAction | toastReducerRemoveAction
 
 
 function toastReducer(state: { toasts: ToastProps[] }, action: toastReducerActionType) {
-  let id: number
   switch (action.type) {
     case 'ADD':
-      id = Math.floor(Math.random() * 10000000)
-      while (state.toasts.map((toast) => toast.id).includes(id)) {
-        id = Math.floor(Math.random() * 10000000)
-      }
-      return { toasts: [...state.toasts, Object.assign(action.payload, { id: id }) as ToastProps] }
+      return { toasts: [...state.toasts, action.payload] }
     case 'REMOVE':
       return { toasts: state.toasts.filter((toast) => toast.id !== action.payload) }
   }
@@ -36,7 +31,12 @@ export function ToastProvider({ children }: { children: ReactElement }) {
   const [state, dispatch] = useReducer(toastReducer, { toasts: [] })
 
   function addToast(type: ToastProps['type'], message: ToastProps['message'], persistent?: ToastProps['persistent'], onDismiss?: ToastProps['onDismiss']) {
-    dispatch({ type: 'ADD', payload: { type: type, message: message, persistent: persistent, onDismiss: onDismiss } })
+    let id = Math.floor(Math.random() * 10000000)
+    while (state.toasts.map((toast) => toast.id).includes(id)) {
+      id = Math.floor(Math.random() * 10000000)
+    }
+    dispatch({ type: 'ADD', payload: { id: id, type: type, message: message, persistent: persistent, onDismiss: onDismiss } })
+    return id
   }
 
   const info: toastContextType['info'] = (message) => addToast('info', message)
@@ -47,9 +47,9 @@ export function ToastProvider({ children }: { children: ReactElement }) {
 
   const error: toastContextType['error'] = (message) => addToast('error', message)
 
-  const persistent: toastContextType['persistent'] = (type, message, onDismiss) => {
-    if (state.toasts.filter((toast) => toast.message === message).length > 0) { return }
-    addToast(type, message, true, onDismiss)
+  const persistent: toastContextType['persistent'] = (type, message) => {
+    if (state.toasts.filter((toast) => toast.message === message).length > 0) { return -1 }
+    return addToast(type, message, true)
   }
 
   const remove: toastContextType['remove'] = (id) => {

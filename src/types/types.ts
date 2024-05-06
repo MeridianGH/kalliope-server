@@ -2,8 +2,22 @@ import { APIGuild, APIUser } from 'discord-api-types/v10'
 
 export type Nullable<T> = T | null | undefined
 
-export type ClientDataMapType = Nullable<{
-  [clientId: string]: {
+export type ClientDataMapType = Nullable<{ [clientId: string]: ClientMessageOptions['clientData'] }>
+export type PlayerListType = Nullable<Set<string>>
+export type GuildClientMapType = Nullable<{ [guildId: string]: string }>
+
+export type User = APIUser & { guilds: APIGuild[] }
+
+type ClientMessageOptions = {
+  playerData: {
+    guildId: string,
+    player: Player,
+    responseTo?: {
+      type: keyof Omit<UserClientMessageOptions, 'requestPlayerData' | 'requestClientData'>,
+      userId: string
+    }
+  },
+  clientData: {
     guilds: string[],
     users: number,
     readyTimestamp: EpochTimeStamp,
@@ -12,22 +26,16 @@ export type ClientDataMapType = Nullable<{
     displayName: string,
     version: string
   }
-}>
-export type PlayerListType = Nullable<Set<string>>
-export type GuildClientMapType = Nullable<{ [guildId: string]: string }>
+}
+export type ClientMessageTypes = keyof ClientMessageOptions
+export type ClientMessage<T extends ClientMessageTypes = ClientMessageTypes> = { type: T, clientId: string } & ClientMessageOptions[T]
 
-export type User = APIUser & { guilds: APIGuild[] }
-
-type PlayerDataMessage = { type: 'playerData', clientId: string, guildId: string, player: Player, isResponseTo?: string }
-type ClientDataMessage = { type: 'clientData', clientId: string, guilds: string[], users: number }
-export type ClientMessage = ClientDataMessage | PlayerDataMessage
-
-interface UserServerMessageOptions {
+type UserServerMessageOptions = {
   requestClientDataMap: unknown,
   requestGuildClientMap: unknown,
   requestPlayerList: unknown
 }
-interface UserClientMessageOptions {
+type UserClientMessageOptions = {
   requestPlayerData: { clientId: string },
   requestClientData: { clientId: string },
   pause: unknown,
@@ -50,10 +58,17 @@ export type UserMessage<T = UserMessageTypes> =
   T extends keyof UserServerMessageOptions ? UserServerMessage<T> :
     T extends keyof UserClientMessageOptions ? UserClientMessage<T> :
       never
-type ClientDataMapMessage = { type: 'clientDataMap', map: ClientDataMapType }
-type GuildClientMapMessage = { type: 'guildClientMap', map: GuildClientMapType }
-type PlayerListMessage = { type: 'playerList', list: string[] }
-export type ServerMessage = ClientDataMapMessage | GuildClientMapMessage | PlayerListMessage | ClientMessage
+
+type ServerMessageOptions = {
+  clientDataMap: { map: ClientDataMapType },
+  guildClientMap: { map: GuildClientMapType },
+  playerList: { list: string[] }
+}
+type ServerMessageTypes = keyof ServerMessageOptions | keyof ClientMessageOptions
+export type ServerMessage<T = ServerMessageTypes> =
+  T extends keyof ServerMessageOptions ? { type: T } & ServerMessageOptions[T] :
+    T extends keyof ClientMessageOptions ? ClientMessage<T> :
+      never
 
 export type Player = {
   guildId: string,

@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useToasts } from '../../hooks/toastHook'
 import './toast.scss'
-import { flushSync } from 'react-dom'
 
 export interface ToastProps {
   id: number,

@@ -1,41 +1,43 @@
 import { Track } from '../types/types'
-import { useContext, useEffect } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { WebSocketContext } from '../contexts/websocketContext'
 import { useToasts } from './toastHook'
 import nearSilence from '../assets/near-silence.mp3'
 
 export function useMediaSession(guildId?: string, track?: Track, paused?: boolean) {
+  const [hasError, setHasError] = useState<boolean>(false)
   const webSocket = useContext(WebSocketContext)
   const toasts = useToasts()
 
-  useEffect(() => {
-    async function playAudio() {
-      try {
-        const audio = new Audio(nearSilence)
-        audio.volume = 0.00001
-        await audio.play()
-        setTimeout(() => audio.pause(), 100)
-      } catch {
-        displayAlert()
-      }
+  const displayAlert = useCallback(() => {
+    console.warn('Autoplay disabled!')
+    const toast = toasts.persistent(
+      'error',
+      'Autoplay disabled! Close this message to enable media notifications or enable autoplay for this website in your browser.'
+    )
+    return () => {
+      toasts.remove(toast)
+      setHasError(false)
     }
-    function displayAlert() {
-      console.warn('Autoplay disabled!')
-      toasts.persistent(
-        'error',
-        'Autoplay disabled! Close this message to enable media notifications or enable autoplay for this website in your browser.',
-        (toast) => { playAudio().then(() => { toasts.remove(toast.id) }) }
-      )
-    }
-
-    if (!('mediaSession' in navigator)) {
-      displayAlert()
-      return
-    }
-
-    // noinspection JSIgnoredPromiseFromCall
-    playAudio()
   }, [toasts])
+
+  useEffect(() => {
+    if (hasError) { return displayAlert() }
+  }, [hasError])
+
+  useEffect(() => {
+    if (!('mediaSession' in navigator)) { return displayAlert() }
+
+    const audio = new Audio(nearSilence)
+    audio.volume = 0.00001
+    audio.play()
+      .catch(() => {
+        setHasError(true)
+      })
+      .then(() => {
+        setTimeout(() => audio.pause(), 100)
+      })
+  }, [displayAlert])
   useEffect(() => {
     function htmlDecode(input: string) { return new DOMParser().parseFromString(input, 'text/html').documentElement.textContent }
     if ('mediaSession' in navigator) {
