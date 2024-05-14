@@ -19,7 +19,7 @@
     }
 
     &.playing {
-        border: 2px solid var(--accent);
+        background: linear-gradient(to bottom right, var(--accent), var(--accent-alt));
     }
 }
 .server-card-text {
