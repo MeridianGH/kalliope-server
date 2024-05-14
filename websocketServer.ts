@@ -138,8 +138,9 @@ export function createWebSocketServer(domain: string) {
         // if (!production) { console.log('received from client:', data) }
         clientConnectionMap[data.clientId] = ws
 
+        const isClientData = (data: ClientMessage): data is ClientMessage<'clientData'> => data.type === 'clientData'
         // Update clientData
-        if (data.type === 'clientData') {
+        if (isClientData(data)) {
           let changed = false
           if (data.guilds.length > 0) {
             data.guilds.forEach((guildId) => {
@@ -159,7 +160,8 @@ export function createWebSocketServer(domain: string) {
           return
         }
 
-        if (data.type === 'playerData') {
+        const isPlayerData = (data: ClientMessage): data is ClientMessage<'playerData'> => data.type === 'playerData'
+        if (isPlayerData(data)) {
           if (data.player) {
             playerList.add(data.guildId)
           } else {
@@ -172,7 +174,7 @@ export function createWebSocketServer(domain: string) {
         }
 
         // Forward data to users
-        if (!data.guildId || !userConnectionsByGuildMap[data.guildId]) { return }
+        if (!isPlayerData(data) || !userConnectionsByGuildMap[data.guildId]) { return }
         Object.values(userConnectionsByGuildMap[data.guildId]).forEach((userWs) => {
           userWs.send(JSON.stringify(data))
         })
