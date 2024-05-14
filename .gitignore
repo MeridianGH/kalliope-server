@@ -1,7 +1,6 @@
 node_modules/
 .idea
-dist/bundle.js
-dist/bundle.js.map
-dist/bundle.js.LICENSE.txt
+dist/
+!dist/index.html
 docs/
 .env

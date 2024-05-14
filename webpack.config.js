@@ -8,15 +8,15 @@ const isDevServer = process.env.WEBPACK_SERVE === 'true'
 
 // noinspection JSUnusedGlobalSymbols
 export default {
-  entry: path.resolve(__dirname, './src/app.js'),
+  entry: path.resolve(__dirname, './src/app.tsx'),
   target: 'web',
   mode: production ? 'production' : 'development',
   module: {
     rules: [
       {
-        test: /\.(js|jsx)$/,
+        test: /\.tsx?$/,
         exclude: /node_modules/,
-        use: ['babel-loader']
+        use: ['ts-loader']
       },
       {
         test: /\.scss$/,
@@ -33,7 +33,7 @@ export default {
       }
     ]
   },
-  resolve: { extensions: ['*', '.js', '.jsx'] },
+  resolve: { extensions: ['*', '.ts', '.tsx', '.js'] },
   output: {
     path: path.resolve(__dirname, './dist'),
     filename: 'bundle.js'

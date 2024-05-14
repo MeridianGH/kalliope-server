@@ -1,335 +1,124 @@
-import express from 'express'
-import https from 'https'
-import http from 'http'
-import url from 'url'
-import fs from 'fs'
-import path from 'path'
-import fetch from 'node-fetch'
-import httpProxy from 'http-proxy'
-import { WebSocketServer } from 'ws'
-import { logging } from './src/utilities/logging.js'
-import { Routes } from 'discord-api-types/v10'
-import os from 'os'
-import { findDominantColor, preventSimilarColor } from './src/utilities/colors.js'
-import 'dotenv/config'
-
-const app = express()
-const lavalinkProxy = httpProxy.createProxyServer({ target: 'http://localhost:2333', ws: true })
-
-const production = process.argv[2] !== 'development'
-
-const port = production ? 443 : 80
-const domain = production ? 'kalliope.cc' : 'localhost'
-const hostname = `http${production ? 's' : ''}://${domain}`
-
-const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
-
+import express from 'express';
+import { createServer as httpServer } from 'http';
+import { createServer as httpsServer } from 'https';
+import url from 'url';
+import fs from 'fs';
+import os from 'os';
+import path from 'path';
+import fetch from 'node-fetch';
+import httpProxy from 'http-proxy';
+import { Routes } from 'discord-api-types/v10';
+import { logging } from './utilities/logging.js';
+import { findDominantColor, preventSimilarColor } from './utilities/colors.js';
+import { createWebSocketServer } from './websocketServer.js';
+import 'dotenv/config';
+const app = express();
+const lavalinkProxy = httpProxy.createProxyServer({ target: 'http://localhost:2333', ws: true });
+const production = process.argv[2] !== 'development';
+const port = production ? 443 : 80;
+const domain = production ? 'kalliope.cc' : 'localhost';
+const hostname = `http${production ? 's' : ''}://${domain}`;
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 // Distribute folder
-app.use(express.static('dist', { index: '' }))
-
+app.use(express.static('dist', { index: '' }));
 // Validate URLs
 app.use((req, res, next) => {
-  try {
-    decodeURIComponent(req.path)
-  } catch (error) {
-    console.log('Error decoding URL: ' + req.path.toString())
-    return res.redirect(hostname)
-  }
-  next()
-})
-
+    try {
+        decodeURIComponent(req.path);
+    }
+    catch (error) {
+        console.log('Error decoding URL: ' + req.path.toString());
+        return res.redirect(hostname);
+    }
+    next();
+});
 // Endpoints
 // Login endpoint
-app.get('/login', (req, res) => {
-  const loginUrl = `https://discordapp.com/api/oauth2/authorize?client_id=1053262351803093032&scope=identify%20guilds&response_type=code&redirect_uri=${encodeURIComponent(`${hostname}/callback`)}`
-  res.redirect(loginUrl)
-})
-
+app.get('/login', (_, res) => {
+    const loginUrl = `https://discordapp.com/api/oauth2/authorize?client_id=1053262351803093032&scope=identify%20guilds&response_type=code&redirect_uri=${encodeURIComponent(`${hostname}/auth`)}`;
+    res.redirect(loginUrl);
+});
 // Colors API
-const colors = {}
+const colors = {};
 app.post('/colors', express.json(), async (req, res) => {
-  if (req.hostname !== domain) { return res.status(401).end() }
-
-  const color = colors[url] ?? await findDominantColor(req.body.url)
-  colors[url] = color
-  const notDark = preventSimilarColor(color, '#121212', true)
-  const corrected = preventSimilarColor(notDark, req.body.preventSimilar, true)
-  res.send({ color: corrected })
-})
-
+    if (req.hostname !== domain) {
+        return res.status(401).end();
+    }
+    const color = colors[req.body.url] ?? await findDominantColor(req.body.url);
+    colors[req.body.url] = color;
+    const notDark = preventSimilarColor(color, '#121212', true);
+    const corrected = preventSimilarColor(notDark, req.body.preventSimilar, true);
+    res.send({ color: corrected });
+});
 app.get('/auth', async (req, res) => {
-  if (req.hostname !== domain) { return res.status(401).end() }
-  if (!req.query.code) { return res.status(400).end() }
-
-  const body = new URLSearchParams({
-    'client_id': process.env.CLIENT_ID,
-    'client_secret': process.env.CLIENT_SECRET,
-    'code': req.query.code,
-    'grant_type': 'authorization_code',
-    'redirect_uri': `${hostname}/auth`
-  })
-
-  const token = await fetch('https://discord.com/api' + Routes.oauth2TokenExchange(), {
-    method: 'POST',
-    body: body,
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-  }).then((response) => response.json()).catch((e) => {
-    logging.error('[OAuth Req] Error fetching token while authenticating: ' + e)
-  })
-
-  res.redirect(`${hostname}/dashboard?token=${token.access_token}&type=${token.token_type}`)
-})
-
+    if (req.hostname !== domain) {
+        return res.status(401).end();
+    }
+    if (!req.query.code || !(typeof req.query.code === 'string')) {
+        return res.status(400).end();
+    }
+    if (!process.env.CLIENT_ID || !process.env.CLIENT_SECRET) {
+        logging.error('[OAuth Req] Client ID or secret not set. OAuth will fail.');
+    }
+    const body = new URLSearchParams({
+        'client_id': process.env.CLIENT_ID ?? '',
+        'client_secret': process.env.CLIENT_SECRET ?? '',
+        'code': req.query.code,
+        'grant_type': 'authorization_code',
+        'redirect_uri': `${hostname}/auth`
+    });
+    const token = await fetch('https://discord.com/api' + Routes.oauth2TokenExchange(), {
+        method: 'POST',
+        body: body,
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+    }).then((response) => response.json())
+        .catch((e) => {
+        logging.error('[OAuth Req] Error fetching token while authenticating: ' + e);
+    });
+    if (!token) {
+        return res.redirect(`${hostname}/login`);
+    }
+    res.redirect(`${hostname}/dashboard?token=${token.access_token}&type=${token.token_type}`);
+});
 // Lavalink endpoint
 app.all('/v4/*', (req, res) => {
-  if (req.hostname !== 'lavalink.' + domain) { return res.status(401).end() }
-  lavalinkProxy.web(req, res)
-})
-
+    if (req.hostname !== 'lavalink.' + domain) {
+        return res.status(401).end();
+    }
+    lavalinkProxy.web(req, res);
+});
 // Main endpoint
 app.get('*', (req, res) => {
-  if (req.hostname === 'clients.' + domain) { return res.redirect(hostname) }
-  if (req.hostname === 'lavalink.' + domain) {
-    if (req.path !== '/version' && req.path !== '/metrics') { return res.redirect(hostname) }
-    return lavalinkProxy.web(req, res, null, console.log)
-  }
-  res.sendFile(path.resolve(__dirname, './dist/index.html'))
-})
-
-const server = (production ? https : http).createServer(production ? {
-  cert: fs.readFileSync(`${os.homedir()}/.certbot/live/${domain}/fullchain.pem`),
-  key: fs.readFileSync(`${os.homedir()}/.certbot/live/${domain}/privkey.pem`)
-} : null, app)
-  .listen(port, null, null, () => {
-    logging.success(`Started server on ${hostname}.`)
-  })
-
-/**
- * The WebSocket Server managing all connections.
- * @type {WebSocket.Server<typeof WebSocket.WebSocket>}
- */
-const wsServer = new WebSocketServer({ noServer: true })
-
+    if (req.hostname === 'clients.' + domain) {
+        return res.redirect(hostname);
+    }
+    if (req.hostname === 'lavalink.' + domain) {
+        if (req.path !== '/version' && req.path !== '/metrics') {
+            return res.redirect(hostname);
+        }
+        return lavalinkProxy.web(req, res, {}, console.log);
+    }
+    res.sendFile(path.resolve(__dirname, './dist/index.html'));
+});
+const server = production ? httpsServer({
+    cert: fs.readFileSync(`${os.homedir()}/.certbot/live/${domain}/fullchain.pem`),
+    key: fs.readFileSync(`${os.homedir()}/.certbot/live/${domain}/privkey.pem`)
+}, app) : httpServer({}, app);
+server.listen({ port: port }, () => {
+    logging.success(`Started server on ${hostname}.`);
+});
+const wsServer = createWebSocketServer(domain);
 server.on('upgrade', (request, socket, head) => {
-  const { origin, host } = request.headers
-  if (host === 'lavalink.' + domain) {
-    return lavalinkProxy.ws(request, socket, head)
-  }
-  if (origin === hostname || host === 'clients.' + domain) {
-    return wsServer.handleUpgrade(request, socket, head, (socket) => {
-      wsServer.emit('connection', socket, request)
-    })
-  }
-  socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n')
-  socket.destroy()
-})
-
-/**
- * A map containing client data organized by clientId.
- * @description Structure: { clientId: { guildIds: string[], userCount: number } }
- * @type {{[key: string]: {guilds: string[], users: number}}}
- */
-const clientDataMap = {}
-/**
- * A list containing all guild IDs with active players.
- * @type {Set<string>}
- */
-const playerList = new Set()
-/**
- * A map containing the single responsible clientId for each guildId.
- * @description Structure: { guildId: clientId }
- * @type {{[key: string]: string}}
- */
-const guildClientMap = {}
-/**
- * A map containing the respective WebSocket object for each clientId.
- * @description Structure: { clientId: ws }
- * @type {{[key: string]: WebSocket}}
- */
-const clientConnectionMap = {}
-/**
- * A map containing WebSocket objects for each connected user organized by guildId.
- * @description Structure: { guildId: { userId: ws } }
- * @type {{[key: string]: {[key: string]: WebSocket}}}
- */
-const userConnectionsByGuildMap = {}
-
-// WebSocket Heartbeat
-const heartbeat = setInterval(() => {
-  wsServer.clients.forEach((ws) => {
-    // noinspection JSUnresolvedReference
-    if (!ws.isAlive) {
-      logging.warn('[WebSocket] Peer did not respond to heartbeat in 60s. Terminating WebSocket...')
-      return ws.terminate()
+    const { origin, host } = request.headers;
+    if (host === 'lavalink.' + domain) {
+        return lavalinkProxy.ws(request, socket, head);
     }
-    ws.isAlive = false
-    ws.ping()
-  })
-}, 60 * 1000)
-wsServer.on('close', () => {
-  clearInterval(heartbeat)
-})
-
-wsServer.on('connection', (ws, req) => {
-  ws.on('message', (message) => {
-    /**
-     * @typedef {{ type: 'playerData', clientId: string, guildId: string, player: object }} PlayerDataMessage
-     */
-    /**
-     * @typedef {{type: 'clientData', clientId: string, guilds: string[], users: number}} ClientDataMessage
-     */
-    /**
-     * @typedef {ClientDataMessage | PlayerDataMessage} ClientMessage
-     */
-    /**
-     * @typedef {{
-     *  type: 'requestClientDataMap' | 'requestGuildClientMap' | 'requestPlayerData' | string,
-     *  userId: string,
-     *  clientId: string,
-     *  guildId: string
-     * }} UserMessage
-     */
-    /**
-     * @typedef {ClientMessage | UserMessage} WebSocketMessage
-     */
-    /**
-     * @type {WebSocketMessage}
-     */
-    const data = JSON.parse(message.toString())
-
-    /**
-     *
-     * @param {WebSocketMessage} [data] The data to check.
-     * @returns {data is UserMessage} If the data is from a user.
-     */
-    function isUserMessage(data) {
-      return data ? req.headers.host === domain : false
+    if (origin === hostname || host === 'clients.' + domain) {
+        return wsServer.handleUpgrade(request, socket, head, (socket) => {
+            wsServer.emit('connection', socket, request);
+        });
     }
-
-    // User WebSocket
-    if (isUserMessage(data)) {
-      if (!data.userId) { return }
-
-      // Store user connection
-      Object.keys(userConnectionsByGuildMap).forEach((guildId) => {
-        if ((data.guildId ?? 'noGuild') === guildId) { return } // Return acts as continue in forEach
-        Object.keys(userConnectionsByGuildMap[guildId]).forEach((userId) => {
-          if (data.userId === userId) {
-            console.log('Deleted WS from ' + guildId)
-            delete userConnectionsByGuildMap[guildId][userId]
-            if (Object.keys(userConnectionsByGuildMap[guildId]).length === 0) {
-              delete userConnectionsByGuildMap[guildId]
-            }
-          }
-        })
-      })
-      userConnectionsByGuildMap[data.guildId ?? 'noGuild'] = { ...userConnectionsByGuildMap[data.guildId ?? 'noGuild'], [data.userId]: ws }
-
-      // Return guildClientMap
-      if (data.type === 'requestGuildClientMap') {
-        ws.send(JSON.stringify({ type: 'guildClientMap', map: guildClientMap }))
-        return
-      }
-      // Return clientDataMap
-      if (data.type === 'requestClientDataMap') {
-        ws.send(JSON.stringify({ type: 'clientDataMap', map: clientDataMap }))
-        return
-      }
-      // Return playerList
-      if (data.type === 'requestPlayerList') {
-        ws.send(JSON.stringify({ type: 'playerList', list: Array.from(playerList) }))
-        return
-      }
-
-      // Forward data to client
-      const clientWs = clientConnectionMap[data.clientId ?? guildClientMap[data.guildId]]
-      if (!clientWs) { return }
-      clientWs.send(JSON.stringify(data))
-    }
-
-    // Client WebSocket
-    if (req.headers.host === 'clients.' + domain) {
-      // if (!production) { console.log('received from client:', data) }
-      // Verify and store client connection
-      if (!data.clientId) { return }
-      clientConnectionMap[data.clientId] = ws
-
-      // Update clientData
-      if (data.type === 'clientData') {
-        let changed = false
-        if (data.guilds.length > 0) {
-          data.guilds.forEach((guildId) => {
-            if (guildClientMap[guildId] !== data.clientId) {
-              guildClientMap[guildId] = data.clientId
-              changed = true
-            }
-          })
-          const { type, clientId, ...clientData } = data
-          clientDataMap[data.clientId] = { ...clientDataMap[data.clientId], ...clientData }
-        }
-        // eslint-disable-next-line dot-notation
-        Object.values(userConnectionsByGuildMap['noGuild'] ?? {}).forEach((userWs) => {
-          if (changed) { userWs.send(JSON.stringify({ type: 'guildClientMap', map: guildClientMap })) }
-          userWs.send(JSON.stringify({ type: 'clientDataMap', map: clientDataMap }))
-        })
-        return
-      }
-
-      if (data.type === 'playerData') {
-        if (data.player) {
-          playerList.add(data.guildId)
-        } else {
-          playerList.delete(data.guildId)
-        }
-        // eslint-disable-next-line dot-notation
-        Object.values(userConnectionsByGuildMap['noGuild'] ?? {}).forEach((userWs) => {
-          userWs.send(JSON.stringify({ type: 'playerList', list: Array.from(playerList) }))
-        })
-      }
-
-      // Forward data to users
-      if (!data.guildId || !userConnectionsByGuildMap[data.guildId]) { return }
-      Object.values(userConnectionsByGuildMap[data.guildId]).forEach((userWs) => {
-        userWs.send(JSON.stringify(data))
-      })
-    }
-  })
-
-  ws.on('close', (code, reason) => {
-    for (const guildId in userConnectionsByGuildMap) {
-      const userId = Object.keys(userConnectionsByGuildMap[guildId]).find((key) => userConnectionsByGuildMap[guildId][key] === ws)
-      if (userId) {
-        if (!production) { logging.info(`[WebSocket] User websocket closed with reason: ${code} | ${reason ?? 'Unknown reason'}`) }
-        delete userConnectionsByGuildMap[guildId][userId]
-        if (Object.keys(userConnectionsByGuildMap[guildId]).length === 0 && guildId !== 'noGuild') {
-          delete userConnectionsByGuildMap[guildId]
-        }
-        return
-      }
-    }
-
-    const clientId = Object.keys(clientConnectionMap).find((key) => clientConnectionMap[key] === ws)
-    if (clientId) {
-      if (!production) { logging.info(`[WebSocket] Client connection closed with reason: ${code} | ${reason ?? 'Unknown reason'}`) }
-      delete clientConnectionMap[clientId]
-      delete clientDataMap[clientId]
-      Object.keys(guildClientMap).forEach((guildId) => {
-        if (guildClientMap[guildId] === clientId) { delete guildClientMap[guildId] }
-      })
-      // eslint-disable-next-line dot-notation
-      Object.values(userConnectionsByGuildMap['noGuild'] ?? {}).forEach((userWs) => {
-        userWs.send(JSON.stringify({ type: 'guildClientMap', map: guildClientMap }))
-        userWs.send(JSON.stringify({ type: 'clientDataMap', map: clientDataMap }))
-      })
-    }
-  })
-
-  ws.isAlive = true
-  ws.on('pong', () => {
-    ws.isAlive = true
-  })
-
-  ws.on('error', (error) => {
-    logging.error(`[WebSocket] Encountered error: ${error}`)
-  })
-})
+    socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n');
+    socket.destroy();
+});
+//# sourceMappingURL=main.js.map

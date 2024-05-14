@@ -1,0 +1,36 @@
+.server-container {
+    padding: 1rem;
+    height: 100svh;
+    box-sizing: border-box;
+}
+
+.server-card {
+    width: 200px;
+    padding: 1rem;
+    border-radius: 1rem;
+    background-color: var(--bg-lvl1);
+    box-shadow: 2px 2px 5px black;
+    cursor: pointer;
+
+    > img {
+        height: 100%;
+        width: 100%;
+        border-radius: inherit;
+    }
+
+    &.playing {
+        background: linear-gradient(to bottom right, var(--accent), var(--accent-alt));
+    }
+}
+.server-card-text {
+    width: 200px;
+    overflow: hidden;
+    text-align: center;
+
+    > span {
+        font-size: 1rem;
+        white-space: nowrap;
+        transition-property: margin-left;
+        transition-timing-function: ease-in-out;
+    }
+}
