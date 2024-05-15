@@ -2,5 +2,8 @@ node_modules/
 .idea
 dist/
 !dist/index.html
+*.js
+*.js.map
+!webpack.config.js
 docs/
 .env
