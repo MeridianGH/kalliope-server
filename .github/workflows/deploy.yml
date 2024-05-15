@@ -1,6 +1,7 @@
 name: Deploy via SSH
 
 on:
+  workflow_dispatch:
   push:
     branches: ['main']
 
@@ -26,11 +27,4 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          script: |
-            cd KalliopeServer
-            git fetch
-            git reset --hard FETCH_HEAD
-            npm ci --omit=dev
-            npx webpack
-            screen -S KalliopeServer -X quit
-            screen -dmS KalliopeServer bash -c "cd ~/KalliopeServer; node ."
+          script: ./release.sh
