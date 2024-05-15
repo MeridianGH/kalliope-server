@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsc -b --verbose && concurrently -n \"webpack,node\" -c \"bgBlue.bold,bgGreen.bold\" \"webpack --mode development --watch\" \"node . development\"",
-    "start": "webpack && node .",
+    "start": "tsc && webpack && node .",
     "serve": "webpack serve --config webpack.config.js --mode development",
     "lint": "eslint .",
     "docs": "typedoc --tsconfig ./src/tsconfig.json"
