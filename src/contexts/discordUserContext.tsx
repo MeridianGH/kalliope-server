@@ -24,7 +24,6 @@ export function DiscordUserProvider({ children }: PropsWithChildren) {
 
   const requestAuth = useCallback(() => {
     const randomState = generateState()
-    console.log('generated state:', randomState)
     localStorage.setItem('oauth-state', JSON.stringify({ state: randomState, redirect: window.location.href }))
 
     const url = new URL(window.location.origin)
@@ -41,7 +40,6 @@ export function DiscordUserProvider({ children }: PropsWithChildren) {
     }
 
     const oauthState = JSON.parse(localStorage.getItem('oauth-state') ?? 'null')
-    console.log('comparing states:', state ? atob(state) : 'huh?', oauthState.state)
     if (!state || atob(state) !== oauthState.state) { throw 'State does not exist or match stored value.' }
 
     const discordUser = await fetch('https://discord.com/api' + Routes.user(), {

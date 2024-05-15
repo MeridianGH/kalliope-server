@@ -97,7 +97,7 @@ export function Statistics() {
                         {new Date(data.readyTimestamp).toLocaleString()}
                       </p>
                       <button onClick={(event) => {
-                        webSocket?.sendData('requestClientData', { clientId: clientId, guildId: 'unused' })
+                        webSocket?.sendData('requestClientData', { clientId: clientId, guildId: 'noGuild' })
                         event.currentTarget.animate([{ rotate: '0deg' }, { rotate: '360deg' }], { duration: 500, easing: 'ease-in-out' })
                       }}>
                         <i className="fas fa-redo"></i>
