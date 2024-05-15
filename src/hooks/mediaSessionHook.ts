@@ -38,7 +38,6 @@ export function useMediaSession(guildId?: string, track?: Track, paused?: boolea
           // setTimeout(() => audio.pause(), 500)
         })
         .catch(() => {
-          console.log('catch audio')
           setHasError(true)
           audio.remove()
         })
@@ -46,7 +45,7 @@ export function useMediaSession(guildId?: string, track?: Track, paused?: boolea
     return () => {
       audio.loop = false
     }
-  }, [displayAlert, hasError])
+  }, [displayAlert, hasError, track])
 
   useEffect(() => {
     if (!('mediaSession' in navigator)) {

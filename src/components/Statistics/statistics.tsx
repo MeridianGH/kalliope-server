@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { Fragment, useContext, useEffect, useState } from 'react'
 import { WebSocketContext } from '../../contexts/websocketContext'
 import { Navbar } from '../Navbar/navbar'
 import { Loader } from '../Loader/loader'
@@ -30,9 +30,7 @@ export function Statistics() {
 
     function onMessage(message: MessageEvent) {
       const data = JSON.parse(message?.data)
-      if (!PRODUCTION) {
-        console.log('client received:', data)
-      }
+      if (!PRODUCTION) { console.log('client received:', data) }
       if (data.type === 'clientDataMap') {
         setClientDataMap(data.map)
       } else if (data.type === 'playerList') {
@@ -55,7 +53,7 @@ export function Statistics() {
   const clientData = Object.values(clientDataMap ?? {})
 
   return (
-    <div>
+    <Fragment>
       <Navbar hideOnMobile={false} />
       <div className={'stats-background-container'}>
         <Background/>
@@ -63,7 +61,16 @@ export function Statistics() {
       <div className={'stats-container flex-container column'}>
         <h1>Statistics</h1>
         <div className={'stats-card'}>
-          {clientData.length === 0 ? <div className={'flex-container column'} style={{ height: '100%' }}><Loader/></div> :
+          {clientDataMap === null && <div className={'flex-container column'}><Loader/></div>}
+          {!!clientDataMap && clientData.length === 0 &&
+            <p>
+              You have no servers in common with any instance of Kalliope.<br/>
+              Host your own instance now using
+              the <a href={'https://github.com/MeridianGH/Kalliope#installation'} className={'underline'}>instructions</a> and
+              make sure it&apos;s properly configured.
+            </p>
+          }
+          {clientData.length > 0 &&
             <div>
               Total guilds: {clientData.reduce((acc, cur) => cur.guilds.length + acc, 0)}<br/>
               Total users: {clientData.reduce((acc, cur) => cur.users + acc, 0)}<br/>
@@ -103,6 +110,6 @@ export function Statistics() {
           }
         </div>
       </div>
-    </div>
+    </Fragment>
   )
 }

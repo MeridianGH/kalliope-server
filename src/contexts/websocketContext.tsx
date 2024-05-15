@@ -1,7 +1,7 @@
 import React, { createContext, useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { Nullable, UserMessage } from '../types/types'
-import { useDiscordLogin } from '../hooks/loginHook'
+import { useDiscordLogin } from '../hooks/discordLoginHook'
 
 export const WebSocketContext = createContext<Nullable<WebSocket>>(null)
 

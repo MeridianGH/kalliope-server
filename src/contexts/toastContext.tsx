@@ -1,4 +1,12 @@
-import React, { createContext, ReactElement, useCallback, useReducer } from 'react'
+import React, {
+  ComponentProps,
+  createContext,
+  FC,
+  PropsWithChildren,
+  ReactElement,
+  useCallback,
+  useReducer
+} from 'react'
 import { ToastContainer } from '../components/ToastContainer/toastContainer'
 import { ToastProps } from '../components/Toast/toast'
 
@@ -19,7 +27,6 @@ type toastReducerActionType = toastReducerAddAction | toastReducerRemoveAction
 
 
 function toastReducer(state: { toasts: ToastProps[] }, action: toastReducerActionType) {
-  console.log(action)
   let id: ToastProps['id']
   switch (action.type) {
     case 'ADD':
@@ -33,7 +40,7 @@ function toastReducer(state: { toasts: ToastProps[] }, action: toastReducerActio
   }
 }
 
-export function ToastProvider({ children }: { children: ReactElement }) {
+export function ToastProvider({ children }: PropsWithChildren) {
   const [state, dispatch] = useReducer(toastReducer, { toasts: [] })
 
   const addToast = useCallback((type: ToastProps['type'], message: ToastProps['message'], persistent?: ToastProps['persistent'], onDismiss?: ToastProps['onDismiss']) => {

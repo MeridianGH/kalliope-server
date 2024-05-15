@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { GuildClientMapType, Nullable, Player, PlayerListType, ServerMessage } from '../../types/types'
-import { useDiscordLogin } from '../../hooks/loginHook'
+import { useDiscordLogin } from '../../hooks/discordLoginHook'
 import { WebSocketContext } from '../../contexts/websocketContext'
 import { useToasts } from '../../hooks/toastHook'
 import { useMediaSession } from '../../hooks/mediaSessionHook'
@@ -87,7 +87,7 @@ export function Dashboard() {
 
   // WebSocket Effect
   useEffect(() => {
-    if (!webSocket) { return }
+    if (!webSocket || !user?.id) { return }
 
     function onMessage(message: MessageEvent) {
       const data: ServerMessage = JSON.parse(message?.data)
@@ -98,7 +98,7 @@ export function Dashboard() {
         setPlayerList(new Set(data.list))
       } else if (data.type === 'playerData') {
         setPlayer(data.player)
-        if (data.responseTo?.userId === user.id) {
+        if (user?.id && data.responseTo?.userId === user.id) {
           let toast = ''
           switch (data.responseTo.type) {
             case 'play':
@@ -123,7 +123,7 @@ export function Dashboard() {
       webSocket.removeEventListener('message', onMessage)
       webSocket.removeEventListener('close', onClose)
     }
-  }, [toasts, user.id, webSocket])
+  }, [toasts, user?.id, webSocket])
 
   const tabs = [
     <Start key={0} setActiveTab={setActiveTab} hasPlayer={!!player}/>,

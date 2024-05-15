@@ -40,26 +40,25 @@ app.use((req, res, next) => {
 
 // Endpoints
 // Login endpoint
-app.get('/login', (_, res) => {
-  const loginUrl = `https://discordapp.com/api/oauth2/authorize?client_id=1053262351803093032&scope=identify%20guilds&response_type=code&redirect_uri=${encodeURIComponent(`${hostname}/auth`)}`
-  res.redirect(loginUrl)
+app.get('/login', (req, res) => {
+  let loginUrl = `https://discordapp.com/api/oauth2/authorize?client_id=1053262351803093032&scope=identify%20guilds&response_type=code&redirect_uri=${encodeURIComponent(hostname + '/auth')}`
+  if (req.query.state && typeof req.query.state === 'string') { loginUrl += `&state=${req.query.state}` }
+  res.redirect(loginUrl.toString())
 })
 
-// Colors API
-const colors = {}
-app.post('/colors', express.json(), async (req, res) => {
-  if (req.hostname !== domain) { return res.status(401).end() }
-
-  const color = colors[req.body.url] ?? await findDominantColor(req.body.url)
-  colors[req.body.url] = color
-  const notDark = preventSimilarColor(color, '#121212', true)
-  const corrected = preventSimilarColor(notDark, req.body.preventSimilar, true)
-  res.send({ color: corrected })
-})
-
+// Authentication endpoint
 app.get('/auth', async (req, res) => {
   if (req.hostname !== domain) { return res.status(401).end() }
-  if (!req.query.code || !(typeof req.query.code === 'string')) { return res.status(400).end() }
+
+  if (typeof req.query.token === 'string' && typeof req.query.type === 'string' && typeof req.query.state === 'string') {
+    return res.sendFile(path.resolve(__dirname, './dist/index.html'))
+  }
+
+  if (typeof req.query.code !== 'string' || typeof req.query.state !== 'string' || typeof req.query.error_description === 'string') {
+    const url = new URL(hostname)
+    if (typeof req.query.error_description === 'string') { url.searchParams.set('error', req.query.error_description) }
+    return res.redirect(url.toString())
+  }
 
   if (!process.env.CLIENT_ID || !process.env.CLIENT_SECRET) {
     logging.error('[OAuth Req] Client ID or secret not set. OAuth will fail.')
@@ -83,7 +82,19 @@ app.get('/auth', async (req, res) => {
     })
 
   if (!token) { return res.redirect(`${hostname}/login`) }
-  res.redirect(`${hostname}/dashboard?token=${token.access_token}&type=${token.token_type}`)
+  res.redirect(`${hostname}/auth?token=${token.access_token}&type=${token.token_type}&state=${req.query.state}`)
+})
+
+// Colors API
+const colors = {}
+app.post('/colors', express.json(), async (req, res) => {
+  if (req.hostname !== domain) { return res.status(401).end() }
+
+  const color = colors[req.body.url] ?? await findDominantColor(req.body.url)
+  colors[req.body.url] = color
+  const notDark = preventSimilarColor(color, '#121212', true)
+  const corrected = preventSimilarColor(notDark, req.body.preventSimilar, true)
+  res.send({ color: corrected })
 })
 
 // Lavalink endpoint

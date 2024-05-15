@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
-import { User } from '../../../types/types'
+import { Nullable, User } from '../../../types/types'
 import kalliopeTransparentPNG from '../../../assets/kalliope_transparent.png'
 import kalliopePNG from '../../../assets/kalliope.png'
 import './sidebar.scss'
@@ -9,7 +9,7 @@ import './sidebar.scss'
 export interface SidebarProps {
   activeTab: number,
   setActiveTab: (tab: number) => void,
-  user: User,
+  user: Nullable<User>,
   hasPlayer: boolean
 }
 

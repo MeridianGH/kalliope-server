@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react'
 import PropTypes from 'prop-types'
-import { GuildClientMapType, PlayerListType, User } from '../../../types/types'
+import { GuildClientMapType, Nullable, PlayerListType, User } from '../../../types/types'
 import { WebSocketContext } from '../../../contexts/websocketContext'
 import { Loader } from '../../Loader/loader'
 import genericServer from '../../../assets/generic_server.png'
@@ -8,7 +8,7 @@ import './servers.scss'
 
 export interface ServersProps {
   setActiveTab: (tab: number) => void,
-  userGuilds: User['guilds'],
+  userGuilds: Nullable<User['guilds']>,
   guildClientMap: GuildClientMapType,
   playerList: PlayerListType
 }
