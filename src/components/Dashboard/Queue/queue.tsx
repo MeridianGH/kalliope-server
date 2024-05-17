@@ -2,7 +2,6 @@ import React, { FormEvent, useContext } from 'react'
 import PropTypes from 'prop-types'
 import { Nullable, Player, Track } from '../../../types/types'
 import { WebSocketContext } from '../../../contexts/websocketContext'
-import { useToasts } from '../../../hooks/toastHook'
 import { Thumbnail } from '../Thumbnail/thumbnail'
 import './queue.scss'
 
@@ -15,7 +14,6 @@ export interface QueueProps {
 
 export function Queue({ guildId, current, tracks, settings }: QueueProps) {
   const webSocket = useContext(WebSocketContext)
-  const toasts = useToasts()
   const inputRef = React.createRef<HTMLInputElement>()
 
   const handlePlay = (event: FormEvent<HTMLFormElement>) => {
@@ -25,7 +23,6 @@ export function Queue({ guildId, current, tracks, settings }: QueueProps) {
     const query = input?.value
     if (!query) { return }
     webSocket?.sendData('play', { query: query, guildId: guildId })
-    toasts.info(`Adding "${query}" to the queue...`)
     if (input) { input.value = '' }
   }
 

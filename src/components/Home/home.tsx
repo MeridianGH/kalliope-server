@@ -1,8 +1,21 @@
 import React, { useEffect } from 'react'
+import { toast } from 'react-toastify'
 import VanillaTilt from 'vanilla-tilt'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import './home.scss'
 
 export function Home() {
+  const [searchParams] = useSearchParams()
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (searchParams.size > 0) {
+      if (searchParams.has('logout')) { toast.success('Successfully logged out.') }
+      if (searchParams.has('error')) { toast.error(`Discord authentication error:\n"${searchParams.get('error')}"`) }
+      navigate('/', { replace: true })
+    }
+  }, [navigate, searchParams])
+
   useEffect(() => {
     document.querySelector('.features-container')?.addEventListener('mousemove', (event: MouseEvent) => {
       for (const card of document.querySelectorAll<HTMLElement>('.feature-card')) {

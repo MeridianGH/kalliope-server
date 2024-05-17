@@ -1,3 +1,5 @@
+@import 'react-toastify/dist/ReactToastify.min.css';
+
 :root {
     --bg: #121212;
     --bg-lvl1: #1d1d1d;
@@ -8,6 +10,22 @@
     --hover: #808080;
     --accent: #e71d36;
     --accent-alt: #e76a1d;
+
+    // react-toastify
+    --toastify-color-info: #008DD5;
+    --toastify-color-success: #8FCB9B; // #499F68
+    --toastify-color-warning: var(--accent-alt);
+    --toastify-color-error: var(--accent);
+
+    --toastify-color-dark: var(--bg-lvl2);
+    --toastify-toast-width: 25rem;
+
+    .Toastify__toast {
+        font-size: 1rem;
+    }
+    .Toastify__toast-body {
+        white-space: pre-line;
+    }
 }
 
 html {

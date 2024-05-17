@@ -1,31 +1,18 @@
+import { useContext, useEffect, useState } from 'react'
+import { toast } from 'react-toastify'
 import { Track } from '../types/types'
-import { useCallback, useContext, useEffect, useState } from 'react'
 import { WebSocketContext } from '../contexts/websocketContext'
-import { useToasts } from './toastHook'
 import nearSilence from '../assets/near-silence.mp3'
 
 export function useMediaSession(guildId?: string, track?: Track, paused?: boolean) {
   const [hasError, setHasError] = useState<boolean>(false)
   const webSocket = useContext(WebSocketContext)
-  const { persistent, warn } = useToasts()
-
-  const displayAlert = useCallback(() => {
-    console.warn('Autoplay disabled!')
-    persistent(
-      'error',
-      'Autoplay disabled! Close this message to enable media notifications or enable autoplay for this website in your browser.',
-      () => { setHasError(false) }
-    )
-    return () => {
-      setHasError(false)
-    }
-  }, [persistent])
 
   useEffect(() => {
     if (!('mediaSession' in navigator) || !track) { return }
     if (hasError) {
-      displayAlert()
-      return
+      console.warn('Autoplay disabled!')
+      document.addEventListener('click', () => { setHasError(false) }, { once: true })
     }
 
     const audio = new Audio(nearSilence)
@@ -45,11 +32,11 @@ export function useMediaSession(guildId?: string, track?: Track, paused?: boolea
     return () => {
       audio.loop = false
     }
-  }, [displayAlert, hasError, track])
+  }, [hasError, track])
 
   useEffect(() => {
     if (!('mediaSession' in navigator)) {
-      warn('Your browser does not support media notifications!')
+      toast.warn('Your browser does not support media notifications!')
       return
     }
     if (!webSocket || !guildId || !track) {
