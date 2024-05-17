@@ -90,7 +90,7 @@ export function Dashboard() {
     if (!webSocket || !user?.id) { return }
 
     function onMessage(message: MessageEvent) {
-      const data: ServerMessage = JSON.parse(message?.data)
+      const data = JSON.parse(message?.data)
       if (!PRODUCTION) { console.log('client received:', data) }
       if (data.type === 'guildClientMap') {
         setGuildClientMap(data.map)

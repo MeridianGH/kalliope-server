@@ -2,73 +2,47 @@ import { APIGuild, APIUser } from 'discord-api-types/v10'
 
 export type Nullable<T> = T | null | undefined
 
-export type ClientDataMapType = Nullable<{ [clientId: string]: ClientMessageOptions['clientData'] }>
+export type User = APIUser & { guilds: APIGuild[] }
+
+type ClientData = {
+  guilds: string[],
+  users: number,
+  readyTimestamp: EpochTimeStamp,
+  ping: number,
+  displayAvatarURL: string,
+  displayName: string,
+  version: string
+}
+
+export type ClientDataMapType = Nullable<{ [clientId: string]: ClientData }>
 export type PlayerListType = Nullable<Set<string>>
 export type GuildClientMapType = Nullable<{ [guildId: string]: string }>
 
-export type User = APIUser & { guilds: APIGuild[] }
+export type ClientMessage =
+  { type: 'playerData', guildId: string, player: Player } |
+  { type: 'clientData', data: ClientData }
 
-type ClientMessageOptions = {
-  playerData: {
-    guildId: string,
-    player: Player,
-    responseTo?: {
-      type: keyof Omit<UserClientMessageOptions, 'requestPlayerData' | 'requestClientData'>,
-      userId: string
-    }
-  },
-  clientData: {
-    guilds: string[],
-    users: number,
-    readyTimestamp: EpochTimeStamp,
-    ping: number,
-    displayAvatarURL: string,
-    displayName: string,
-    version: string
-  }
-}
-export type ClientMessageTypes = keyof ClientMessageOptions
-export type ClientMessage<T extends ClientMessageTypes = ClientMessageTypes> = { type: T, clientId: string } & ClientMessageOptions[T]
+type PlayerAction =
+  { action: 'pause' | 'previous' | 'shuffle' | 'repeat' | 'autoplay' | 'sponsorblock' | 'clear' } |
+  { action: 'skip', payload?: { index: number }} |
+  { action: 'remove', payload: { index: number }} |
+  { action: 'volume', payload: { volume: number }} |
+  { action: 'play', payload: { query: string }} |
+  { action: 'filter', payload: { filter: string }}
+type RequestPlayerActionMessage = { type: 'requestPlayerAction', guildId: string } & PlayerAction
+export type UserMessage =
+  { type: 'requestPlayerData' | 'requestClientData' | 'requestClientDataMap' | 'requestGuildClientMap' | 'requestPlayerList' } |
+  RequestPlayerActionMessage
 
-type UserServerMessageOptions = {
-  requestClientDataMap: unknown,
-  requestGuildClientMap: unknown,
-  requestPlayerList: unknown
-}
-type UserClientMessageOptions = {
-  requestPlayerData: { clientId: string },
-  requestClientData: { clientId: string },
-  pause: unknown,
-  previous: unknown,
-  shuffle: unknown,
-  repeat: unknown,
-  autoplay: unknown,
-  sponsorblock: unknown,
-  clear: unknown,
-  skip: { index?: number },
-  remove: { index: number },
-  volume: { volume: number },
-  play: { query: string },
-  filter: { filter: string }
-}
-export type UserServerMessage<T extends keyof UserServerMessageOptions> = { type: T, userId: string } & UserServerMessageOptions[T]
-export type UserClientMessage<T extends keyof UserClientMessageOptions> = { type: T, guildId: string, userId: string } & UserClientMessageOptions[T]
-export type UserMessageTypes = keyof UserServerMessageOptions | keyof UserClientMessageOptions
-export type UserMessage<T = UserMessageTypes> =
-  T extends keyof UserServerMessageOptions ? UserServerMessage<T> :
-    T extends keyof UserClientMessageOptions ? UserClientMessage<T> :
-      never
 
-type ServerMessageOptions = {
-  clientDataMap: { map: ClientDataMapType },
-  guildClientMap: { map: GuildClientMapType },
-  playerList: { list: string[] }
-}
-type ServerMessageTypes = keyof ServerMessageOptions | keyof ClientMessageOptions
-export type ServerMessage<T = ServerMessageTypes> =
-  T extends keyof ServerMessageOptions ? { type: T } & ServerMessageOptions[T] :
-    T extends keyof ClientMessageOptions ? ClientMessage<T> :
-      never
+export type ServerMessage =
+  { type: 'clientDataMap', map: ClientDataMapType } |
+  { type: 'guildClientMap', map: GuildClientMapType } |
+  { type: 'playerList', list: string[] }
+
+export type MessageToUser = (ServerMessage | ClientMessage) & { requestId: string }
+export type MessageToServer = (UserMessage | ClientMessage) & { requestId: string }
+export type MessageToClient = (RequestPlayerActionMessage) & { requestId: string }
 
 export type Player = {
   guildId: string,
