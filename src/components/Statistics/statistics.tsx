@@ -39,8 +39,8 @@ export function Statistics() {
     }
 
     webSocket.addEventListener('open', () => {
-      webSocket.sendData('requestClientDataMap' )
-      webSocket.sendData('requestPlayerList')
+      webSocket.request({ type: 'requestClientDataMap' })
+      webSocket.request({ type: 'requestPlayerList' })
     }, { once: true })
 
     webSocket.addEventListener('message', onMessage)
@@ -97,7 +97,7 @@ export function Statistics() {
                         {new Date(data.readyTimestamp).toLocaleString()}
                       </p>
                       <button onClick={(event) => {
-                        webSocket?.sendData('requestClientData', { clientId: clientId, guildId: 'noGuild' })
+                        webSocket?.request({ type: 'requestClientData', clientId: clientId })
                         event.currentTarget.animate([{ rotate: '0deg' }, { rotate: '360deg' }], { duration: 500, easing: 'ease-in-out' })
                       }}>
                         <i className="fas fa-redo"></i>

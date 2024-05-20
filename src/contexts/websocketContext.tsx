@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
-import { MessageToUser, Nullable } from '../types/types'
+import { MessageToUser, Nullable, UserMessageTypes } from '../types/types'
 import { useDiscordLogin } from '../hooks/discordLoginHook'
 
 export const WebSocketContext = createContext<Nullable<WebSocket>>(null)
@@ -13,37 +13,39 @@ export function WebsocketProvider({ children }) {
     if (DEV_SERVER) { return }
     const ws = new WebSocket(`ws${PRODUCTION ? 's' : ''}://${location.host}`)
 
-    ws.request = (data, awaitResponse = true) => new Promise((resolve, reject) => {
+    function request(data: UserMessageTypes): void
+    function request(data: UserMessageTypes, awaitResponse: true): Promise<MessageToUser>
+    function request(data: UserMessageTypes, awaitResponse?: true) {
       const requestId = new Date().getTime() + '-' + Math.floor(Math.random() * 10)
-      Object.assign(data, { requestId: requestId })
+      Object.assign(data, { requestId: requestId, userId: user?.id })
 
       try {
         if (!PRODUCTION) { console.log('client sent:', data) }
         ws.send(JSON.stringify(data))
       } catch (e) {
-        reject(`WebSocket request ${requestId} failed with error: ${e}`)
-        return
+        throw `WebSocket request ${requestId} failed with error: ${e}`
       }
-      if (!awaitResponse) {
-        resolve()
-        return
-      }
+      if (!awaitResponse) { return }
 
-      const messageListener = (message: MessageEvent) => {
-        const data: MessageToUser = JSON.parse(message.data)
-        if (data.requestId === requestId) {
-          clearTimeout(timeout)
-          ws.removeEventListener('message', messageListener)
-          resolve(data)
+      return new Promise((resolve, reject) => {
+        const messageListener = (message: MessageEvent) => {
+          const data: MessageToUser = JSON.parse(message.data)
+          if (data.requestId === requestId) {
+            clearTimeout(timeout)
+            ws.removeEventListener('message', messageListener)
+            if (data.type === 'error') { reject(data.errorMessage) }
+            resolve(data)
+          }
         }
-      }
-      ws.addEventListener('message', messageListener)
+        ws.addEventListener('message', messageListener)
 
-      const timeout = setTimeout(() => {
-        ws.removeEventListener('message', messageListener)
-        reject(`WebSocket request ${requestId} timed out.`)
+        const timeout = setTimeout(() => {
+          ws.removeEventListener('message', messageListener)
+          reject(`WebSocket request ${requestId} timed out.`)
+        })
       })
-    })
+    }
+    ws.request = request
     setWebSocket(ws)
 
     function closeWs() {

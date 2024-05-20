@@ -4,7 +4,7 @@ export type Nullable<T> = T | null | undefined
 
 export type User = APIUser & { guilds: APIGuild[] }
 
-type ClientData = {
+export type ClientData = {
   guilds: string[],
   users: number,
   readyTimestamp: EpochTimeStamp,
@@ -18,9 +18,11 @@ export type ClientDataMapType = Nullable<{ [clientId: string]: ClientData }>
 export type PlayerListType = Nullable<Set<string>>
 export type GuildClientMapType = Nullable<{ [guildId: string]: string }>
 
-export type ClientMessage =
+export type ClientMessageTypes =
   { type: 'playerData', guildId: string, player: Player } |
-  { type: 'clientData', data: ClientData }
+  { type: 'clientData', clientData: ClientData } |
+  { type: 'error', errorMessage: string, guildId?: string }
+export type ClientMessage = ClientMessageTypes & { requestId?: string, clientId: string }
 
 type PlayerAction =
   { action: 'pause' | 'previous' | 'shuffle' | 'repeat' | 'autoplay' | 'sponsorblock' | 'clear' } |
@@ -29,20 +31,24 @@ type PlayerAction =
   { action: 'volume', payload: { volume: number }} |
   { action: 'play', payload: { query: string }} |
   { action: 'filter', payload: { filter: string }}
-type RequestPlayerActionMessage = { type: 'requestPlayerAction', guildId: string } & PlayerAction
-export type UserMessage =
-  { type: 'requestPlayerData' | 'requestClientData' | 'requestClientDataMap' | 'requestGuildClientMap' | 'requestPlayerList' } |
-  RequestPlayerActionMessage
+export type UserMessageTypes =
+  { type: 'requestClientDataMap' | 'requestGuildClientMap' | 'requestPlayerList' } |
+  { type: 'requestClientData', clientId: string } |
+  { type: 'requestPlayerData', guildId: string } |
+  { type: 'requestPlayerAction', guildId: string } & PlayerAction
+export type UserMessage = UserMessageTypes & { requestId: string, userId: string }
 
 
-export type ServerMessage =
+type ServerMessageTypes =
   { type: 'clientDataMap', map: ClientDataMapType } |
   { type: 'guildClientMap', map: GuildClientMapType } |
-  { type: 'playerList', list: string[] }
+  { type: 'playerList', list: string[] } |
+  { type: 'error', errorMessage: string }
+export type ServerMessage = ServerMessageTypes & { requestId: string }
 
-export type MessageToUser = (ServerMessage | ClientMessage) & { requestId: string }
-export type MessageToServer = (UserMessage | ClientMessage) & { requestId: string }
-export type MessageToClient = (RequestPlayerActionMessage) & { requestId: string }
+export type MessageToUser = ServerMessage | ClientMessage
+export type MessageToServer = UserMessage | ClientMessage
+export type MessageToClient = UserMessage
 
 export type Player = {
   guildId: string,

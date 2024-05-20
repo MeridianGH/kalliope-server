@@ -54,9 +54,9 @@ export function useMediaSession(guildId?: string, track?: Track, paused?: boolea
     })
     navigator.mediaSession.playbackState = paused ? 'paused' : 'playing'
 
-    navigator.mediaSession.setActionHandler('play', () => { webSocket.sendData({ type: 'requestPlayerAction', guildId: guildId, action: 'pause' }) })
-    navigator.mediaSession.setActionHandler('pause', () => { webSocket.sendData({ type: 'requestPlayerAction', guildId: guildId, action: 'pause' }) })
-    navigator.mediaSession.setActionHandler('nexttrack', () => { webSocket.sendData({ type: 'requestPlayerAction', guildId: guildId, action: 'skip' }) })
-    navigator.mediaSession.setActionHandler('previoustrack', () => { webSocket.sendData({ type: 'requestPlayerAction', guildId: guildId, action: 'previous' }) })
+    navigator.mediaSession.setActionHandler('play', () => { webSocket.request({ type: 'requestPlayerAction', guildId: guildId, action: 'pause' }) })
+    navigator.mediaSession.setActionHandler('pause', () => { webSocket.request({ type: 'requestPlayerAction', guildId: guildId, action: 'pause' }) })
+    navigator.mediaSession.setActionHandler('nexttrack', () => { webSocket.request({ type: 'requestPlayerAction', guildId: guildId, action: 'skip' }) })
+    navigator.mediaSession.setActionHandler('previoustrack', () => { webSocket.request({ type: 'requestPlayerAction', guildId: guildId, action: 'previous' }) })
   }, [guildId, paused, track, webSocket])
 }

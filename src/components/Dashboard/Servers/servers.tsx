@@ -18,11 +18,11 @@ export function Servers({ setActiveTab, userGuilds = [], guildClientMap, playerL
 
   useEffect(() => {
     if (webSocket?.readyState === 1 && !guildClientMap) {
-      webSocket.sendData('requestGuildClientMap')
+      webSocket.request({ type: 'requestGuildClientMap' })
     }
     if (webSocket?.readyState === 1) {
       // Always ask for new playerList in order to allow server to update this connection
-      webSocket.sendData('requestPlayerList')
+      webSocket.request({ type: 'requestPlayerList' })
     }
   }, [webSocket, guildClientMap])
 
@@ -62,7 +62,7 @@ export function Servers({ setActiveTab, userGuilds = [], guildClientMap, playerL
           key={index}
           className={`server-card ${playerList?.has(guild.id) ? 'playing' : ''} flex-container column`}
           onClick={() => {
-            webSocket?.sendData('requestPlayerData', { guildId: guild.id, clientId: guildClientMap[guild.id] })
+            webSocket?.request({ type: 'requestPlayerData', guildId: guild.id })
             setActiveTab(2)
           }}
         >

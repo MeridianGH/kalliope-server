@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { toast } from 'react-toastify'
-import { GuildClientMapType, Nullable, Player, PlayerListType, ServerMessage, UserMessage } from '../../types/types'
+import { GuildClientMapType, MessageToUser, Nullable, Player, PlayerListType } from '../../types/types'
 import { useDiscordLogin } from '../../hooks/discordLoginHook'
 import { WebSocketContext } from '../../contexts/websocketContext'
 import { useMediaSession } from '../../hooks/mediaSessionHook'
@@ -88,7 +87,7 @@ export function Dashboard() {
     if (!webSocket || !user?.id) { return }
 
     function onMessage(message: MessageEvent) {
-      const data = JSON.parse(message?.data)
+      const data: MessageToUser = JSON.parse(message?.data)
       if (!PRODUCTION) { console.log('client received:', data) }
       if (data.type === 'guildClientMap') {
         setGuildClientMap(data.map)
@@ -96,15 +95,6 @@ export function Dashboard() {
         setPlayerList(new Set(data.list))
       } else if (data.type === 'playerData') {
         setPlayer(data.player)
-        if (user?.id && data.responseTo?.userId === user.id) {
-          let toastMessage = ''
-          switch (data.responseTo.type) {
-            case 'play':
-              toastMessage = `Successfully added "${data.player.queue.tracks.at(-1)?.info.title}" to the queue.`
-              break
-          }
-          if (toastMessage !== '') { toast.success(toastMessage) }
-        }
       }
     }
 
