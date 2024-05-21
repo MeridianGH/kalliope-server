@@ -51,6 +51,7 @@ export type MessageToServer = UserMessage | ClientMessage
 export type MessageToClient = UserMessage
 
 export type Player = {
+  timestamp: EpochTimeStamp,
   guildId: string,
   voiceChannelId: string | null,
   textChannelId: string | null,
