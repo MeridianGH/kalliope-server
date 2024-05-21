@@ -20,15 +20,13 @@ export interface NowPlayingProps {
 
 export function NowPlaying({ player }: NowPlayingProps) {
   const webSocket = useContext(WebSocketContext)
-  const startPosition = player?.position && player?.timestamp ? player.position + Date.now() - player.timestamp : 0
-  const [position, setPosition] = useState(startPosition ?? 0)
+  const [position, setPosition] = useState(player?.position ?? 0)
   const [volume, setVolume] = React.useState(player?.volume ?? 50)
 
   useEffect(() => {
-    const current = player?.queue.current
-    if (!current || !player?.position || !player.timestamp) { return }
-    const position = player.position + Date.now() - player.timestamp
-    setPosition(position)
+    const current = player?.queue?.current
+    if (!current) { return }
+    setPosition(player.position)
     const interval = setInterval(() => {
       if (!player.paused) {
         setPosition((prevPosition) => {
@@ -41,7 +39,7 @@ export function NowPlaying({ player }: NowPlayingProps) {
       }
     }, 1000 * (1 / player.filters.timescale ?? 1))
     return () => { clearInterval(interval) }
-  }, [player?.filters.timescale, player?.paused, player?.position, player?.queue, player?.timestamp])
+  }, [player])
 
   useEffect(() => {
     const slider = document.querySelector<HTMLInputElement>('.volume-slider-input')
