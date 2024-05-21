@@ -117,7 +117,7 @@ export function Dashboard() {
     <Start key={0} setActiveTab={setActiveTab} hasPlayer={!!player}/>,
     <Servers key={1} setActiveTab={setActiveTab} userGuilds={user?.guilds} guildClientMap={guildClientMap} playerList={playerList}/>,
     <NowPlaying key={2} player={player}/>,
-    <Queue key={3} guildId={player?.guildId} current={player?.queue?.current} tracks={player?.queue?.tracks ?? []} settings={player?.settings}/>
+    <Queue key={3} player={player}/>
   ]
 
   return (

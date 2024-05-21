@@ -1,33 +1,29 @@
-import React, { FormEvent, useContext } from 'react'
+import React, { createRef, FormEvent, useContext } from 'react'
 import PropTypes from 'prop-types'
-import { Nullable, Player, Track } from '../../../types/types'
+import { Nullable, Player } from '../../../types/types'
 import { WebSocketContext } from '../../../contexts/websocketContext'
 import { Thumbnail } from '../Thumbnail/thumbnail'
 import './queue.scss'
 import { toast } from 'react-toastify'
 
 export interface QueueProps {
-  guildId: Nullable<string>,
-  current: Nullable<Track>,
-  tracks: Nullable<Track[]>,
-  filters: Nullable<Player['filters']>,
-  settings: Nullable<Player['settings']>
+  player: Nullable<Player>
 }
 
-export function Queue({ guildId, current, tracks, filters, settings }: QueueProps) {
+export function Queue({ player }: QueueProps) {
   const webSocket = useContext(WebSocketContext)
-  const inputRef = React.createRef<HTMLInputElement>()
+  const inputRef = createRef<HTMLInputElement>()
 
   const handlePlay = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    if (!guildId) { return }
+    if (!player?.guildId) { return }
     const input = inputRef.current
     const query = input?.value
     if (!query) { return }
     if (webSocket) {
       // noinspection JSIgnoredPromiseFromCall
       toast.promise(
-        webSocket.request({ type: 'requestPlayerAction', guildId: guildId, action: 'play', payload: { query: query } }, true),
+        webSocket.request({ type: 'requestPlayerAction', guildId: player.guildId, action: 'play', payload: { query: query } }, true),
         {
           pending: `Adding '${query}' to queue...`,
           success: `Successfully added '${query}' to the queue.`,
@@ -38,7 +34,7 @@ export function Queue({ guildId, current, tracks, filters, settings }: QueueProp
     if (input) { input.value = '' }
   }
 
-  if (!guildId) {
+  if (!player?.guildId) {
     return <div className={'queue-container flex-container column'}>Please select a valid guild!</div>
   }
 
@@ -46,13 +42,13 @@ export function Queue({ guildId, current, tracks, filters, settings }: QueueProp
     <div className={'queue-container flex-container column'}>
       <h1>Queue:</h1>
       <h4 className={'queue-current-title'}>Now playing:</h4>
-      {current ?
+      {player?.queue.current ?
         <div className={'flex-container'}>
-          <Thumbnail image={current.info.artworkUrl} size={'3em'}/>
+          <Thumbnail image={player?.queue.current.info.artworkUrl} size={'3em'}/>
           <div className={'queue-current flex-container column start'}>
-            <a href={current.info.uri} rel="noreferrer" target="_blank"><b
-              className={'now-playing-title'}>{current.info.title}</b></a>
-            <span>{current.info.author}</span>
+            <a href={player?.queue.current.info.uri} rel="noreferrer" target="_blank"><b
+              className={'now-playing-title'}>{player?.queue.current.info.title}</b></a>
+            <span>{player?.queue.current.info.author}</span>
           </div>
         </div>
         : <span>Nothing currently playing!</span>
@@ -62,13 +58,13 @@ export function Queue({ guildId, current, tracks, filters, settings }: QueueProp
           <input type="text" className={'queue-input'} placeholder="Add to queue" ref={inputRef}/>
           <button className={'queue-input-button'}><i className={'fas fa-plus'}/></button>
         </form>
-        <select className={'queue-input pointer'} name="filter" id={'filter'} value={filters?.current ?? 'none'} onChange={(event) => {
+        <select className={'queue-input pointer'} name="filter" id={'filter'} value={player?.filters.current ?? 'none'} onChange={(event) => {
           const filter = event.target.value
           const filterText = event.target.options.item(event.target.options.selectedIndex)?.label ?? 'Unknown filter'
           if (webSocket) {
             // noinspection JSIgnoredPromiseFromCall
             toast.promise(
-              webSocket?.request({ type: 'requestPlayerAction', guildId: guildId, action: 'filter', payload: { filter: filter, filterText: filterText } }, true),
+              webSocket?.request({ type: 'requestPlayerAction', guildId: player.guildId, action: 'filter', payload: { filter: filter, filterText: filterText } }, true),
               {
                 pending: `Setting filter '${filterText}'...`,
                 success: `Successfully set filter to '${filterText}'.`,
@@ -92,7 +88,7 @@ export function Queue({ guildId, current, tracks, filters, settings }: QueueProp
           if (webSocket) {
             // noinspection JSIgnoredPromiseFromCall
             toast.promise(
-              webSocket.request({ type: 'requestPlayerAction', guildId: guildId, action: 'clear' }, true),
+              webSocket.request({ type: 'requestPlayerAction', guildId: player.guildId, action: 'clear' }, true),
               {
                 pending: 'Clearing the queue...',
                 success: 'Successfully cleared the queue.',
@@ -110,7 +106,7 @@ export function Queue({ guildId, current, tracks, filters, settings }: QueueProp
           if (webSocket) {
             // noinspection JSIgnoredPromiseFromCall
             toast.promise(
-              webSocket?.request({ type: 'requestPlayerAction', guildId: guildId, action: 'autoplay' }, true),
+              webSocket?.request({ type: 'requestPlayerAction', guildId: player.guildId, action: 'autoplay' }, true),
               {
                 pending: 'Toggling autoplay...',
                 success: 'Successfully toggled autoplay.',
@@ -120,18 +116,18 @@ export function Queue({ guildId, current, tracks, filters, settings }: QueueProp
           }
         }}>
           <div className={'queue-input-toggle'}>
-            <input type={'checkbox'} checked={!!settings?.autoplay} readOnly={true}/>
+            <input type={'checkbox'} checked={!!player?.settings.autoplay} readOnly={true}/>
             <span/>
           </div>
           Autoplay
         </label>
-        {settings?.sponsorblockSupport ? <label className={'queue-input pointer'} onClick={(event) => {
+        {player?.settings.sponsorblockSupport ? <label className={'queue-input pointer'} onClick={(event) => {
           event.preventDefault()
           // TODO: Use state value with SponsorBlock
           if (webSocket) {
             // noinspection JSIgnoredPromiseFromCall
             toast.promise(
-              webSocket?.request({ type: 'requestPlayerAction', guildId: guildId, action: 'sponsorblock' }, true),
+              webSocket?.request({ type: 'requestPlayerAction', guildId: player.guildId, action: 'sponsorblock' }, true),
               {
                 pending: 'Toggling SponsorBlock...',
                 success: 'Successfully toggled SponsorBlock.',
@@ -141,14 +137,14 @@ export function Queue({ guildId, current, tracks, filters, settings }: QueueProp
           }
         }}>
           <div className={'queue-input-toggle'}>
-            <input type={'checkbox'} checked={!!settings?.sponsorblock} readOnly={true}/>
+            <input type={'checkbox'} checked={!!player?.settings.sponsorblock} readOnly={true}/>
             <span/>
           </div>
           SponsorBlock
         </label> : ''}
       </div>
       {/* eslint-disable-next-line no-extra-parens */}
-      {tracks && tracks.length > 0 ? tracks.map((track, index) => (
+      {player?.queue.tracks && player?.queue.tracks.length > 0 ? player?.queue.tracks.map((track, index) => (
         <div className={'queue-track flex-container space-between nowrap'} key={index}>
           <div className={'flex-container nowrap'}>
             <b>{index + 1}.</b>
@@ -157,11 +153,11 @@ export function Queue({ guildId, current, tracks, filters, settings }: QueueProp
           </div>
           <div className={'queue-track-buttons flex-container'}>
             <button onClick={() => {
-              const trackTitle = tracks[index].info.title
+              const trackTitle = player?.queue.tracks[index].info.title
               if (webSocket) {
                 // noinspection JSIgnoredPromiseFromCall
                 toast.promise(
-                  webSocket?.request({ type: 'requestPlayerAction', guildId: guildId, action: 'remove', payload: { index: index + 1 } }, true),
+                  webSocket?.request({ type: 'requestPlayerAction', guildId: player.guildId, action: 'remove', payload: { index: index + 1 } }, true),
                   {
                     pending: `Removing '${trackTitle}' from the queue...`,
                     success: `Successfully removed '${trackTitle}' from the queue.`,
@@ -171,11 +167,11 @@ export function Queue({ guildId, current, tracks, filters, settings }: QueueProp
               }
             }}><i className={'fas fa-trash-alt'}/></button>
             <button onClick={() => {
-              const trackTitle = tracks[index].info.title
+              const trackTitle = player?.queue.tracks[index].info.title
               if (webSocket) {
                 // noinspection JSIgnoredPromiseFromCall
                 toast.promise(
-                  webSocket?.request({ type: 'requestPlayerAction', guildId: guildId, action: 'skip', payload: { index: index + 1 } }, true),
+                  webSocket?.request({ type: 'requestPlayerAction', guildId: player.guildId, action: 'skip', payload: { index: index + 1 } }, true),
                   {
                     pending: `Skipping to '${trackTitle}'...`,
                     success: `Successfully skipped to '${trackTitle}'.`,
