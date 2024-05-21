@@ -16,7 +16,7 @@ export function WebsocketProvider({ children }) {
     function request(data: UserMessageTypes): void
     function request(data: UserMessageTypes, awaitResponse: true): Promise<MessageToUser>
     function request(data: UserMessageTypes, awaitResponse?: true) {
-      const requestId = new Date().getTime() + '-' + Math.floor(Math.random() * 10)
+      const requestId = Date.now() + '-' + Math.floor(Math.random() * 100)
       Object.assign(data, { requestId: requestId, userId: user?.id })
 
       try {
@@ -42,7 +42,7 @@ export function WebsocketProvider({ children }) {
         const timeout = setTimeout(() => {
           ws.removeEventListener('message', messageListener)
           reject(`WebSocket request ${requestId} timed out.`)
-        })
+        }, 30000)
       })
     }
     ws.request = request

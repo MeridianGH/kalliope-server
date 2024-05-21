@@ -30,7 +30,7 @@ type PlayerAction =
   { action: 'remove', payload: { index: number }} |
   { action: 'volume', payload: { volume: number }} |
   { action: 'play', payload: { query: string }} |
-  { action: 'filter', payload: { filter: string }}
+  { action: 'filter', payload: { filter: string, filterText: string }}
 export type UserMessageTypes =
   { type: 'requestClientDataMap' | 'requestGuildClientMap' | 'requestPlayerList' } |
   { type: 'requestClientData', clientId: string } |

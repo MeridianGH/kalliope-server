@@ -17,12 +17,14 @@ export function Servers({ setActiveTab, userGuilds = [], guildClientMap, playerL
   const webSocket = useContext(WebSocketContext)
 
   useEffect(() => {
-    if (webSocket?.readyState === 1 && !guildClientMap) {
-      webSocket.request({ type: 'requestGuildClientMap' })
-    }
     if (webSocket?.readyState === 1) {
       // Always ask for new playerList in order to allow server to update this connection
       webSocket.request({ type: 'requestPlayerList' })
+    }
+  }, [webSocket])
+  useEffect(() => {
+    if (webSocket?.readyState === 1 && !guildClientMap) {
+      webSocket.request({ type: 'requestGuildClientMap' })
     }
   }, [webSocket, guildClientMap])
 

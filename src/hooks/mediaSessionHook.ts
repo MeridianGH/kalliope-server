@@ -19,18 +19,17 @@ export function useMediaSession(guildId?: string, track?: Track, paused?: boolea
     audio.volume = 0.00001
     audio.loop = true
     audio.addEventListener('canplaythrough', () => {
-      audio.play()
-        .then(() => {
-          console.info('MediaSession started.')
-          // setTimeout(() => audio.pause(), 500)
-        })
-        .catch(() => {
-          setHasError(true)
-          audio.remove()
-        })
+      audio.play().catch(() => {
+        setHasError(true)
+        audio.src = ''
+        audio.removeAttribute('src')
+        audio.load()
+      })
     })
     return () => {
-      audio.loop = false
+      audio.src = ''
+      audio.removeAttribute('src')
+      audio.load()
     }
   }, [hasError, track])
 

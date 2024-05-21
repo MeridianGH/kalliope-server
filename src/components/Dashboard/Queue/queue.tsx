@@ -10,10 +10,11 @@ export interface QueueProps {
   guildId: Nullable<string>,
   current: Nullable<Track>,
   tracks: Nullable<Track[]>,
+  filters: Nullable<Player['filters']>,
   settings: Nullable<Player['settings']>
 }
 
-export function Queue({ guildId, current, tracks, settings }: QueueProps) {
+export function Queue({ guildId, current, tracks, filters, settings }: QueueProps) {
   const webSocket = useContext(WebSocketContext)
   const inputRef = React.createRef<HTMLInputElement>()
 
@@ -61,13 +62,13 @@ export function Queue({ guildId, current, tracks, settings }: QueueProps) {
           <input type="text" className={'queue-input'} placeholder="Add to queue" ref={inputRef}/>
           <button className={'queue-input-button'}><i className={'fas fa-plus'}/></button>
         </form>
-        <select className={'queue-input pointer'} name="filter" id={'filter'} onChange={(event) => {
+        <select className={'queue-input pointer'} name="filter" id={'filter'} value={filters?.current ?? 'none'} onChange={(event) => {
           const filter = event.target.value
-          const filterText = event.target.innerText
+          const filterText = event.target.options.item(event.target.options.selectedIndex)?.label ?? 'Unknown filter'
           if (webSocket) {
             // noinspection JSIgnoredPromiseFromCall
             toast.promise(
-              webSocket?.request({ type: 'requestPlayerAction', guildId: guildId, action: 'filter', payload: { filter: filter } }, true),
+              webSocket?.request({ type: 'requestPlayerAction', guildId: guildId, action: 'filter', payload: { filter: filter, filterText: filterText } }, true),
               {
                 pending: `Setting filter '${filterText}'...`,
                 success: `Successfully set filter to '${filterText}'.`,
@@ -119,7 +120,7 @@ export function Queue({ guildId, current, tracks, settings }: QueueProps) {
           }
         }}>
           <div className={'queue-input-toggle'}>
-            <input type={'checkbox'} checked={settings?.autoplay} readOnly={true}/>
+            <input type={'checkbox'} checked={!!settings?.autoplay} readOnly={true}/>
             <span/>
           </div>
           Autoplay
@@ -140,7 +141,7 @@ export function Queue({ guildId, current, tracks, settings }: QueueProps) {
           }
         }}>
           <div className={'queue-input-toggle'}>
-            <input type={'checkbox'} checked={settings?.sponsorblock} readOnly={true}/>
+            <input type={'checkbox'} checked={!!settings?.sponsorblock} readOnly={true}/>
             <span/>
           </div>
           SponsorBlock

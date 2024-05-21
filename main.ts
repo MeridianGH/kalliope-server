@@ -90,6 +90,7 @@ const colors = {}
 app.post('/colors', express.json(), async (req, res) => {
   if (req.hostname !== domain) { return res.status(401).end() }
 
+  if (!req.body.url?.endsWith('.jpg') && !req.body.url?.endsWith('.png')) { return res.status(400).end() }
   const color = colors[req.body.url] ?? await findDominantColor(req.body.url)
   colors[req.body.url] = color
   const notDark = preventSimilarColor(color, '#121212', true)
