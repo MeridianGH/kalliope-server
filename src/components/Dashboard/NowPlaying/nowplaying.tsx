@@ -21,11 +21,16 @@ export interface NowPlayingProps {
 export function NowPlaying({ player }: NowPlayingProps) {
   const webSocket = useContext(WebSocketContext)
   const [position, setPosition] = useState(player?.position ?? 0)
-  const [volume, setVolume] = React.useState(player?.volume ?? 50)
+  const [volume, setVolume] = useState(player?.volume ?? 50)
+
+  useEffect(() => {
+    if (!webSocket || !player?.guildId) { return }
+    webSocket.request({ type: 'requestPlayerData', guildId: player.guildId })
+  }, [player?.guildId, webSocket])
 
   useEffect(() => {
     const current = player?.queue?.current
-    if (!current) { return }
+    if (!current || !player?.position) { return }
     setPosition(player.position)
     const interval = setInterval(() => {
       if (!player.paused) {
@@ -39,7 +44,7 @@ export function NowPlaying({ player }: NowPlayingProps) {
       }
     }, 1000 * (1 / player.filters.timescale ?? 1))
     return () => { clearInterval(interval) }
-  }, [player])
+  }, [player?.filters.timescale, player?.paused, player?.position, player?.queue])
 
   useEffect(() => {
     const slider = document.querySelector<HTMLInputElement>('.volume-slider-input')
