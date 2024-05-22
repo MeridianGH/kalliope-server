@@ -1,15 +1,10 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import './background.scss'
 
 export interface BackgroundProps {
   style?: 'solid' | 'gradient' | 'transparent'
 }
 
-/**
- * @category Components
- * @param props {BackgroundProps}
- */
 export function Background({ style = 'gradient' }: BackgroundProps) {
   return (
     // eslint-disable-next-line react/no-unknown-property
@@ -140,5 +135,3 @@ export function Background({ style = 'gradient' }: BackgroundProps) {
     </svg>
   )
 }
-
-Background.propTypes = { style: PropTypes.oneOf(['transparent', 'solid', 'gradient']) }

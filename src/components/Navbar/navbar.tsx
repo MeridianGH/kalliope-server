@@ -1,10 +1,14 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 import './navbar.scss'
 import kalliopeTransparentPNG from '../../assets/kalliope_transparent.png'
 
-export function Navbar({ displayLinks = false, hideOnMobile = true }) {
+export interface NavbarProps {
+  displayLinks?: boolean,
+  hideOnMobile?: boolean
+}
+
+export function Navbar({ displayLinks = false, hideOnMobile = true }: NavbarProps) {
   return (
     <nav className={`navbar flex-container space-between nowrap ${hideOnMobile ? 'hideOnMobile' : ''}`}>
       <Link to={'/'} className={'nav-logo-container'}>
@@ -26,9 +30,4 @@ export function Navbar({ displayLinks = false, hideOnMobile = true }) {
       }
     </nav>
   )
-}
-
-Navbar.propTypes = {
-  displayLinks: PropTypes.bool,
-  hideOnMobile: PropTypes.bool
 }

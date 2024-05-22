@@ -1,5 +1,4 @@
 import React, { createRef, FormEvent, useContext } from 'react'
-import PropTypes from 'prop-types'
 import { Nullable, Player } from '../../../types/types'
 import { WebSocketContext } from '../../../contexts/websocketContext'
 import { Thumbnail } from '../Thumbnail/thumbnail'
@@ -185,11 +184,4 @@ export function Queue({ player }: QueueProps) {
       )) : <div className={'queue-track flex-container'}>No upcoming songs! Add songs with &apos;/play&apos; or by using the field above.</div>}
     </div>
   )
-}
-
-Queue.propTypes = {
-  guildId: PropTypes.string,
-  current: PropTypes.object,
-  tracks: PropTypes.arrayOf(PropTypes.object).isRequired,
-  settings: PropTypes.object
 }

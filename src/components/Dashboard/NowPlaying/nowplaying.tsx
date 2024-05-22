@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from 'react'
-import PropTypes from 'prop-types'
 import { Nullable, Player } from '../../../types/types'
 import { WebSocketContext } from '../../../contexts/websocketContext'
 import { Thumbnail } from '../Thumbnail/thumbnail'
@@ -106,5 +105,3 @@ export function NowPlaying({ player }: NowPlayingProps) {
     </div>
   )
 }
-
-NowPlaying.propTypes = { player: PropTypes.object }

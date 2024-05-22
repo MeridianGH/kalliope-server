@@ -1,5 +1,4 @@
 import React, { useContext, useEffect } from 'react'
-import PropTypes from 'prop-types'
 import { GuildClientMapType, Nullable, PlayerListType, User } from '../../../types/types'
 import { WebSocketContext } from '../../../contexts/websocketContext'
 import { Loader } from '../../Loader/loader'
@@ -74,11 +73,4 @@ export function Servers({ setActiveTab, userGuilds = [], guildClientMap, playerL
       ))}
     </div>
   )
-}
-
-Servers.propTypes = {
-  setActiveTab: PropTypes.func.isRequired,
-  userGuilds: PropTypes.array,
-  guildClientMap: PropTypes.object,
-  playerList: PropTypes.object
 }

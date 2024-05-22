@@ -1,9 +1,13 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 import './start.scss'
 
-export function Start({ setActiveTab, hasPlayer }) {
+export interface StartProps {
+  setActiveTab: (tab: number) => void,
+  hasPlayer: boolean
+}
+
+export function Start({ setActiveTab, hasPlayer }: StartProps) {
   return (
     <div className={'start-container flex-container column'}>
       <h1>Welcome to the Kalliope Dashboard!</h1>
@@ -24,9 +28,4 @@ export function Start({ setActiveTab, hasPlayer }) {
       </div>
     </div>
   )
-}
-
-Start.propTypes = {
-  setActiveTab: PropTypes.func.isRequired,
-  hasPlayer: PropTypes.bool.isRequired
 }

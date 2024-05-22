@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import PropTypes from 'prop-types'
 import { Nullable, User } from '../../../types/types'
 import kalliopeTransparentPNG from '../../../assets/kalliope_transparent.png'
 import kalliopePNG from '../../../assets/kalliope.png'
@@ -50,11 +49,4 @@ export function Sidebar({ activeTab = 0, setActiveTab, user, hasPlayer }: Sideba
       </div>
     </div>
   )
-}
-
-Sidebar.propTypes = {
-  activeTab: PropTypes.number.isRequired,
-  setActiveTab: PropTypes.func.isRequired,
-  user: PropTypes.object,
-  hasPlayer: PropTypes.bool.isRequired
 }

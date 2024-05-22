@@ -1,11 +1,10 @@
-import React, { createContext, useEffect, useState } from 'react'
-import PropTypes from 'prop-types'
+import React, { createContext, PropsWithChildren, useEffect, useState } from 'react'
 import { MessageToUser, Nullable, UserMessageTypes } from '../types/types'
 import { useDiscordLogin } from '../hooks/discordLoginHook'
 
 export const WebSocketContext = createContext<Nullable<WebSocket>>(null)
 
-export function WebsocketProvider({ children }) {
+export function WebsocketProvider({ children }: PropsWithChildren) {
   const [webSocket, setWebSocket] = useState<Nullable<WebSocket>>(null)
   const user = useDiscordLogin()
 
@@ -61,5 +60,3 @@ export function WebsocketProvider({ children }) {
     </WebSocketContext.Provider>
   )
 }
-
-WebsocketProvider.propTypes = { children: PropTypes.node }

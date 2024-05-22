@@ -1,5 +1,4 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import { Nullable } from '../../../types/types'
 import imagePlaceholder from '../../../assets/image_placeholder.png'
 import './thumbnail.scss'
@@ -16,9 +15,4 @@ export function Thumbnail({ image, size }: ThumbnailProps) {
       <img className={'thumbnail'} src={image ?? imagePlaceholder} alt='Video Thumbnail'/>
     </div>
   )
-}
-
-Thumbnail.propTypes = {
-  image: PropTypes.string,
-  size: PropTypes.string.isRequired
 }
