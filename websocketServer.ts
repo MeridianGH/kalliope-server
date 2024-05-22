@@ -89,6 +89,129 @@ export function createWebSocketServer(domain: string) {
   wsServer.on('connection', (ws, req) => {
     ws.isAlive = true
 
+    function handleUserMessage(message: UserMessage) {
+      if (!message.requestId) {
+        return ws.json<ServerMessage>({ requestId: 'none', type: 'error', errorMessage: 'No requestId in request.' })
+      }
+      if (!message.userId) {
+        return ws.json<ServerMessage>({ requestId: message.requestId, type: 'error', errorMessage: 'No userId in request.' })
+      }
+
+      const websocketGuildId = 'guildId' in message ? message.guildId : 'noGuild'
+
+      // Store user connection
+      Object.keys(userConnectionsByGuildMap).forEach((guildId) => {
+        if (websocketGuildId === guildId) { return } // Return acts as continue in forEach
+        Object.keys(userConnectionsByGuildMap[guildId]).forEach((userId) => {
+          if (message.userId === userId) {
+            delete userConnectionsByGuildMap[guildId][userId]
+            if (Object.keys(userConnectionsByGuildMap[guildId]).length === 0) {
+              delete userConnectionsByGuildMap[guildId]
+            }
+          }
+        })
+      })
+      userConnectionsByGuildMap[websocketGuildId] = { ...userConnectionsByGuildMap[websocketGuildId], [message.userId]: ws }
+
+      switch (message.type) {
+        case 'requestClientDataMap': {
+          // Return clientDataMap
+          ws.json<ServerMessage>({ requestId: message.requestId, type: 'clientDataMap', map: clientDataMap })
+          break
+        }
+        case 'requestGuildClientMap': {
+          // Return guildClientMap
+          ws.json<ServerMessage>({ requestId: message.requestId, type: 'guildClientMap', map: guildClientMap })
+          break
+        }
+        case 'requestPlayerList': {
+          // Return playerList
+          ws.json<ServerMessage>({ requestId: message.requestId, type: 'playerList', list: Array.from(playerList) })
+          break
+        }
+        case 'requestClientData':
+        case 'requestPlayerData':
+        case 'requestPlayerAction': {
+          // Forward data to client
+          const clientWs = clientConnectionMap[guildClientMap[websocketGuildId]]
+          if (!clientWs) {
+            ws.json<ServerMessage>({ requestId: message.requestId, type: 'error', errorMessage: 'Could not identify client.' })
+            return
+          }
+          clientWs.json<MessageToClient>(message)
+          break
+        }
+      }
+    }
+
+    function handleClientMessage(message: ClientMessage) {
+      if (!message.clientId) { return }
+
+      // if (!production) { console.log('received from client:', data) }
+      clientConnectionMap[message.clientId] = ws
+
+      switch (message.type) {
+        case 'clientData': {
+          // Update clientDataMap and guildClientMap
+          let changedGuildClientMap = false
+          let changedClientDataMap = false
+
+          if (message.clientData.guilds.length > 0) {
+            message.clientData.guilds.forEach((guildId) => {
+              if (guildClientMap[guildId] !== message.clientId) {
+                const oldClientId = guildClientMap[guildId]
+                guildClientMap[guildId] = message.clientId
+                changedGuildClientMap = true
+                logging.warn(`[WebSocket] Conflict in guildClientMap: Guild ${guildId} changed from clientId ${oldClientId} to ${message.clientId}!`)
+              }
+            })
+          }
+
+          if (clientDataMap[message.clientId] !== message.clientData) {
+            clientDataMap[message.clientId] = message.clientData
+            changedClientDataMap = true
+          }
+          // eslint-disable-next-line dot-notation
+          Object.values(userConnectionsByGuildMap['noGuild'] ?? {}).forEach((userWs) => {
+            if (changedGuildClientMap) {
+              userWs.json<ServerMessage>({ requestId: message.requestId ?? 'none', type: 'guildClientMap', map: guildClientMap })
+            }
+            if (changedClientDataMap) {
+              userWs.json<ServerMessage>({ requestId: message.requestId ?? 'none', type: 'clientDataMap', map: clientDataMap })
+            }
+          })
+          break
+        }
+        case 'playerData': {
+          // Update playerList
+          const previousSize = playerList.size
+          if (message.player) {
+            playerList.add(message.guildId)
+          } else {
+            playerList.delete(message.guildId)
+          }
+          if (playerList.size !== previousSize) {
+            // eslint-disable-next-line dot-notation
+            Object.values(userConnectionsByGuildMap['noGuild'] ?? {}).forEach((userWs) => {
+              userWs.json<ServerMessage>({ requestId: message.requestId ?? 'none', type: 'playerList', list: Array.from(playerList) })
+            })
+          }
+
+          // Forward playerData to users
+          Object.values(userConnectionsByGuildMap[message.guildId] ?? {}).forEach((userWs) => {
+            userWs.json<ClientMessage>(message)
+          })
+          break
+        }
+        case 'error': {
+          Object.values(userConnectionsByGuildMap[message.guildId ?? 'noGuild'] ?? {}).forEach((userWs) => {
+            userWs.json<ServerMessage>({ requestId: message.requestId ?? 'none', type: 'error', errorMessage: message.errorMessage })
+          })
+          break
+        }
+      }
+    }
+
     ws.on('message', (rawData) => {
       const message: MessageToServer = JSON.parse(rawData.toString())
 
@@ -97,125 +220,9 @@ export function createWebSocketServer(domain: string) {
       }
 
       if (isUserMessage(message)) {
-        // User WebSocket
-        if (!message.requestId) {
-          return ws.json<ServerMessage>({ requestId: 'none', type: 'error', errorMessage: 'No requestId in request.' })
-        }
-        if (!message.userId) {
-          return ws.json<ServerMessage>({ requestId: message.requestId, type: 'error', errorMessage: 'No userId in request.' })
-        }
-
-        const websocketGuildId = 'guildId' in message ? message.guildId : 'noGuild'
-
-        // Store user connection
-        Object.keys(userConnectionsByGuildMap).forEach((guildId) => {
-          if (websocketGuildId === guildId) { return } // Return acts as continue in forEach
-          Object.keys(userConnectionsByGuildMap[guildId]).forEach((userId) => {
-            if (message.userId === userId) {
-              delete userConnectionsByGuildMap[guildId][userId]
-              if (Object.keys(userConnectionsByGuildMap[guildId]).length === 0) {
-                delete userConnectionsByGuildMap[guildId]
-              }
-            }
-          })
-        })
-        userConnectionsByGuildMap[websocketGuildId] = { ...userConnectionsByGuildMap[websocketGuildId], [message.userId]: ws }
-
-        switch (message.type) {
-          case 'requestClientDataMap': {
-            // Return clientDataMap
-            ws.json<ServerMessage>({ requestId: message.requestId, type: 'clientDataMap', map: clientDataMap })
-            break
-          }
-          case 'requestGuildClientMap': {
-            // Return guildClientMap
-            ws.json<ServerMessage>({ requestId: message.requestId, type: 'guildClientMap', map: guildClientMap })
-            break
-          }
-          case 'requestPlayerList': {
-            // Return playerList
-            ws.json<ServerMessage>({ requestId: message.requestId, type: 'playerList', list: Array.from(playerList) })
-            break
-          }
-          case 'requestClientData':
-          case 'requestPlayerData':
-          case 'requestPlayerAction': {
-            // Forward data to client
-            const clientWs = clientConnectionMap[guildClientMap[websocketGuildId]]
-            if (!clientWs) {
-              ws.json<ServerMessage>({ requestId: message.requestId, type: 'error', errorMessage: 'Could not identify client.' })
-              return
-            }
-            clientWs.json<MessageToClient>(message)
-            break
-          }
-        }
+        handleUserMessage(message)
       } else if (req.headers.host === 'clients.' + domain) {
-        // Client WebSocket
-        if (!message.clientId) { return }
-
-        // if (!production) { console.log('received from client:', data) }
-        clientConnectionMap[message.clientId] = ws
-
-        switch (message.type) {
-          case 'clientData': {
-            // Update clientDataMap and guildClientMap
-            let changedGuildClientMap = false
-            let changedClientDataMap = false
-
-            if (message.clientData.guilds.length > 0) {
-              message.clientData.guilds.forEach((guildId) => {
-                if (guildClientMap[guildId] !== message.clientId) {
-                  const oldClientId = guildClientMap[guildId]
-                  guildClientMap[guildId] = message.clientId
-                  changedGuildClientMap = true
-                  logging.warn(`[WebSocket] Conflict in guildClientMap: Guild ${guildId} changed from clientId ${oldClientId} to ${message.clientId}!`)
-                }
-              })
-            }
-
-            if (clientDataMap[message.clientId] !== message.clientData) {
-              clientDataMap[message.clientId] = message.clientData
-              changedClientDataMap = true
-            }
-            // eslint-disable-next-line dot-notation
-            Object.values(userConnectionsByGuildMap['noGuild'] ?? {}).forEach((userWs) => {
-              if (changedGuildClientMap) {
-                userWs.json<ServerMessage>({ requestId: message.requestId ?? 'none', type: 'guildClientMap', map: guildClientMap })
-              }
-              if (changedClientDataMap) {
-                userWs.json<ServerMessage>({ requestId: message.requestId ?? 'none', type: 'clientDataMap', map: clientDataMap })
-              }
-            })
-            break
-          }
-          case 'playerData': {
-            // Update playerList
-            const previousSize = playerList.size
-            if (message.player) {
-              playerList.add(message.guildId)
-            } else {
-              playerList.delete(message.guildId)
-            }
-            if (playerList.size !== previousSize) {
-              // eslint-disable-next-line dot-notation
-              Object.values(userConnectionsByGuildMap['noGuild'] ?? {}).forEach((userWs) => {
-                userWs.json<ServerMessage>({ requestId: message.requestId ?? 'none', type: 'playerList', list: Array.from(playerList) })
-              })
-            }
-
-            // Forward playerData to users
-            Object.values(userConnectionsByGuildMap[message.guildId] ?? {}).forEach((userWs) => {
-              userWs.json<ClientMessage>(message)
-            })
-            break
-          }
-          case 'error': {
-            Object.values(userConnectionsByGuildMap[message.guildId ?? 'noGuild'] ?? {}).forEach((userWs) => {
-              userWs.json<ServerMessage>({ requestId: message.requestId ?? 'none', type: 'error', errorMessage: message.errorMessage })
-            })
-          }
-        }
+        handleClientMessage(message)
       }
     })
 
