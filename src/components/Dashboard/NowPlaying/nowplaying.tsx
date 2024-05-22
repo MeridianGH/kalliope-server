@@ -28,7 +28,7 @@ export function NowPlaying({ player }: NowPlayingProps) {
   }, [player?.guildId, webSocket])
 
   useEffect(() => {
-    const current = player?.queue?.current
+    const current = player?.queue.current
     if (!current || !player?.position) { return }
     setPosition(player.position)
     const interval = setInterval(() => {
@@ -60,7 +60,7 @@ export function NowPlaying({ player }: NowPlayingProps) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        url: player?.queue?.current?.info.artworkUrl,
+        url: player?.queue.current.info.artworkUrl,
         preventSimilar: getComputedStyle(document.documentElement).getPropertyValue('--hover')
       })
     }).then((res) => res.json()).then((body) => {
