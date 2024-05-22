@@ -64,7 +64,7 @@ export function Statistics() {
           {clientDataMap === null && <div className={'flex-container column'}><Loader/></div>}
           {!!clientDataMap && clientData.length === 0 &&
             <p>
-              You have no servers in common with any instance of Kalliope.<br/>
+              This server is not managing any instance of Kalliope.<br/>
               Host your own instance now using
               the <a href={'https://github.com/MeridianGH/Kalliope#installation'} className={'underline'}>instructions</a> and
               make sure it&apos;s properly configured.
