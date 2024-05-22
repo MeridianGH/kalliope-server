@@ -14,14 +14,14 @@ export interface SidebarProps {
 
 export function Sidebar({ activeTab = 0, setActiveTab, user, hasPlayer }: SidebarProps) {
   function toggleCollapsed() {
-    document.querySelector('.sidebar')?.classList.toggle('collapsed')
+    document.querySelector<HTMLDivElement>('.sidebar')!.classList.toggle('collapsed')
   }
   function linkHandler(tab: number) {
     setActiveTab(tab)
     if (screen.width <= 768) { toggleCollapsed() }
   }
   useEffect(() => {
-    document.querySelectorAll('.sidebar-link').forEach((link, index) => {
+    document.querySelectorAll<HTMLButtonElement>('.sidebar-link').forEach((link, index) => {
       index === activeTab ? link.classList.add('active') : link.classList.remove('active')
     })
   }, [activeTab])

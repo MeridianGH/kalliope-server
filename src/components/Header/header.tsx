@@ -5,11 +5,10 @@ import './header.scss'
 
 export function Header() {
   useEffect(() => {
-    const header = document.querySelector('header') as HTMLElement
+    const header = document.querySelector<HTMLElement>('header')!
     const observer = new IntersectionObserver(([entry]) => {
-      const scrollHint = document.querySelector<HTMLElement>('.scroll-hint')
-      const nav = document.querySelector('nav')
-      if (!scrollHint || !nav) { return }
+      const scrollHint = document.querySelector<HTMLLinkElement>('.scroll-hint')!
+      const nav = document.querySelector<HTMLElement>('nav')!
       scrollHint.style.opacity = entry.isIntersecting ? '1' : '0'
       entry.isIntersecting ? nav.classList.add('transparent') : nav.classList.remove('transparent')
     }, { threshold: [0.95] })

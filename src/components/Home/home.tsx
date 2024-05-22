@@ -17,8 +17,8 @@ export function Home() {
   }, [navigate, searchParams])
 
   useEffect(() => {
-    document.querySelector('.features-container')?.addEventListener('mousemove', (event: MouseEvent) => {
-      for (const card of document.querySelectorAll<HTMLElement>('.feature-card')) {
+    document.querySelector<HTMLDivElement>('.features-container')!.addEventListener('mousemove', (event: MouseEvent) => {
+      for (const card of document.querySelectorAll<HTMLDivElement>('.feature-card')) {
         const rect = card.getBoundingClientRect()
         const x = event.clientX - rect.left
         const y = event.clientY - rect.top
@@ -29,7 +29,7 @@ export function Home() {
     })
 
     // noinspection JSCheckFunctionSignatures
-    VanillaTilt.init(Array.from(document.querySelectorAll('.commands-container > code')), { reverse: true, startX: 10, startY: 10, scale: 1.2 })
+    VanillaTilt.init(Array.from(document.querySelectorAll<HTMLElement>('.commands-container > code')), { reverse: true, startX: 10, startY: 10, scale: 1.2 })
   }, [])
   return (
     <div id={'home'}>

@@ -14,7 +14,7 @@ import { Statistics } from './components/Statistics/statistics'
 import kalliopeTransparentPNG from './assets/kalliope_transparent.png'
 import './app.scss'
 
-(document.querySelector('link[rel=icon]') as HTMLLinkElement).href = kalliopeTransparentPNG
+document.querySelector<HTMLLinkElement>('link[rel=icon]')!.href = kalliopeTransparentPNG
 
 // eslint-disable-next-line no-extra-parens
 const UserWebsocketProvider = ({ children }: PropsWithChildren) => (
@@ -62,5 +62,5 @@ export function App() {
 }
 
 
-const root = createRoot(document.querySelector('.app') as HTMLElement)
+const root = createRoot(document.querySelector<HTMLDivElement>('.app')!)
 root.render(<App/>)

@@ -28,9 +28,9 @@ export function Servers({ setActiveTab, userGuilds = [], guildClientMap, playerL
   }, [webSocket, guildClientMap])
 
   useEffect(() => {
-    const elements = document.querySelectorAll<HTMLElement>('.server-card-text')
+    const elements = document.querySelectorAll<HTMLDivElement>('.server-card-text')
     elements.forEach((element) => {
-      const span = element.querySelector('span') as HTMLSpanElement
+      const span = element.querySelector<HTMLSpanElement>('span')!
       if (span.offsetWidth > element.offsetWidth) {
         span.style.transitionDuration = `${(1 - element.offsetWidth / span.offsetWidth) * 3}s`
         element.onmouseenter = () => { span.style.marginLeft = element.offsetWidth - span.offsetWidth + 'px' }

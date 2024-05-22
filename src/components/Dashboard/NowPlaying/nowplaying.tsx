@@ -46,16 +46,15 @@ export function NowPlaying({ player }: NowPlayingProps) {
   }, [player?.filters.timescale, player?.paused, player?.position, player?.queue])
 
   useEffect(() => {
-    const slider = document.querySelector<HTMLInputElement>('.volume-slider-input')
-    if (!slider) { return }
+    const slider = document.querySelector<HTMLInputElement>('.volume-slider-input')!
 
-    const container = document.querySelector('.volume-slider-container')
-    slider.ontouchstart = () => { container?.classList.add('active') }
-    slider.ontouchend = () => { container?.classList.remove('active') }
+    const container = document.querySelector<HTMLDivElement>('.volume-slider-container')!
+    slider.ontouchstart = () => { container.classList.add('active') }
+    slider.ontouchend = () => { container.classList.remove('active') }
   }, [])
 
   useEffect(() => {
-    if (!player?.queue?.current?.info.artworkUrl) { return }
+    if (!player?.queue.current.info.artworkUrl) { return }
 
     fetch(window.location.origin + '/colors', {
       method: 'POST',
@@ -65,11 +64,11 @@ export function NowPlaying({ player }: NowPlayingProps) {
         preventSimilar: getComputedStyle(document.documentElement).getPropertyValue('--hover')
       })
     }).then((res) => res.json()).then((body) => {
-      (document.querySelector('.now-playing-container') as HTMLDivElement).style.setProperty('--dominant-color', body.color ?? 'var(--accent)')
+      document.querySelector<HTMLDivElement>('.now-playing-container')!.style.setProperty('--dominant-color', body.color ?? 'var(--accent)')
     }).catch((error) => console.warn(error))
   }, [player])
 
-  const current = player?.queue?.current
+  const current = player?.queue.current
   if (!current) { return <div className={'now-playing-container flex-container'}>Nothing currently playing! Join a voice channel and start playback using &apos;/play&apos;!</div> }
   return (
     <div className={'now-playing-container flex-container column'}>
@@ -95,8 +94,8 @@ export function NowPlaying({ player }: NowPlayingProps) {
       <div className={'flex-container column'}>
         <div className={'volume-slider-container'}>
           <input className={'volume-slider-input'} type={'range'} defaultValue={volume.toString()} step={'1'} min={'0'} max={'100'}
-            onInput={() => { setVolume(parseInt((document.querySelector('.volume-slider-input') as HTMLInputElement).value)) }}
-            onMouseUp={() => { webSocket?.request({ type: 'requestPlayerAction', guildId: player.guildId, action: 'volume', payload: { volume: parseInt((document.querySelector('.volume-slider-input') as HTMLInputElement).value) } }) }}
+            onInput={() => { setVolume(parseInt(document.querySelector<HTMLInputElement>('.volume-slider-input')!.value)) }}
+            onMouseUp={() => { webSocket?.request({ type: 'requestPlayerAction', guildId: player.guildId, action: 'volume', payload: { volume: parseInt(document.querySelector<HTMLInputElement>('.volume-slider-input')!.value) } }) }}
           />
           <div className={'volume-slider-range'} style={{ width: `${100 - volume}%`, borderRadius: volume === 0 ? '5px' : '0 5px 5px 0' }}></div>
         </div>
