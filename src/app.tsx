@@ -25,42 +25,52 @@ const UserWebsocketProvider = ({ children }: PropsWithChildren) => (
   </DiscordUserProvider>
 )
 
-
 export function App() {
   return (
     <Fragment>
       <ToastContainer position={'bottom-right'} theme={'dark'} transition={Slide}/>
       <BrowserRouter>
         <Routes>
-          <Route index element={
-            <Fragment>
-              <Navbar displayLinks={true}/>
-              <Header/>
-              <Home/>
-              <Footer/>
-            </Fragment>
-          }/>
-          <Route path={'/auth'} element={
-            <DiscordUserProvider>
-              <Auth/>
-            </DiscordUserProvider>
-          }/>
-          <Route path={'/dashboard'} element={
-            <UserWebsocketProvider>
-              <Dashboard/>
-            </UserWebsocketProvider>
-          }/>
-          <Route path={'/statistics'} element={
-            <UserWebsocketProvider>
-              <Statistics/>
-            </UserWebsocketProvider>
-          }/>
+          <Route
+            index
+            element={(
+              <Fragment>
+                <Navbar displayLinks={true}/>
+                <Header/>
+                <Home/>
+                <Footer/>
+              </Fragment>
+            )}
+          />
+          <Route
+            path={'/auth'}
+            element={(
+              <DiscordUserProvider>
+                <Auth/>
+              </DiscordUserProvider>
+            )}
+          />
+          <Route
+            path={'/dashboard'}
+            element={(
+              <UserWebsocketProvider>
+                <Dashboard/>
+              </UserWebsocketProvider>
+            )}
+          />
+          <Route
+            path={'/statistics'}
+            element={(
+              <UserWebsocketProvider>
+                <Statistics/>
+              </UserWebsocketProvider>
+            )}
+          />
         </Routes>
       </BrowserRouter>
     </Fragment>
   )
 }
-
 
 const root = createRoot(document.querySelector<HTMLDivElement>('.app')!)
 root.render(<App/>)

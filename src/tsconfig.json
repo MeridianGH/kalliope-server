@@ -4,7 +4,6 @@
   "include": ["./**/*"],
   "compilerOptions": {
     "outDir": "../dist",
-    "strict": true,
     "jsx": "react"
   },
   "typedocOptions": {

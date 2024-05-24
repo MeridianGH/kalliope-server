@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import './navbar.scss'
 import kalliopeTransparentPNG from '../../assets/kalliope_transparent.png'
 
-export interface NavbarProps {
+export type NavbarProps = {
   displayLinks?: boolean,
   hideOnMobile?: boolean
 }
@@ -14,20 +14,22 @@ export function Navbar({ displayLinks = false, hideOnMobile = true }: NavbarProp
       <Link to={'/'} className={'nav-logo-container'}>
         <div className={'flex-container nowrap'}>
           <img className={'nav-logo'} src={kalliopeTransparentPNG} alt={'Logo'}/>
-          <h1 className={'nav-title'}>Kalliope.</h1>
+          <h1 className={'nav-title'}>{'Kalliope.'}</h1>
         </div>
       </Link>
       {displayLinks && hideOnMobile ?
-        <div className={'nav-link-container flex-container nowrap'}>
-          <Link to={'/dashboard'}>Dashboard</Link>
-          <Link to={'/statistics'}>Statistics</Link>
-          <div className={'nav-separator'}/>
-          <a href={'#features'}>Features</a>
-          <a href={'#install'}>Install</a>
-          <a href={'#commands'}>Commands</a>
-          <a href={'#github'}>GitHub</a>
-        </div> : null
-      }
+        (
+          <div className={'nav-link-container flex-container nowrap'}>
+            <Link to={'/dashboard'}>{'Dashboard'}</Link>
+            <Link to={'/statistics'}>{'Statistics'}</Link>
+            <div className={'nav-separator'}/>
+            <a href={'#features'}>{'Features'}</a>
+            <a href={'#install'}>{'Install'}</a>
+            <a href={'#commands'}>{'Commands'}</a>
+            <a href={'#github'}>{'GitHub'}</a>
+          </div>
+        ) :
+        null}
     </nav>
   )
 }

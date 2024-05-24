@@ -1,4 +1,4 @@
-import express from 'express'
+import express, { Request } from 'express'
 import { createServer as httpServer } from 'http'
 import { createServer as httpsServer } from 'https'
 import url from 'url'
@@ -47,6 +47,7 @@ app.get('/login', (req, res) => {
 })
 
 // Authentication endpoint
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
 app.get('/auth', async (req, res) => {
   if (req.hostname !== domain) { return res.status(401).end() }
 
@@ -65,11 +66,11 @@ app.get('/auth', async (req, res) => {
   }
 
   const body = new URLSearchParams({
-    'client_id': process.env.CLIENT_ID ?? '',
-    'client_secret': process.env.CLIENT_SECRET ?? '',
-    'code': req.query.code,
-    'grant_type': 'authorization_code',
-    'redirect_uri': `${hostname}/auth`
+    client_id: process.env.CLIENT_ID ?? '',
+    client_secret: process.env.CLIENT_SECRET ?? '',
+    code: req.query.code,
+    grant_type: 'authorization_code',
+    redirect_uri: `${hostname}/auth`
   })
 
   const token = await fetch('https://discord.com/api' + Routes.oauth2TokenExchange(), {
@@ -86,15 +87,16 @@ app.get('/auth', async (req, res) => {
 })
 
 // Colors API
-const colors = {}
-app.post('/colors', express.json(), async (req, res) => {
+const colors: Record<string, string> = {}
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+app.post('/colors', express.json(), async (req: Request<never, { color: string }, { url: string, preventSimilar?: string }>, res) => {
   if (req.hostname !== domain) { return res.status(401).end() }
 
   if (!req.body.url?.endsWith('.jpg') && !req.body.url?.endsWith('.png')) { return res.status(400).end() }
   const color = colors[req.body.url] ?? await findDominantColor(req.body.url)
   colors[req.body.url] = color
   const notDark = preventSimilarColor(color, '#121212', true)
-  const corrected = preventSimilarColor(notDark, req.body.preventSimilar, true)
+  const corrected = preventSimilarColor(notDark, req.body.preventSimilar ?? '#121212', true)
   res.send({ color: corrected })
 })
 
@@ -114,10 +116,12 @@ app.get('*', (req, res) => {
   res.sendFile(path.resolve(__dirname, './dist/index.html'))
 })
 
-const server = production ? httpsServer({
-  cert: fs.readFileSync(`${os.homedir()}/.certbot/live/${domain}/fullchain.pem`),
-  key: fs.readFileSync(`${os.homedir()}/.certbot/live/${domain}/privkey.pem`)
-}, app) : httpServer({}, app)
+const server = production ?
+  httpsServer({
+    cert: fs.readFileSync(`${os.homedir()}/.certbot/live/${domain}/fullchain.pem`),
+    key: fs.readFileSync(`${os.homedir()}/.certbot/live/${domain}/privkey.pem`)
+  }, app) :
+  httpServer({}, app)
 
 server.listen({ port: port }, () => {
   logging.success(`Started server on ${hostname}.`)

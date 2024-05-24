@@ -40,7 +40,7 @@ export async function findDominantColor(url: string) {
   const canvas = new Canvas(canvasSize, canvasSize)
   const ctx = canvas.getContext('2d')
 
-  const colors = {}
+  const colors: Record<string, number> = {}
   ctx.filter = 'blur(2px)'
   ctx.drawImage(img, 0, 0, canvasSize, canvasSize)
   const imageData = ctx.getImageData(0, 0, canvasSize, canvasSize).data

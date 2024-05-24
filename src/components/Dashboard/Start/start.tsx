@@ -2,7 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import './start.scss'
 
-export interface StartProps {
+export type StartProps = {
   setActiveTab: (tab: number) => void,
   hasPlayer: boolean
 }
@@ -10,21 +10,21 @@ export interface StartProps {
 export function Start({ setActiveTab, hasPlayer }: StartProps) {
   return (
     <div className={'start-container flex-container column'}>
-      <h1>Welcome to the Kalliope Dashboard!</h1>
+      <h1>{'Welcome to the Kalliope Dashboard!'}</h1>
       <div className={'dashboard-links-container'}>
-        <Link to={'/'} className={'dashboard-link'}><i className={'fad fa-door-open'}/><p>Back to homepage</p></Link>
-        <button className={'dashboard-link'} onClick={() => { setActiveTab(1) }}><i className={'fad fa-th-list'}/><p>Servers</p></button>
-        <button className={'dashboard-link'} disabled={!hasPlayer} onClick={() => { setActiveTab(2) }}><i className={'fad fa-turntable'}/><p>Player</p></button>
-        <button className={'dashboard-link'} disabled={!hasPlayer} onClick={() => { setActiveTab(3) }}><i className={'fad fa-list-music'}/><p>Queue</p></button>
+        <Link to={'/'} className={'dashboard-link'}><i className={'fad fa-door-open'}/><p>{'Back to homepage'}</p></Link>
+        <button className={'dashboard-link'} onClick={() => { setActiveTab(1) }}><i className={'fad fa-th-list'}/><p>{'Servers'}</p></button>
+        <button className={'dashboard-link'} disabled={!hasPlayer} onClick={() => { setActiveTab(2) }}><i className={'fad fa-turntable'}/><p>{'Player'}</p></button>
+        <button className={'dashboard-link'} disabled={!hasPlayer} onClick={() => { setActiveTab(3) }}><i className={'fad fa-list-music'}/><p>{'Queue'}</p></button>
       </div>
-      <p>Quick links to the most common sources:</p>
+      <p>{'Quick links to the most common sources:'}</p>
       <div className={'flex-container'}>
-        <a href={'https://youtube.com'} target={'_blank'} className={'source'} style={{ backgroundColor: '#ff0000' }} rel="noreferrer"><i className={'fab fa-youtube'}/></a>
-        <a href={'https://spotify.com'} target={'_blank'} className={'source'} style={{ backgroundColor: '#1db954' }} rel="noreferrer"><i className={'fab fa-spotify'}/></a>
-        <a href={'https://twitch.tv'} target={'_blank'} className={'source'} style={{ backgroundColor: '#9146ff' }} rel="noreferrer"><i className={'fab fa-twitch'}/></a>
-        <a href={'https://soundcloud.com'} target={'_blank'} className={'source'} style={{ backgroundColor: '#ff8800' }} rel="noreferrer"><i className={'fab fa-soundcloud'}/></a>
-        <a href={'https://bandcamp.com'} target={'_blank'} className={'source'} style={{ backgroundColor: '#629aa9' }} rel="noreferrer"><i className={'fab fa-bandcamp'}/></a>
-        <a href={'https://vimeo.com'} target={'_blank'} className={'source'} style={{ backgroundColor: '#19b7ea' }} rel="noreferrer"><i className={'fab fa-vimeo'}/></a>
+        <a href={'https://youtube.com'} target={'_blank'} className={'source'} style={{ backgroundColor: '#ff0000' }} rel={'noreferrer'}><i className={'fab fa-youtube'}/></a>
+        <a href={'https://spotify.com'} target={'_blank'} className={'source'} style={{ backgroundColor: '#1db954' }} rel={'noreferrer'}><i className={'fab fa-spotify'}/></a>
+        <a href={'https://twitch.tv'} target={'_blank'} className={'source'} style={{ backgroundColor: '#9146ff' }} rel={'noreferrer'}><i className={'fab fa-twitch'}/></a>
+        <a href={'https://soundcloud.com'} target={'_blank'} className={'source'} style={{ backgroundColor: '#ff8800' }} rel={'noreferrer'}><i className={'fab fa-soundcloud'}/></a>
+        <a href={'https://bandcamp.com'} target={'_blank'} className={'source'} style={{ backgroundColor: '#629aa9' }} rel={'noreferrer'}><i className={'fab fa-bandcamp'}/></a>
+        <a href={'https://vimeo.com'} target={'_blank'} className={'source'} style={{ backgroundColor: '#19b7ea' }} rel={'noreferrer'}><i className={'fab fa-vimeo'}/></a>
       </div>
     </div>
   )

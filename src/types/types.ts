@@ -14,9 +14,9 @@ export type ClientData = {
   version: string
 }
 
-export type ClientDataMapType = Nullable<{ [clientId: string]: ClientData }>
+export type ClientDataMapType = Nullable<Record<string, ClientData>>
 export type PlayerListType = Nullable<Set<string>>
-export type GuildClientMapType = Nullable<{ [guildId: string]: string }>
+export type GuildClientMapType = Nullable<Record<string, string>>
 
 export type ClientMessageTypes =
   { type: 'playerData', guildId: string, player: Player } |
@@ -26,18 +26,17 @@ export type ClientMessage = ClientMessageTypes & { requestId?: string, clientId:
 
 type PlayerAction =
   { action: 'pause' | 'previous' | 'shuffle' | 'repeat' | 'autoplay' | 'sponsorblock' | 'clear' } |
-  { action: 'skip', payload?: { index: number }} |
-  { action: 'remove', payload: { index: number }} |
-  { action: 'volume', payload: { volume: number }} |
-  { action: 'play', payload: { query: string }} |
-  { action: 'filter', payload: { filter: string, filterText: string }}
+  { action: 'skip', payload?: { index: number } } |
+  { action: 'remove', payload: { index: number } } |
+  { action: 'volume', payload: { volume: number } } |
+  { action: 'play', payload: { query: string } } |
+  { action: 'filter', payload: { filter: string, filterText: string } }
 export type UserMessageTypes =
   { type: 'requestClientDataMap' | 'requestGuildClientMap' | 'requestPlayerList' } |
   { type: 'requestClientData', clientId: string } |
   { type: 'requestPlayerData', guildId: string } |
   { type: 'requestPlayerAction', guildId: string } & PlayerAction
 export type UserMessage = UserMessageTypes & { requestId: string, userId: string }
-
 
 type ServerMessageTypes =
   { type: 'clientDataMap', map: ClientDataMapType } |

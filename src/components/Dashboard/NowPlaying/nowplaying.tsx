@@ -13,7 +13,7 @@ function msToHMS(ms: number) {
   return hours === '0' ? `${minutes}:${seconds.padStart(2, '0')}` : `${hours}:${minutes.padStart(2, '0')}:${seconds.padStart(2, '0')}`
 }
 
-export interface NowPlayingProps {
+export type NowPlayingProps = {
   player: Nullable<Player>
 }
 
@@ -41,7 +41,7 @@ export function NowPlaying({ player }: NowPlayingProps) {
           return prevPosition + 1000
         })
       }
-    }, 1000 * (1 / player.filters.timescale ?? 1))
+    }, 1000 * (1 / (player.filters.timescale ?? 1)))
     return () => { clearInterval(interval) }
   }, [player?.filters.timescale, player?.paused, player?.position, player?.queue])
 
@@ -63,13 +63,13 @@ export function NowPlaying({ player }: NowPlayingProps) {
         url: player?.queue.current.info.artworkUrl,
         preventSimilar: getComputedStyle(document.documentElement).getPropertyValue('--hover')
       })
-    }).then((res) => res.json()).then((body) => {
+    }).then((res) => res.json()).then((body: { color?: string }) => {
       document.querySelector<HTMLDivElement>('.now-playing-container')!.style.setProperty('--dominant-color', body.color ?? 'var(--accent)')
     }).catch((error) => console.warn(error))
   }, [player])
 
   const current = player?.queue.current
-  if (!current) { return <div className={'now-playing-container flex-container'}>Nothing currently playing! Join a voice channel and start playback using &apos;/play&apos;!</div> }
+  if (!current) { return <div className={'now-playing-container flex-container'}>{'Nothing currently playing! Join a voice channel and start playback using &apos;/play&apos;!'}</div> }
   return (
     <div className={'now-playing-container flex-container column'}>
       <Thumbnail image={current.info.artworkUrl} size={'35vh'}/>
@@ -81,7 +81,7 @@ export function NowPlaying({ player }: NowPlayingProps) {
         <span>{!current.info.isStream ? msToHMS(current.info.duration) : '🔴 Live'}</span>
       </div>
       <div className={'flex-container column'}>
-        <a href={current.info.uri} rel='noreferrer' target='_blank'><b className={'now-playing-title'}>{current.info.title}</b></a>
+        <a href={current.info.uri} rel={'noreferrer'} target={'_blank'}><b className={'now-playing-title'}>{current.info.title}</b></a>
         <span>{current.info.author}</span>
       </div>
       <div className={'music-buttons flex-container nowrap'}>
@@ -93,7 +93,13 @@ export function NowPlaying({ player }: NowPlayingProps) {
       </div>
       <div className={'flex-container column'}>
         <div className={'volume-slider-container'}>
-          <input className={'volume-slider-input'} type={'range'} defaultValue={volume.toString()} step={'1'} min={'0'} max={'100'}
+          <input
+            className={'volume-slider-input'}
+            type={'range'}
+            defaultValue={volume.toString()}
+            step={'1'}
+            min={'0'}
+            max={'100'}
             onInput={() => { setVolume(parseInt(document.querySelector<HTMLInputElement>('.volume-slider-input')!.value)) }}
             onMouseUp={() => { webSocket?.request({ type: 'requestPlayerAction', guildId: player.guildId, action: 'volume', payload: { volume: parseInt(document.querySelector<HTMLInputElement>('.volume-slider-input')!.value) } }) }}
           />

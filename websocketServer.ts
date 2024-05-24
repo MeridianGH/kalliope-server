@@ -16,8 +16,8 @@ import 'dotenv/config'
 
 const production = process.argv[2] !== 'development'
 
-type clientConnectionMapType = Nullable<{ [clientId: string]: HeartbeatWebSocket }>
-type userConnectionByGuildMapType = Nullable<{ [guildId: string]: { [userId: string]: HeartbeatWebSocket } }>
+type clientConnectionMapType = Nullable<Record<string, HeartbeatWebSocket>>
+type userConnectionByGuildMapType = Nullable<Record<string, Record<string, HeartbeatWebSocket>>>
 
 /**
  * A map containing client data organized by clientId.
@@ -56,7 +56,7 @@ class HeartbeatWebSocket extends WebSocket {
     })
 
     this.on('error', (error) => {
-      logging.error(`[WebSocket] Encountered error: ${error}`)
+      logging.error(`[WebSocket] Encountered error: ${error.message}`)
     })
   }
 
@@ -171,7 +171,7 @@ export function createWebSocketServer(domain: string) {
             clientDataMap[message.clientId] = message.clientData
             changedClientDataMap = true
           }
-          // eslint-disable-next-line dot-notation
+          // eslint-disable-next-line @typescript-eslint/dot-notation
           Object.values(userConnectionsByGuildMap['noGuild'] ?? {}).forEach((userWs) => {
             if (changedGuildClientMap) {
               userWs.json<ServerMessage>({ requestId: message.requestId ?? 'none', type: 'guildClientMap', map: guildClientMap })
@@ -191,7 +191,7 @@ export function createWebSocketServer(domain: string) {
             playerList.delete(message.guildId)
           }
           if (playerList.size !== previousSize) {
-            // eslint-disable-next-line dot-notation
+            // eslint-disable-next-line @typescript-eslint/dot-notation
             Object.values(userConnectionsByGuildMap['noGuild'] ?? {}).forEach((userWs) => {
               userWs.json<ServerMessage>({ requestId: message.requestId ?? 'none', type: 'playerList', list: Array.from(playerList) })
             })
@@ -213,7 +213,8 @@ export function createWebSocketServer(domain: string) {
     }
 
     ws.on('message', (rawData) => {
-      const message: MessageToServer = JSON.parse(rawData.toString())
+      if (!(rawData instanceof Buffer)) { return }
+      const message = JSON.parse(rawData.toString()) as MessageToServer
 
       function isUserMessage(data: MessageToServer): data is UserMessage {
         return data ? req.headers.host === domain : false
@@ -230,7 +231,7 @@ export function createWebSocketServer(domain: string) {
       for (const guildId in userConnectionsByGuildMap) {
         const userId = Object.keys(userConnectionsByGuildMap[guildId]).find((key) => userConnectionsByGuildMap[guildId][key] === ws)
         if (userId) {
-          if (!production) { logging.info(`[WebSocket] User websocket closed with reason: ${code} | ${reason ?? 'Unknown reason'}`) }
+          if (!production) { logging.info(`[WebSocket] User websocket closed with reason: ${code} | ${reason.toString() ?? 'Unknown reason'}`) }
           delete userConnectionsByGuildMap[guildId][userId]
           if (Object.keys(userConnectionsByGuildMap[guildId]).length === 0 && guildId !== 'noGuild') {
             delete userConnectionsByGuildMap[guildId]
@@ -241,13 +242,13 @@ export function createWebSocketServer(domain: string) {
 
       const clientId = Object.keys(clientConnectionMap).find((key) => clientConnectionMap[key] === ws)
       if (clientId) {
-        if (!production) { logging.info(`[WebSocket] Client connection closed with reason: ${code} | ${reason ?? 'Unknown reason'}`) }
+        if (!production) { logging.info(`[WebSocket] Client connection closed with reason: ${code} | ${reason.toString() ?? 'Unknown reason'}`) }
         delete clientConnectionMap[clientId]
         delete clientDataMap[clientId]
         Object.keys(guildClientMap).forEach((guildId) => {
           if (guildClientMap[guildId] === clientId) { delete guildClientMap[guildId] }
         })
-        // eslint-disable-next-line dot-notation
+        // eslint-disable-next-line @typescript-eslint/dot-notation
         Object.values(userConnectionsByGuildMap['noGuild'] ?? {}).forEach((userWs) => {
           userWs.json({ requestId: 'none', type: 'guildClientMap', map: guildClientMap })
           userWs.json({ requestId: 'none', type: 'clientDataMap', map: clientDataMap })

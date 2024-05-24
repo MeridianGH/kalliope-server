@@ -5,7 +5,7 @@ import { Loader } from '../../Loader/loader'
 import genericServer from '../../../assets/generic_server.png'
 import './servers.scss'
 
-export interface ServersProps {
+export type ServersProps = {
   setActiveTab: (tab: number) => void,
   userGuilds: Nullable<User['guilds']>,
   guildClientMap: GuildClientMapType,
@@ -50,7 +50,7 @@ export function Servers({ setActiveTab, userGuilds = [], guildClientMap, playerL
   if (Object.keys(guildClientMap).length === 0) {
     return (
       <div className={'server-container flex-container'}>
-        <p>You have no servers in common with any instance of Kalliope.<br/>Host your own instance now using the <a href={'https://github.com/MeridianGH/Kalliope#installation'} className={'underline'}>instructions</a> and make sure it&apos;s properly configured.</p>
+        <p>{'You have no servers in common with any instance of Kalliope.'}<br/>{'Host your own instance now using the '}<a href={'https://github.com/MeridianGH/Kalliope#installation'} className={'underline'}>{'instructions'}</a>{' and make sure it&apos;s properly configured.'}</p>
       </div>
     )
   }

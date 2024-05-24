@@ -27,8 +27,8 @@ export function WebsocketProvider({ children }: PropsWithChildren) {
       if (!awaitResponse) { return }
 
       return new Promise((resolve, reject) => {
-        const messageListener = (message: MessageEvent) => {
-          const data: MessageToUser = JSON.parse(message.data)
+        const messageListener = (message: MessageEvent<string>) => {
+          const data = JSON.parse(message.data) as MessageToUser
           if (data.requestId === requestId) {
             clearTimeout(timeout)
             ws.removeEventListener('message', messageListener)

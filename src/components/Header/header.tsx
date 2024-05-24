@@ -17,8 +17,8 @@ export function Header() {
   return (
     <header className={'flex-container column nowrap'}>
       <Background style={'gradient'}/>
-      <h1 className={'header-title'}>Kalliope.</h1>
-      <p className={'header-slogan'}>Stream high quality music in your Discord server.</p>
+      <h1 className={'header-title'}>{'Kalliope.'}</h1>
+      <p className={'header-slogan'}>{'Stream high quality music in your Discord server.'}</p>
       <div className={'source-icons-container flex-container'}>
         <i className={'fab fa-youtube'} style={{ color: '#ff0000' }}/>
         <i className={'fab fa-spotify'} style={{ color: '#1db954' }}/>
@@ -28,7 +28,7 @@ export function Header() {
         <i className={'fab fa-vimeo'} style={{ color: '#19b7ea' }}/>
         <i className={'fas fa-cloud-music'} style={{ color: '#f0f0f0' }}/>
       </div>
-      <Link to={'/dashboard'} className={'cta-button'}>Dashboard</Link>
+      <Link to={'/dashboard'} className={'cta-button'}>{'Dashboard'}</Link>
       <a className={'scroll-hint'} href={'#features'} tabIndex={-1}><i className={'fas fa-chevron-circle-down'}/></a>
     </header>
   )

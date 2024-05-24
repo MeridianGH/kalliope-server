@@ -1,7 +1,7 @@
 import React from 'react'
 import './background.scss'
 
-export interface BackgroundProps {
+export type BackgroundProps = {
   style?: 'solid' | 'gradient' | 'transparent'
 }
 
@@ -14,11 +14,13 @@ export function Background({ style = 'gradient' }: BackgroundProps) {
           <rect width={'2560'} height={'1440'} fill={'#ffffff'}/>
         </mask>
         {style === 'gradient' ?
-          <linearGradient x1={'10.94%'} y1={'-19.44%'} x2={'89.06%'} y2={'119.44%'} gradientUnits={'userSpaceOnUse'} id={'SvgjsLinearGradient1007'}>
-            <stop stopColor={'rgba(231, 29, 54, 1)'} offset={'0'}/>
-            <stop stopColor={'rgba(231, 106, 29, 1)'} offset={'1'}/>
-          </linearGradient>
-          : null}
+          (
+            <linearGradient x1={'10.94%'} y1={'-19.44%'} x2={'89.06%'} y2={'119.44%'} gradientUnits={'userSpaceOnUse'} id={'SvgjsLinearGradient1007'}>
+              <stop stopColor={'rgba(231, 29, 54, 1)'} offset={'0'}/>
+              <stop stopColor={'rgba(231, 106, 29, 1)'} offset={'1'}/>
+            </linearGradient>
+          ) :
+          null}
       </defs>
       <g mask={'url(#SvgjsMask1006)'} fill={'none'}>
         {style !== 'transparent' ? <rect width={'2560'} height={'1440'} x={'0'} y={'0'} fill={style === 'solid' ? 'rgba(231, 29, 54, 1)' : 'url(#SvgjsLinearGradient1007)'}/> : null}
