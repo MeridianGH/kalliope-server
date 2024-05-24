@@ -71,7 +71,8 @@ export default tseslint.config(
       'member-delimiter-style': ['warn', { singleline: { delimiter: 'comma', requireLast: false }, multiline: { delimiter: 'comma', requireLast: false } }],
       'jsx-indent': ['off'],
       'jsx-curly-brace-presence': ['warn', 'always'],
-      'jsx-curly-newline': ['warn', { singleline: 'forbid', multiline: 'require' }],
+      'jsx-curly-newline': ['warn', { singleline: 'forbid', multiline: 'forbid' }],
+      'jsx-wrap-multilines': ['warn', { declaration: 'parens-new-line', assignment: 'parens-new-line', return: 'parens-new-line', arrow: 'parens-new-line' }],
       'jsx-tag-spacing': ['warn', { beforeSelfClosing: 'never' }],
       'jsx-one-expression-per-line': ['warn', { allow: 'single-line' }]
     }).map(([rule, options]) => ['@stylistic/' + rule, options]))
