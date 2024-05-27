@@ -7,8 +7,9 @@ export function Header() {
   useEffect(() => {
     const header = document.querySelector<HTMLElement>('header')!
     const observer = new IntersectionObserver(([entry]) => {
-      const scrollHint = document.querySelector<HTMLLinkElement>('.scroll-hint')!
-      const nav = document.querySelector<HTMLElement>('nav')!
+      const scrollHint = document.querySelector<HTMLLinkElement>('.scroll-hint')
+      const nav = document.querySelector<HTMLElement>('nav')
+      if (!scrollHint || !nav) { return }
       scrollHint.style.opacity = entry.isIntersecting ? '1' : '0'
       entry.isIntersecting ? nav.classList.add('transparent') : nav.classList.remove('transparent')
     }, { threshold: [0.95] })

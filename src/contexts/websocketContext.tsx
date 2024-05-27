@@ -1,6 +1,7 @@
 import React, { createContext, PropsWithChildren, useEffect, useState } from 'react'
 import { MessageToUser, Nullable, UserMessageTypes } from '../types/types'
 import { useDiscordLogin } from '../hooks/discordLoginHook'
+import { toast } from 'react-toastify'
 
 export const WebSocketContext = createContext<Nullable<WebSocket>>(null)
 
@@ -11,6 +12,10 @@ export function WebsocketProvider({ children }: PropsWithChildren) {
   useEffect(() => {
     if (DEV_SERVER) { return }
     const ws = new WebSocket(`ws${PRODUCTION ? 's' : ''}://${location.host}`)
+
+    ws.addEventListener('error', () => {
+      toast.error('WebSocket has been closed unexpectedly. Please reload the page to try again.', { autoClose: false })
+    })
 
     function request(data: UserMessageTypes): void
     function request(data: UserMessageTypes, awaitResponse: true): Promise<MessageToUser>

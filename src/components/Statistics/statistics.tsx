@@ -66,14 +66,9 @@ export function Statistics() {
             <p>
               {'This server is not managing any instance of Kalliope.'}
               <br/>
-              {'Host your own instance now using\r'}
-              {'the '}
+              {'Host your own instance now using the '}
               <a href={'https://github.com/MeridianGH/Kalliope#installation'} className={'underline'}>{'instructions'}</a>
-              {' '}
-              {'and\r'}
-              {'make sure it'}
-              &apos;
-              {'s properly configured.\r'}
+              {' and make sure it\'s properly configured.'}
             </p>
           )}
           {clientData.length > 0 && (
@@ -82,7 +77,6 @@ export function Statistics() {
               {clientData.reduce((acc, cur) => cur.guilds.length + acc, 0)}
               <br/>
               {'Total users: '}
-              {' '}
               {clientData.reduce((acc, cur) => cur.users + acc, 0)}
               <br/>
               {'Average latency: '}

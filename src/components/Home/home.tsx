@@ -96,15 +96,9 @@ export function Home() {
         <h1><i className={'fas fa-download'}/>{' Install'}</h1>
         <div className={'flex-container column'}>
           <p>
-            {'You'}
-            &apos;
-            {'ll need to install your own version of Kalliope in order to add it to your server.'}
+            {'You\'ll need to install your own version of Kalliope in order to add it to your server.'}
             <br/>
-            {'But don'}
-            &apos;
-            {'t worry, it'}
-            &apos;
-            {'s really easy and fast.'}
+            {'But don\'t worry, it\'s really easy and fast.'}
             <br/>
             <br/>
           </p>
@@ -129,13 +123,9 @@ export function Home() {
         <h1><i className={'fab fa-github'}/>{' GitHub'}</h1>
         <div className={'flex-container column'}>
           <p>
-            {'Kalliope is open-source! You can find it'}
-            &apos;
-            {'s source-code, releases and more info using the link below.'}
+            {'Kalliope is open-source! You can find it\'s source-code, releases and more info using the link below.'}
             <br/>
-            {'However, please be mindful of the license if you'}
-            &apos;
-            {'re interested in redistributing code from the repository.'}
+            {'However, please be mindful of the license if you\'re interested in redistributing code from the repository.'}
             <br/>
             <br/>
           </p>

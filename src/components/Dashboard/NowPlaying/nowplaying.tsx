@@ -47,15 +47,15 @@ export function NowPlaying({ player }: NowPlayingProps) {
   }, [player?.filters.timescale, player?.paused, player?.position, player?.queue])
 
   useEffect(() => {
-    const slider = document.querySelector<HTMLInputElement>('.volume-slider-input')!
-
-    const container = document.querySelector<HTMLDivElement>('.volume-slider-container')!
-    slider.ontouchstart = () => { container.classList.add('active') }
-    slider.ontouchend = () => { container.classList.remove('active') }
+    const slider = document.querySelector<HTMLInputElement>('.volume-slider-input')
+    if (!slider) { return }
+    const container = document.querySelector<HTMLDivElement>('.volume-slider-container')
+    slider.ontouchstart = () => { container?.classList.add('active') }
+    slider.ontouchend = () => { container?.classList.remove('active') }
   }, [])
 
   useEffect(() => {
-    if (!player?.queue.current.info.artworkUrl) { return }
+    if (!player?.queue.current?.info.artworkUrl) { return }
 
     fetch(window.location.origin + '/colors', {
       method: 'POST',
@@ -70,7 +70,13 @@ export function NowPlaying({ player }: NowPlayingProps) {
   }, [player])
 
   const current = player?.queue.current
-  if (!current) { return <div className={'now-playing-container flex-container'}>{'Nothing currently playing! Join a voice channel and start playback using &apos;/play&apos;!'}</div> }
+  if (!current) {
+    return (
+      <div className={'now-playing-container flex-container'}>
+        <p>{'Nothing currently playing! Join a voice channel and start playback using \'/play\'!'}</p>
+      </div>
+    )
+  }
   return (
     <div className={'now-playing-container flex-container column nowrap'}>
       <Thumbnail image={current.info.artworkUrl} size={'35vh'}/>

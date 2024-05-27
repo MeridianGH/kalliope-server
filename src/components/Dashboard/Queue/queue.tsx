@@ -34,7 +34,7 @@ export function Queue({ player }: QueueProps) {
   }
 
   if (!player?.guildId) {
-    return <div className={'queue-container flex-container column'}>{'Please select a valid guild!'}</div>
+    return <div className={'queue-container flex-container column'}>{'Nothing currently playing! Join a voice channel and start playback using \'/play\'!'}</div>
   }
 
   return (
@@ -137,7 +137,7 @@ export function Queue({ player }: QueueProps) {
           </div>
           {'Autoplay\r'}
         </label>
-        {player?.settings.sponsorblockSupport ?? (
+        {player?.settings.sponsorblockSupport && (
           <label
             className={'queue-input pointer'}
             onClick={(event) => {
@@ -208,7 +208,7 @@ export function Queue({ player }: QueueProps) {
             </div>
           </div>
         )) :
-        <div className={'queue-track flex-container'}>{'No upcoming songs! Add songs with &apos;/play&apos; or by using the field above.'}</div>}
+        <div className={'queue-track flex-container'}>{'No upcoming songs! Add songs with \'/play\' or by using the field above.'}</div>}
     </div>
   )
 }
