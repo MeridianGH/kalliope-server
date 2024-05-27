@@ -1,9 +1,10 @@
 import React, { createRef, FormEvent, useContext } from 'react'
+import { toast } from 'react-toastify'
 import { Nullable, Player } from '../../../types/types'
 import { WebSocketContext } from '../../../contexts/websocketContext'
 import { Thumbnail } from '../Thumbnail/thumbnail'
+import { Visualizer } from '../Vizualizer/visualizer'
 import './queue.scss'
-import { toast } from 'react-toastify'
 
 export type QueueProps = {
   player: Nullable<Player>
@@ -43,15 +44,14 @@ export function Queue({ player }: QueueProps) {
       {player?.queue.current ?
         (
           <div className={'flex-container'}>
+            <Visualizer style={'gradient'} paused={player?.paused}/>
             <Thumbnail image={player?.queue.current.info.artworkUrl} size={'3em'}/>
             <div className={'queue-current flex-container column start'}>
-              <a href={player?.queue.current.info.uri} rel={'noreferrer'} target={'_blank'}>
-                <b
-                  className={'now-playing-title'}
-                >
-                  {player?.queue.current.info.title}
-                </b>
-              </a>
+              <div className={'flex-container nowrap'}>
+                <a href={player?.queue.current.info.uri} rel={'noreferrer'} target={'_blank'}>
+                  <b className={'now-playing-title'}>{player?.queue.current.info.title}</b>
+                </a>
+              </div>
               <span>{player?.queue.current.info.author}</span>
             </div>
           </div>

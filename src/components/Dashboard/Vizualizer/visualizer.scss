@@ -1,0 +1,26 @@
+.visualizer {
+    height: 20px;
+    display: flex;
+    gap: 2px;
+    align-items: end;
+
+    &.white > .visualizer-bar {
+        background-color: white;
+    }
+    &.gradient > .visualizer-bar {
+        background: linear-gradient(to top, var(--accent), var(--accent-alt));
+    }
+    .visualizer-bar {
+        width: 5px;
+        height: 5px;
+        background-color: white;
+        border-radius: 2px 2px 0 0;
+        animation: visualizer-animation 0.4s infinite ease-in-out alternate;
+    }
+}
+
+@keyframes visualizer-animation {
+    0% { height: 25%; }
+    50% { height: 60%; }
+    100% { height: 100%; }
+}

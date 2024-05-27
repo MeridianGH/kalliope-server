@@ -2,6 +2,7 @@ import React, { useContext, useEffect } from 'react'
 import { GuildClientMapType, Nullable, PlayerListType, User } from '../../../types/types'
 import { WebSocketContext } from '../../../contexts/websocketContext'
 import { Loader } from '../../Loader/loader'
+import { Visualizer } from '../Vizualizer/visualizer'
 import genericServer from '../../../assets/generic_server.png'
 import './servers.scss'
 
@@ -61,14 +62,17 @@ export function Servers({ setActiveTab, userGuilds = [], guildClientMap, playerL
       {userGuilds.filter((guild) => Object.keys(guildClientMap ?? {}).includes(guild.id)).map((guild, index) => (
         <div
           key={index}
-          className={`server-card ${playerList?.has(guild.id) ? 'playing' : ''} flex-container column`}
+          className={`server-card ${playerList?.has(guild.id) && 'playing'} flex-container column`}
           onClick={() => {
             webSocket?.request({ type: 'requestPlayerData', guildId: guild.id })
             setActiveTab(2)
           }}
         >
           <img src={guild.icon ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}?size=1024` : genericServer} alt={'Server Icon'}></img>
-          <div className={'server-card-text'}><span>{guild.name}</span></div>
+          <div className={'server-card-text'}>
+            {playerList?.has(guild.id) && <Visualizer style={'white'}/>}
+            <span>{guild.name}</span>
+          </div>
         </div>
       ))}
     </div>

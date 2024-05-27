@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { Nullable, Player } from '../../../types/types'
 import { WebSocketContext } from '../../../contexts/websocketContext'
 import { Thumbnail } from '../Thumbnail/thumbnail'
+import { Visualizer } from '../Vizualizer/visualizer'
 import './nowplaying.scss'
 
 function msToHMS(ms: number) {
@@ -71,7 +72,7 @@ export function NowPlaying({ player }: NowPlayingProps) {
   const current = player?.queue.current
   if (!current) { return <div className={'now-playing-container flex-container'}>{'Nothing currently playing! Join a voice channel and start playback using &apos;/play&apos;!'}</div> }
   return (
-    <div className={'now-playing-container flex-container column'}>
+    <div className={'now-playing-container flex-container column nowrap'}>
       <Thumbnail image={current.info.artworkUrl} size={'35vh'}/>
       <div className={'flex-container nowrap'}>
         <span>{msToHMS(position)}</span>
@@ -83,6 +84,7 @@ export function NowPlaying({ player }: NowPlayingProps) {
       <div className={'flex-container column'}>
         <a href={current.info.uri} rel={'noreferrer'} target={'_blank'}><b className={'now-playing-title'}>{current.info.title}</b></a>
         <span>{current.info.author}</span>
+        <Visualizer style={'color'} color={'var(--dominant-color)'} paused={player?.paused}/>
       </div>
       <div className={'music-buttons flex-container nowrap'}>
         <button onClick={() => { webSocket?.request({ type: 'requestPlayerAction', guildId: player.guildId, action: 'shuffle' }) }}><i className={'fas fa-random'}/></button>

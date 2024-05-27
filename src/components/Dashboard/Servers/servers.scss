@@ -20,14 +20,20 @@
 
     &.playing {
         background: linear-gradient(to bottom right, var(--accent), var(--accent-alt));
+        font-weight: bold;
     }
 }
 .server-card-text {
     width: 200px;
-    overflow: hidden;
-    text-align: center;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
 
     > span {
+        max-width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-align: center;
         font-size: 1rem;
         white-space: nowrap;
         transition-property: margin-left;
