@@ -1,6 +1,7 @@
 import path from 'path'
 import * as url from 'url'
 import webpack from 'webpack'
+import HtmlWebpackPlugin from 'html-webpack-plugin'
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 const production = process.argv[process.argv.indexOf('--mode') + 1] !== 'development'
@@ -39,6 +40,7 @@ export default {
     filename: 'bundle.js'
   },
   plugins: [
+    new HtmlWebpackPlugin({ template: './src/index.html' }),
     new webpack.DefinePlugin({
       PRODUCTION: JSON.stringify(production),
       DEV_SERVER: JSON.stringify(isDevServer)
