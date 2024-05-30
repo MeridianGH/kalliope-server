@@ -99,6 +99,7 @@ section h2 {
         flex-grow: 1;
         padding: 15px;
         z-index: 2;
+        cursor: default;
         border-radius: inherit;
         color: var(--text);
         transition: color 0.5s ease-in-out;
