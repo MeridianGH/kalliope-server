@@ -52,11 +52,9 @@ export function WebsocketProvider({ children }: PropsWithChildren) {
     ws.request = request
     setWebSocket(ws)
 
-    function closeWs() {
+    return () => {
       ws.close(1000, 'WebSocket was closed by user.')
     }
-    window.addEventListener('unload', closeWs, { once: true })
-    return closeWs
   }, [user?.id])
 
   return (
