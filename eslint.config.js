@@ -75,7 +75,7 @@ export default tseslint.config(
       'jsx-wrap-multilines': ['warn', { declaration: 'parens-new-line', assignment: 'parens-new-line', return: 'parens-new-line', arrow: 'parens-new-line' }],
       'jsx-tag-spacing': ['warn', { beforeSelfClosing: 'never' }],
       'jsx-one-expression-per-line': ['warn', { allow: 'single-line' }],
-      'jsx-self-closing-comp': ['warn', { component: true, html: true }]
+      'jsx-self-closing-comp': ['warn', { component: true, html: false }]
     }).map(([rule, options]) => ['@stylistic/' + rule, options]))
   },
   reactPluginConfig,

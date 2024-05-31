@@ -19,10 +19,10 @@ export function Visualizer(props: VisualizerProps) {
       props.style === 'color' ? props.color : 'white'
   return (
     <div className={`visualizer ${props.style}`}>
-      <div style={{ animationDelay: '-0.85s', animationPlayState: playState, background: background }} className={'visualizer-bar'}/>
-      <div style={{ animationDelay: '-1s', animationPlayState: playState, background: background }} className={'visualizer-bar'}/>
-      <div style={{ animationDelay: '-0.6s', animationPlayState: playState, background: background }} className={'visualizer-bar'}/>
-      <div style={{ animationDelay: '-0.75s', animationPlayState: playState, background: background }} className={'visualizer-bar'}/>
+      <div style={{ animationDelay: '-0.85s', animationPlayState: playState, background: background }} className={'visualizer-bar'}></div>
+      <div style={{ animationDelay: '-1s', animationPlayState: playState, background: background }} className={'visualizer-bar'}></div>
+      <div style={{ animationDelay: '-0.6s', animationPlayState: playState, background: background }} className={'visualizer-bar'}></div>
+      <div style={{ animationDelay: '-0.75s', animationPlayState: playState, background: background }} className={'visualizer-bar'}></div>
     </div>
   )
 }

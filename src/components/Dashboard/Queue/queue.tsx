@@ -60,7 +60,7 @@ export function Queue({ player }: QueueProps) {
       <div className={'flex-container'}>
         <form onSubmit={handlePlay} className={'queue-input-form music-buttons'}>
           <input type={'text'} className={'queue-input'} placeholder={'Add to queue'} ref={inputRef}/>
-          <button className={'queue-input-button'}><i className={'fas fa-plus'}/></button>
+          <button className={'queue-input-button'}><i className={'fas fa-plus'}></i></button>
         </form>
         <select
           className={'queue-input pointer'}
@@ -108,7 +108,7 @@ export function Queue({ player }: QueueProps) {
             }
           }}
         >
-          <i className={'fas fa-trash-alt'}/>
+          <i className={'fas fa-trash-alt'}></i>
           {' '}
           {'Clear queue\r'}
         </button>
@@ -187,7 +187,7 @@ export function Queue({ player }: QueueProps) {
                 }
               }}
               >
-                <i className={'fas fa-trash-alt'}/>
+                <i className={'fas fa-trash-alt'}></i>
               </button>
               <button onClick={() => {
                 const trackTitle = player?.queue.tracks[index].info.title
@@ -203,7 +203,7 @@ export function Queue({ player }: QueueProps) {
                 }
               }}
               >
-                <i className={'fas fa-forward'}/>
+                <i className={'fas fa-forward'}></i>
               </button>
             </div>
           </div>

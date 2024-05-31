@@ -34,11 +34,11 @@ export function Home() {
   return (
     <div id={'home'}>
       <section id={'features'}>
-        <h1><i className={'fas fa-th'}/>{' Features'}</h1>
+        <h1><i className={'fas fa-th'}></i>{' Features'}</h1>
         <div className={'features-container'}>
           <div className={'feature-card'}>
             <div className={'feature-card-content'}>
-              <i className={'fad fa-stream'}/>
+              <i className={'fad fa-stream'}></i>
               <h2>{'Full support'}</h2>
               <p>
                 {'Kalliope still offers full support for almost every platform you can imagine.\r'}
@@ -47,7 +47,7 @@ export function Home() {
           </div>
           <div className={'feature-card'}>
             <div className={'feature-card-content'}>
-              <i className={'fad fa-headphones'}/>
+              <i className={'fad fa-headphones'}></i>
               <h2>{'High quality'}</h2>
               <p>
                 {'Kalliope is using the well established library LavaLink for high quality playback.\r'}
@@ -56,7 +56,7 @@ export function Home() {
           </div>
           <div className={'feature-card'}>
             <div className={'feature-card-content'}>
-              <i className={'fad fa-search'}/>
+              <i className={'fad fa-search'}></i>
               <h2>{'YouTube Search'}</h2>
               <p>
                 {'Search up to five songs from YouTube and play one directly from Discord.\r'}
@@ -65,7 +65,7 @@ export function Home() {
           </div>
           <div className={'feature-card'}>
             <div className={'feature-card-content'}>
-              <i className={'fad fa-browser'}/>
+              <i className={'fad fa-browser'}></i>
               <h2>{'Dashboard'}</h2>
               <p>
                 {'Use the web dashboard to control your bot without having to type out commands ever again.\r'}
@@ -74,7 +74,7 @@ export function Home() {
           </div>
           <div className={'feature-card'}>
             <div className={'feature-card-content'}>
-              <i className={'fad fa-list-music'}/>
+              <i className={'fad fa-list-music'}></i>
               <h2>{'Genius Lyrics'}</h2>
               <p>
                 {'Kalliope supports Genius Lyrics, directly accessible in Discord via a command.'}<br/>
@@ -83,7 +83,7 @@ export function Home() {
           </div>
           <div className={'feature-card'}>
             <div className={'feature-card-content'}>
-              <i className={'fad fa-terminal'}/>
+              <i className={'fad fa-terminal'}></i>
               <h2>{'Easy commands'}</h2>
               <p>
                 {'Kalliope uses slash-commands to integrate into Discord, which allows for easy command usage.'}<br/>
@@ -93,7 +93,7 @@ export function Home() {
         </div>
       </section>
       <section id={'install'} className={'diagonal'}>
-        <h1><i className={'fas fa-download'}/>{' Install'}</h1>
+        <h1><i className={'fas fa-download'}></i>{' Install'}</h1>
         <div className={'flex-container column'}>
           <p>
             {'You\'ll need to install your own version of Kalliope in order to add it to your server.'}
@@ -106,7 +106,7 @@ export function Home() {
         </div>
       </section>
       <section id={'commands'}>
-        <h1><i className={'fas fa-list-ul'}/>{' Commands'}</h1>
+        <h1><i className={'fas fa-list-ul'}></i>{' Commands'}</h1>
         <div className={'commands-container'}>
           <code>{'/play'}</code>
           <code>{'/search'}</code>
@@ -120,7 +120,7 @@ export function Home() {
         <a href={'https://github.com/MeridianGH/Kalliope#commands'} className={'cta-button'}>{'View all commands'}</a>
       </section>
       <section id={'github'} className={'diagonal reverse'}>
-        <h1><i className={'fab fa-github'}/>{' GitHub'}</h1>
+        <h1><i className={'fab fa-github'}></i>{' GitHub'}</h1>
         <div className={'flex-container column'}>
           <p>
             {'Kalliope is open-source! You can find it\'s source-code, releases and more info using the link below.'}

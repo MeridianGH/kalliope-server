@@ -68,7 +68,7 @@ export function Servers({ setActiveTab, userGuilds = [], guildClientMap, playerL
             setActiveTab(2)
           }}
         >
-          <img src={guild.icon ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}?size=1024` : genericServer} alt={'Server Icon'}></img>
+          <img src={guild.icon ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}?size=1024` : genericServer} alt={'Server Icon'}/>
           <div className={'server-card-text'}>
             {playerList?.has(guild.id) && <Visualizer style={'white'}/>}
             <span>{guild.name}</span>

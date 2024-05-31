@@ -83,7 +83,7 @@ export function NowPlaying({ player }: NowPlayingProps) {
       <div className={'flex-container nowrap'}>
         <span>{msToHMS(position)}</span>
         <div className={'progress-container'}>
-          <div className={'progress-bar'} style={{ width: `${current.info.isStream ? '100%' : position / current.info.duration * 100 + '%'}` }}/>
+          <div className={'progress-bar'} style={{ width: `${current.info.isStream ? '100%' : position / current.info.duration * 100 + '%'}` }}></div>
         </div>
         <span>{!current.info.isStream ? msToHMS(current.info.duration) : '🔴 Live'}</span>
       </div>
@@ -93,11 +93,11 @@ export function NowPlaying({ player }: NowPlayingProps) {
         <Visualizer style={'color'} color={'var(--dominant-color)'} paused={player?.paused}/>
       </div>
       <div className={'music-buttons flex-container nowrap'}>
-        <button onClick={() => { webSocket?.request({ type: 'requestPlayerAction', guildId: player.guildId, action: 'shuffle' }) }}><i className={'fas fa-random'}/></button>
-        <button onClick={() => { webSocket?.request({ type: 'requestPlayerAction', guildId: player.guildId, action: 'previous' }) }}><i className={'fas fa-angle-left'}/></button>
-        <button onClick={() => { webSocket?.request({ type: 'requestPlayerAction', guildId: player.guildId, action: 'pause' }) }}><i className={player.paused ? 'fas fa-play' : 'fas fa-pause'}/></button>
-        <button onClick={() => { webSocket?.request({ type: 'requestPlayerAction', guildId: player.guildId, action: 'skip' }) }}><i className={'fas fa-angle-right'}/></button>
-        <button onClick={() => { webSocket?.request({ type: 'requestPlayerAction', guildId: player.guildId, action: 'repeat' }) }}><i className={player.repeatMode === 'off' ? 'fad fa-repeat-alt' : player.repeatMode === 'track' ? 'fas fa-repeat-1-alt' : 'fas fa-repeat'}/></button>
+        <button onClick={() => { webSocket?.request({ type: 'requestPlayerAction', guildId: player.guildId, action: 'shuffle' }) }}><i className={'fas fa-random'}></i></button>
+        <button onClick={() => { webSocket?.request({ type: 'requestPlayerAction', guildId: player.guildId, action: 'previous' }) }}><i className={'fas fa-angle-left'}></i></button>
+        <button onClick={() => { webSocket?.request({ type: 'requestPlayerAction', guildId: player.guildId, action: 'pause' }) }}><i className={player.paused ? 'fas fa-play' : 'fas fa-pause'}></i></button>
+        <button onClick={() => { webSocket?.request({ type: 'requestPlayerAction', guildId: player.guildId, action: 'skip' }) }}><i className={'fas fa-angle-right'}></i></button>
+        <button onClick={() => { webSocket?.request({ type: 'requestPlayerAction', guildId: player.guildId, action: 'repeat' }) }}><i className={player.repeatMode === 'off' ? 'fad fa-repeat-alt' : player.repeatMode === 'track' ? 'fas fa-repeat-1-alt' : 'fas fa-repeat'}></i></button>
       </div>
       <div className={'flex-container column'}>
         <div className={'volume-slider-container'}>
@@ -113,7 +113,7 @@ export function NowPlaying({ player }: NowPlayingProps) {
           />
           <div className={'volume-slider-range'} style={{ width: `${100 - volume}%`, borderRadius: volume === 0 ? '5px' : '0 5px 5px 0' }}></div>
         </div>
-        <div className={'volume-display'}><i className={volume === 0 ? 'fas fa-volume-off' : volume <= 33 ? 'fas fa-volume-down' : volume <= 66 ? 'fas fa-volume' : 'fas fa-volume-up'}/> {volume}</div>
+        <div className={'volume-display'}><i className={volume === 0 ? 'fas fa-volume-off' : volume <= 33 ? 'fas fa-volume-down' : volume <= 66 ? 'fas fa-volume' : 'fas fa-volume-up'}></i> {volume}</div>
       </div>
     </div>
   )

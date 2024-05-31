@@ -29,23 +29,23 @@ export function Sidebar({ activeTab = 0, setActiveTab, user, hasPlayer }: Sideba
   return (
     <div className={'sidebar'}>
       <button className={'menu-toggle'} onClick={toggleCollapsed}>
-        <i className={'fad fa-chevron-left fa-fw'}/>
-        <i className={'fad fa-bars fa-fw'}/>
+        <i className={'fad fa-chevron-left fa-fw'}></i>
+        <i className={'fad fa-bars fa-fw'}></i>
       </button>
       <div className={'sidebar-links'}>
         <Link to={'/'} className={'sidebar-title'}>
           <img className={'sidebar-icon'} src={kalliopeTransparentPNG} alt={'Logo'}/>
           <span>{'Kalliope'}</span>
         </Link>
-        <button className={'sidebar-link'} onClick={() => { linkHandler(0) }}><i className={'fad fa-home fa-fw'}/><span>{' Home'}</span></button>
-        <button className={'sidebar-link'} onClick={() => { linkHandler(1) }}><i className={'fad fa-th-list fa-fw'}/><span>{' Servers'}</span></button>
-        <button className={'sidebar-link'} disabled={!hasPlayer} onClick={() => { linkHandler(2) }}><i className={'fad fa-turntable fa-fw'}/><span>{' Player'}</span></button>
-        <button className={'sidebar-link'} disabled={!hasPlayer} onClick={() => { linkHandler(3) }}><i className={'fad fa-list-music fa-fw'}/><span>{' Queue'}</span></button>
+        <button className={'sidebar-link'} onClick={() => { linkHandler(0) }}><i className={'fad fa-home fa-fw'}></i><span>{' Home'}</span></button>
+        <button className={'sidebar-link'} onClick={() => { linkHandler(1) }}><i className={'fad fa-th-list fa-fw'}></i><span>{' Servers'}</span></button>
+        <button className={'sidebar-link'} disabled={!hasPlayer} onClick={() => { linkHandler(2) }}><i className={'fad fa-turntable fa-fw'}></i><span>{' Player'}</span></button>
+        <button className={'sidebar-link'} disabled={!hasPlayer} onClick={() => { linkHandler(3) }}><i className={'fad fa-list-music fa-fw'}></i><span>{' Queue'}</span></button>
       </div>
       <div className={'sidebar-user'}>
         <img className={'sidebar-icon'} src={user ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}` : kalliopePNG} alt={'Avatar'}/>
         <span>{user?.global_name ?? 'Logging in...'}</span>
-        <Link to={'/?logout'} className={'sidebar-link logout-button'} onClick={() => { localStorage.removeItem('user') }}><i className={'fad fa-sign-out-alt fa-fw'}/><span>{' Logout'}</span></Link>
+        <Link to={'/?logout'} className={'sidebar-link logout-button'} onClick={() => { localStorage.removeItem('user') }}><i className={'fad fa-sign-out-alt fa-fw'}></i><span>{' Logout'}</span></Link>
       </div>
     </div>
   )
