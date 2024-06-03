@@ -25,7 +25,14 @@ export function Queue({ player }: QueueProps) {
         webSocket.request({ type: 'requestPlayerAction', guildId: player.guildId, action: 'play', payload: { query: query } }, true),
         {
           pending: `Adding '${query}' to queue...`,
-          success: `Successfully added '${query}' to the queue.`,
+          success: {
+            render: ({ data }) => {
+              const trackTitle = data.type === 'playerData' ?
+                (data.player.queue.tracks?.at(-1) ?? data.player.queue.current).info.title :
+                'Unknown track'
+              return `Successfully added '${trackTitle}' to the queue.`
+            }
+          },
           error: `Failed to add '${query}' to the queue. Please try again.`
         }
       )
