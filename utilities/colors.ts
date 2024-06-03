@@ -1,4 +1,4 @@
-import { Canvas, loadImage } from 'skia-canvas'
+import { decode, Image } from 'imagescript'
 
 export function rgbToHEX(color: Uint8ClampedArray) {
   return '#' + ((1 << 24) + (color[0] << 16) + (color[1] << 8) + color[2]).toString(16).slice(1)
@@ -35,22 +35,8 @@ export function preventSimilarColor(color: string, reference: string, brighten =
 }
 
 export async function findDominantColor(url: string) {
-  const img = await loadImage(url)
-  const canvasSize = 20
-  const canvas = new Canvas(canvasSize, canvasSize)
-  const ctx = canvas.getContext('2d')
-
-  const colors: Record<string, number> = {}
-  ctx.filter = 'blur(2px)'
-  ctx.drawImage(img, 0, 0, canvasSize, canvasSize)
-  const imageData = ctx.getImageData(0, 0, canvasSize, canvasSize).data
-  for (let i = 0; i < imageData.length; i += 4) {
-    const rgb = rgbToHEX(new Uint8ClampedArray([
-      imageData[i] - imageData[i] % 32,
-      imageData[i + 1] - imageData[i + 1] % 32,
-      imageData[i + 2] - imageData[i + 2] % 32
-    ]))
-    colors[rgb] = (colors[rgb] ?? 0) + 1
-  }
-  return Object.keys(colors).reduce((a, b) => colors[a] > colors[b] ? a : b)
+  const imageBuffer = Buffer.from(await fetch(url).then((response) => response.arrayBuffer()))
+  const img = await decode(imageBuffer) as Image
+  const hex = img.dominantColor(true, false)
+  return `#${hex.toString(16).padStart(6, '0')}`
 }
