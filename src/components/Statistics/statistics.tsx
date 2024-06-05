@@ -67,7 +67,7 @@ export function Statistics() {
               {'This server is not managing any instance of Kalliope.'}
               <br/>
               {'Host your own instance now using the '}
-              <a href={'https://github.com/MeridianGH/Kalliope#installation'} className={'underline'}>{'instructions'}</a>
+              <a href={'https://github.com/MeridianGH/kalliope#installation'} className={'underline'}>{'instructions'}</a>
               {' and make sure it\'s properly configured.'}
             </p>
           )}

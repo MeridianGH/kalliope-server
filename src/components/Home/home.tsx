@@ -102,7 +102,7 @@ export function Home() {
             <br/>
             <br/>
           </p>
-          <a href={'https://github.com/MeridianGH/Kalliope#installation'} className={'cta-button'}>{'Get Started'}</a>
+          <a href={'https://github.com/MeridianGH/kalliope#installation'} className={'cta-button'}>{'Get Started'}</a>
         </div>
       </section>
       <section id={'commands'}>
@@ -117,7 +117,7 @@ export function Home() {
           <code>{'/queue'}</code>
           <code>{'And more...'}</code>
         </div>
-        <a href={'https://github.com/MeridianGH/Kalliope#commands'} className={'cta-button'}>{'View all commands'}</a>
+        <a href={'https://github.com/MeridianGH/kalliope#commands'} className={'cta-button'}>{'View all commands'}</a>
       </section>
       <section id={'github'} className={'diagonal reverse'}>
         <h1><i className={'fab fa-github'}></i>{' GitHub'}</h1>
@@ -129,7 +129,7 @@ export function Home() {
             <br/>
             <br/>
           </p>
-          <a href={'https://github.com/MeridianGH/Kalliope'} className={'cta-button'}>{'GitHub'}</a>
+          <a href={'https://github.com/MeridianGH/kalliope'} className={'cta-button'}>{'GitHub'}</a>
         </div>
       </section>
     </div>

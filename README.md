@@ -30,7 +30,7 @@
 ---
 
 ## Notice
-> This is a server only handling the communication between users and instances of **[Kalliope](https://github.com/MeridianGH/Kalliope)**.
+> This is a server only handling the communication between users and instances of **[Kalliope](https://github.com/MeridianGH/kalliope)**.
 > If you're looking to install the bot yourself, please check out the other repository.
 
 
