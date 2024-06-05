@@ -156,7 +156,7 @@ export function createWebSocketServer(domain: string) {
           let changedGuildClientMap = false
           let changedClientDataMap = false
 
-          if (message.clientData.guilds.length > 0) {
+          if (message.clientData?.guilds?.length > 0) {
             message.clientData.guilds.forEach((guildId) => {
               if (guildClientMap[guildId] !== message.clientId) {
                 const oldClientId = guildClientMap[guildId]
