@@ -19,7 +19,7 @@ const clientDataMapObject = {
 }
 
 export function Statistics() {
-  document.title = 'Kalliope | Statistics'
+  document.title = 'Kalliope. | Statistics'
 
   const webSocket = useContext(WebSocketContext)
   const [clientDataMap, setClientDataMap] = useState<ClientDataMapType>(DEV_SERVER ? clientDataMapObject : null)

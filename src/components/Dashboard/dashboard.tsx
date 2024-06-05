@@ -72,7 +72,7 @@ const playerObject: Player = {
 }
 
 export function Dashboard() {
-  document.title = 'Kalliope | Dashboard'
+  document.title = 'Kalliope. | Dashboard'
 
   const user = useDiscordLogin()
   const webSocket = useContext(WebSocketContext)

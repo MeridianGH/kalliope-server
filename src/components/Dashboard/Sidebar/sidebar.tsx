@@ -35,7 +35,7 @@ export function Sidebar({ activeTab = 0, setActiveTab, user, hasPlayer }: Sideba
       <div className={'sidebar-links'}>
         <Link to={'/'} className={'sidebar-title'}>
           <img className={'sidebar-icon'} src={kalliopeTransparentPNG} alt={'Logo'}/>
-          <span>{'Kalliope'}</span>
+          <span>{'Kalliope.'}</span>
         </Link>
         <button className={'sidebar-link'} onClick={() => { linkHandler(0) }}><i className={'fad fa-home fa-fw'}></i><span>{' Home'}</span></button>
         <button className={'sidebar-link'} onClick={() => { linkHandler(1) }}><i className={'fad fa-th-list fa-fw'}></i><span>{' Servers'}</span></button>
