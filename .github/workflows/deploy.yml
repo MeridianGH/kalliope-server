@@ -2,9 +2,8 @@ name: Deploy via SSH
 
 on:
   workflow_dispatch:
-  push:
-    tags:
-      - '*'
+  release:
+    types: ['published']
 
 jobs:
   webpack:
@@ -28,4 +27,4 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          script: ./release.sh
+          script: ./scripts/kalliope-server/deploy.sh
