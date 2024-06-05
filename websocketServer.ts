@@ -162,7 +162,7 @@ export function createWebSocketServer(domain: string) {
                 const oldClientId = guildClientMap[guildId]
                 guildClientMap[guildId] = message.clientId
                 changedGuildClientMap = true
-                logging.warn(`[WebSocket] Conflict in guildClientMap: Guild ${guildId} changed from clientId ${oldClientId} to ${message.clientId}!`)
+                if (oldClientId !== undefined) { logging.warn(`[WebSocket] Conflict in guildClientMap: Guild ${guildId} changed from clientId ${oldClientId} to ${message.clientId}!`) }
               }
             })
           }
