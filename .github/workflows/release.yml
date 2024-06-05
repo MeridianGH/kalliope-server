@@ -26,11 +26,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload binaries to release
+      - name: Create release
         uses: ncipollo/release-action@v1
         with:
           body: ${{steps.create_changelog.outputs.changelog}}
           tag: ${{ github.ref }}
+          name: ${{ github.ref_name }}
 
   deploy:
     needs: build
