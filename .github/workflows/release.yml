@@ -31,3 +31,7 @@ jobs:
         with:
           body: ${{steps.create_changelog.outputs.changelog}}
           tag: ${{ github.ref }}
+
+  deploy:
+    needs: build
+    uses: ./.github/workflows/deploy.yml
