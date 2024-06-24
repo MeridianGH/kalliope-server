@@ -151,6 +151,7 @@
     height: 3rem;
     padding: 0;
     white-space: nowrap;
+    outline: none;
 
     > i {
         position: absolute;
@@ -177,7 +178,8 @@
     }
 
     &.active::before,
-    &:hover::before {
+    &:hover::before,
+    &:focus-within::before {
         opacity: 1;
     }
 
@@ -191,7 +193,8 @@
     }
 
     &.active:disabled::before,
-    &:hover:disabled::before {
+    &:hover:disabled::before,
+    &:focus-within:disabled::before {
         opacity: 0.25;
     }
 }
@@ -221,7 +224,8 @@
     z-index: 2;
     transition: opacity 0.25s ease-in-out;
 
-    &:hover {
+    &:hover,
+    &:focus-within {
         color: var(--text);
         opacity: 1;
     }
