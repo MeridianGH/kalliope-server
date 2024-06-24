@@ -21,11 +21,21 @@ export function Servers({ setActiveTab, setGuildId, userGuilds = [], guildClient
     if (webSocket?.readyState === 1) {
       // Always ask for new playerList in order to allow server to update this connection
       webSocket.request({ type: 'requestPlayerList' })
+    } else {
+      webSocket?.addEventListener('open', () => {
+        webSocket.request({ type: 'requestPlayerList' })
+      }, { once: true })
     }
   }, [webSocket])
   useEffect(() => {
-    if (webSocket?.readyState === 1 && !guildClientMap) {
-      webSocket.request({ type: 'requestGuildClientMap' })
+    if (!guildClientMap) {
+      if (webSocket?.readyState === 1) {
+        webSocket.request({ type: 'requestGuildClientMap' })
+      } else {
+        webSocket?.addEventListener('open', () => {
+          webSocket.request({ type: 'requestGuildClientMap' })
+        }, { once: true })
+      }
     }
   }, [webSocket, guildClientMap])
 
