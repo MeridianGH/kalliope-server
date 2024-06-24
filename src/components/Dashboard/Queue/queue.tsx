@@ -1,4 +1,4 @@
-import React, { createRef, FormEvent, useContext } from 'react'
+import React, { createRef, FormEvent, useContext, useEffect } from 'react'
 import { toast } from 'react-toastify'
 import { Nullable, Player } from '../../../types/types'
 import { WebSocketContext } from '../../../contexts/websocketContext'
@@ -7,12 +7,18 @@ import { Visualizer } from '../Vizualizer/visualizer'
 import './queue.scss'
 
 export type QueueProps = {
+  guildId: Nullable<string>,
   player: Nullable<Player>
 }
 
-export function Queue({ player }: QueueProps) {
+export function Queue({ guildId, player }: QueueProps) {
   const webSocket = useContext(WebSocketContext)
   const inputRef = createRef<HTMLInputElement>()
+
+  useEffect(() => {
+    if (!webSocket || !guildId) { return }
+    webSocket.request({ type: 'requestPlayerData', guildId: guildId })
+  }, [guildId, webSocket])
 
   const handlePlay = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()

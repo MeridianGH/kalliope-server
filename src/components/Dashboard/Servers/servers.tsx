@@ -8,12 +8,13 @@ import './servers.scss'
 
 export type ServersProps = {
   setActiveTab: (tab: number) => void,
+  setGuildId: (guildId: string) => void,
   userGuilds: Nullable<User['guilds']>,
   guildClientMap: GuildClientMapType,
   playerList: PlayerListType
 }
 
-export function Servers({ setActiveTab, userGuilds = [], guildClientMap, playerList }: ServersProps) {
+export function Servers({ setActiveTab, setGuildId, userGuilds = [], guildClientMap, playerList }: ServersProps) {
   const webSocket = useContext(WebSocketContext)
 
   useEffect(() => {
@@ -65,6 +66,7 @@ export function Servers({ setActiveTab, userGuilds = [], guildClientMap, playerL
           className={`server-card ${playerList?.has(guild.id) && 'playing'} flex-container column`}
           onClick={() => {
             // webSocket?.request({ type: 'requestPlayerData', guildId: guild.id })
+            setGuildId(guild.id)
             setActiveTab(2)
           }}
         >

@@ -76,10 +76,11 @@ export function Dashboard() {
 
   const user = useDiscordLogin()
   const webSocket = useContext(WebSocketContext)
-  const [player, setPlayer] = useState<Nullable<Player>>(!PRODUCTION ? playerObject : null)
+  const [activeTab, setActiveTab] = useState(0)
   const [guildClientMap, setGuildClientMap] = useState<Nullable<GuildClientMapType>>(null)
   const [playerList, setPlayerList] = useState<Nullable<PlayerListType>>(null)
-  const [activeTab, setActiveTab] = useState(0)
+  const [guildId, setGuildId] = useState<Nullable<string>>(null)
+  const [player, setPlayer] = useState<Nullable<Player>>(!PRODUCTION ? playerObject : null)
   useMediaSession(player?.guildId, player?.queue.current, player?.paused)
 
   // WebSocket Effect
@@ -94,6 +95,7 @@ export function Dashboard() {
       } else if (data.type === 'playerList') {
         setPlayerList(new Set(data.list))
       } else if (data.type === 'playerData') {
+        setGuildId(data.player?.guildId)
         setPlayer(data.player)
       }
     }
@@ -101,6 +103,7 @@ export function Dashboard() {
     function onClose() {
       setGuildClientMap(null)
       setPlayerList(null)
+      setGuildId(null)
       setPlayer(null)
     }
 
@@ -115,9 +118,9 @@ export function Dashboard() {
 
   const tabs = [
     <Start key={0} setActiveTab={setActiveTab} hasPlayer={!!player}/>,
-    <Servers key={1} setActiveTab={setActiveTab} userGuilds={user?.guilds} guildClientMap={guildClientMap} playerList={playerList}/>,
-    <NowPlaying key={2} player={player}/>,
-    <Queue key={3} player={player}/>
+    <Servers key={1} setActiveTab={setActiveTab} setGuildId={setGuildId} userGuilds={user?.guilds} guildClientMap={guildClientMap} playerList={playerList}/>,
+    <NowPlaying key={2} guildId={guildId} player={player}/>,
+    <Queue key={3} guildId={guildId} player={player}/>
   ]
 
   return (

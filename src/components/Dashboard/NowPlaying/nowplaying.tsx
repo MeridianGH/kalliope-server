@@ -15,18 +15,19 @@ function msToHMS(ms: number) {
 }
 
 export type NowPlayingProps = {
+  guildId: Nullable<string>,
   player: Nullable<Player>
 }
 
-export function NowPlaying({ player }: NowPlayingProps) {
+export function NowPlaying({ guildId, player }: NowPlayingProps) {
   const webSocket = useContext(WebSocketContext)
   const [position, setPosition] = useState(player?.position ?? 0)
   const [volume, setVolume] = useState(player?.volume ?? 50)
 
   useEffect(() => {
-    if (!webSocket || !player?.guildId) { return }
-    webSocket.request({ type: 'requestPlayerData', guildId: player.guildId })
-  }, [player?.guildId, webSocket])
+    if (!webSocket || !guildId) { return }
+    webSocket.request({ type: 'requestPlayerData', guildId: guildId })
+  }, [guildId, webSocket])
 
   useEffect(() => {
     const current = player?.queue.current
