@@ -11,36 +11,75 @@
 }
 
 .queue-input {
-    width: 200px;
-    height: 30px;
-    padding: 5px;
+    position: relative;
+    min-width: 200px;
+    min-height: 30px;
+    padding: 1rem;
     box-sizing: border-box;
     background-color: var(--bg-lvl2);
     color: var(--text);
-    border: 2px solid #808080;
+    border: none;
+    outline: none;
     border-radius: 5px;
-    box-shadow: 2px 2px 5px black;
     font-weight: bold;
     font-size: 0.8rem;
-    transition: border-color 0.25s ease-in-out;
+    cursor: pointer;
 
-    &:hover {
-        border-color: var(--text);
+    &:hover,
+    &:focus-within {
+        &::before {
+            opacity: 1;
+        }
+    }
+    &::before {
+        content: '';
+        position: absolute;
+        inset: -2px;
+        z-index: -1;
+        border-radius: inherit;
+        background: linear-gradient(to bottom right, var(--accent), var(--accent-alt));
+        opacity: 0;
+        transition: opacity 0.25s ease-in-out;
     }
 
-    &:focus {
-        outline: none;
-    }
-
-    &.pointer {
-        cursor: pointer;
+    > i {
+        padding-right: 1rem;
     }
 }
 .queue-input-form {
     position: relative;
+    padding: 0;
 
-    > .queue-input {
-        padding-right: 1.5rem;
+    > input {
+        padding: 1rem;
+        border: none;
+        background: none;
+        color: var(--text);
+        height: 100%;
+        outline: none;
+    }
+    > button {
+        padding-right: 1rem;
+    }
+
+    > i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 1rem;
+    }
+    > select {
+        padding: 1rem 1rem 1rem 3rem;
+        width: 100%;
+        border: none;
+        outline: none;
+        border-radius: inherit;
+        cursor: pointer;
+        background: var(--bg-lvl2);
+        appearance: none;
+        -moz-appearance: none;
+        -webkit-appearance: none;
     }
 }
 .queue-input-button {
@@ -53,11 +92,13 @@
 }
 
 .queue-input-toggle {
-    height: 100%;
+    height: 1rem;
     aspect-ratio: 2/1;
     display: inline-block;
-    margin-right: 0.5rem;
+    margin-right: 1rem;
     position: relative;
+    border-radius: 50%;
+    box-shadow: 2px 2px 5px black;
 
     input {
         opacity: 0;

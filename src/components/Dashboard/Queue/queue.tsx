@@ -71,43 +71,54 @@ export function Queue({ guildId, player }: QueueProps) {
         ) :
         <span>{'Nothing currently playing!'}</span>}
       <div className={'flex-container'}>
-        <form onSubmit={handlePlay} className={'queue-input-form music-buttons'}>
-          <input type={'text'} className={'queue-input'} placeholder={'Add to queue'} ref={inputRef}/>
-          <button className={'queue-input-button'}><i className={'fas fa-plus'}></i></button>
+        <form onSubmit={handlePlay} className={'queue-input queue-input-form'}>
+          <input type={'text'} placeholder={'Add to queue'} ref={inputRef}/>
+          <button tabIndex={-1}><i className={'fas fa-plus'}></i></button>
         </form>
-        <select
-          className={'queue-input pointer'}
-          name={'filter'}
-          id={'filter'}
-          value={player?.filters.current ?? 'none'}
-          onChange={(event) => {
-            const filter = event.target.value
-            const filterText = event.target.options.item(event.target.options.selectedIndex)?.label ?? 'Unknown filter'
-            if (webSocket) {
-              void toast.promise(
-                webSocket?.request({ type: 'requestPlayerAction', guildId: player.guildId, action: 'filter', payload: { filter: filter, filterText: filterText } }, true),
-                {
-                  pending: `Setting filter '${filterText}'...`,
-                  success: `Successfully set filter to '${filterText}'.`,
-                  error: `Failed to set filter '${filterText}'. Please try again.`
-                }
-              )
-            }
-          }}
-        >
-          <option disabled hidden>{'Select a filter...'}</option>
-          <option value={'none'}>{'No Filter'}</option>
-          <option value={'bassboost'}>{'Bass Boost'}</option>
-          <option value={'classic'}>{'Classic'}</option>
-          <option value={'eightd'}>{'8D'}</option>
-          <option value={'earrape'}>{'Earrape'}</option>
-          <option value={'karaoke'}>{'Karaoke'}</option>
-          <option value={'nightcore'}>{'Nightcore'}</option>
-          <option value={'superfast'}>{'Superfast'}</option>
-          <option value={'vaporwave'}>{'Vaporwave'}</option>
-        </select>
+        <div className={'queue-input queue-input-form'}>
+          <i className={'fas fa-sliders-v-square'}></i>
+          <select
+            className={'queue-select'}
+            name={'filter'}
+            id={'filter'}
+            value={player?.filters.current ?? 'none'}
+            onChange={(event) => {
+              const filter = event.target.value
+              const filterText = event.target.options.item(event.target.options.selectedIndex)?.label ?? 'Unknown filter'
+              if (webSocket) {
+                void toast.promise(
+                  webSocket?.request({
+                    type: 'requestPlayerAction',
+                    guildId: player.guildId,
+                    action: 'filter',
+                    payload: {
+                      filter: filter,
+                      filterText: filterText
+                    }
+                  }, true),
+                  {
+                    pending: `Setting filter '${filterText}'...`,
+                    success: `Successfully set filter to '${filterText}'.`,
+                    error: `Failed to set filter '${filterText}'. Please try again.`
+                  }
+                )
+              }
+            }}
+          >
+            <option disabled hidden>{'Select a filter...'}</option>
+            <option value={'none'}>{'No Filter'}</option>
+            <option value={'bassboost'}>{'Bass Boost'}</option>
+            <option value={'classic'}>{'Classic'}</option>
+            <option value={'eightd'}>{'8D'}</option>
+            <option value={'earrape'}>{'Earrape'}</option>
+            <option value={'karaoke'}>{'Karaoke'}</option>
+            <option value={'nightcore'}>{'Nightcore'}</option>
+            <option value={'superfast'}>{'Superfast'}</option>
+            <option value={'vaporwave'}>{'Vaporwave'}</option>
+          </select>
+        </div>
         <button
-          className={'queue-input pointer'}
+          className={'queue-input'}
           onClick={() => {
             if (webSocket) {
               void toast.promise(
@@ -122,13 +133,12 @@ export function Queue({ guildId, player }: QueueProps) {
           }}
         >
           <i className={'fas fa-trash-alt'}></i>
-          {' '}
           {'Clear queue\r'}
         </button>
       </div>
       <div className={'flex-container'}>
         <label
-          className={'queue-input pointer'}
+          className={'queue-input'}
           onClick={(event) => {
             event.preventDefault()
             // TODO: Use state value with autoplay
@@ -152,7 +162,7 @@ export function Queue({ guildId, player }: QueueProps) {
         </label>
         {player?.settings.sponsorblockSupport && (
           <label
-            className={'queue-input pointer'}
+            className={'queue-input'}
             onClick={(event) => {
               event.preventDefault()
               // TODO: Use state value with SponsorBlock
