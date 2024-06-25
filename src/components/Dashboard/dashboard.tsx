@@ -3,14 +3,15 @@ import { GuildClientMapType, MessageToUser, Nullable, Player, PlayerListType } f
 import { useDiscordLogin } from '../../hooks/discordLoginHook'
 import { WebSocketContext } from '../../contexts/websocketContext'
 import { useMediaSession } from '../../hooks/mediaSessionHook'
-import { Sidebar } from './Sidebar/sidebar'
-import { NowPlaying } from './NowPlaying/nowplaying'
-import { Queue } from './Queue/queue'
-import { Start } from './Start/start'
 import { Background } from '../Background/background'
-import { Servers } from './Servers/servers'
-import { Loader } from '../Loader/loader'
 import './dashboard.scss'
+import { ControlBar } from './ControlBar/controlbar'
+import { ServerList } from './ServerList/serverlist'
+import kalliopeTransparentPNG from '../../assets/kalliope_transparent.png'
+import { Link } from 'react-router-dom'
+import { Queue } from './Queue/queue'
+import { Tracks } from './Tracks/tracks'
+import { Controls } from './Controls/controls'
 
 const playerObject: Player = {
   guildId: '610498937874546699',
@@ -76,7 +77,6 @@ export function Dashboard() {
 
   const user = useDiscordLogin()
   const webSocket = useContext(WebSocketContext)
-  const [activeTab, setActiveTab] = useState(0)
   const [guildClientMap, setGuildClientMap] = useState<Nullable<GuildClientMapType>>(null)
   const [playerList, setPlayerList] = useState<Nullable<PlayerListType>>(null)
   const [guildId, setGuildId] = useState<Nullable<string>>(null)
@@ -116,20 +116,28 @@ export function Dashboard() {
     }
   }, [user?.id, webSocket])
 
-  const tabs = [
-    <Start key={0} setActiveTab={setActiveTab} hasPlayer={!!player}/>,
-    <Servers key={1} setActiveTab={setActiveTab} setGuildId={setGuildId} userGuilds={user?.guilds} guildClientMap={guildClientMap} playerList={playerList}/>,
-    <NowPlaying key={2} guildId={guildId} player={player}/>,
-    <Queue key={3} guildId={guildId} player={player}/>
-  ]
-
   return (
     <div className={'dashboard'}>
       <Background style={'transparent'}/>
-      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} user={user} hasPlayer={!!player}/>
-      <div className={'sidebar-margin'}>
-        {!user ? <div className={'flex-container'} style={{ height: '100%' }}><Loader/></div> : tabs[activeTab]}
+      <div className={'dashboard-header flex-container nowrap'}>
+        <Link to={'/'} className={'dashboard-header-title flex-container'}>
+          <img src={kalliopeTransparentPNG} alt={'Logo'}/>
+          <span>{'Kalliope.'}</span>
+        </Link>
       </div>
+      <ServerList guildClientMap={guildClientMap} playerList={playerList} userGuilds={user?.guilds} setGuildId={setGuildId}/>
+      <Tracks guildId={guildId} tracks={player?.queue.tracks}/>
+      <Controls guildId={guildId} filter={player?.filters.current}/>
+      <ControlBar
+        guildId={guildId}
+        current={player?.queue.current}
+        initialPosition={player?.position}
+        initialVolume={player?.volume}
+        timescale={player?.filters.timescale}
+        paused={player?.paused}
+        repeatMode={player?.repeatMode}
+        settings={player?.settings}
+      />
     </div>
   )
 }

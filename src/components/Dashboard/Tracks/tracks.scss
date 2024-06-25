@@ -1,0 +1,81 @@
+.queue-container {
+  overflow-y: scroll;
+
+  .queue-title {
+    margin: 0 0 0 0.5rem;
+  }
+
+  .queue-item {
+    width: 100%;
+    padding: 0.5rem 2rem 0.5rem 0.5rem;
+    box-sizing: border-box;
+    font-size: 1rem;
+    border-radius: inherit;
+    transition: background-color 0.25s ease-in-out;
+
+    &:hover {
+      background-color: var(--bg-lvl3);
+
+      .queue-item-skipto::after, .queue-item-skipto > i {
+        opacity: 1;
+      }
+      .queue-item-remove {
+        opacity: 1;
+      }
+    }
+
+    .queue-item-text {
+      gap: 0.5rem;
+
+      > span {
+        color: var(--hover);
+      }
+
+      > .queue-item-placeholder {
+        display: inline-block;
+        width: 5rem;
+        height: 1rem;
+        background-color: var(--hover);
+      }
+    }
+
+    .queue-item-skipto {
+      position: relative;
+
+      &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-color: rgba(0, 0, 0, 0.75);
+        border-radius: 5%;
+        opacity: 0;
+        transition: opacity 0.25s ease-in-out;
+      }
+
+      > i {
+        position: absolute;
+        inset: 0;
+        text-align: center;
+        line-height: 4rem;
+        z-index: 99;
+        font-size: 1.5rem;
+        opacity: 0;
+        transition: opacity 0.25s ease-in-out, color 0.25s ease-in-out;
+      }
+
+      &:hover > i {
+        color: var(--accent);
+      }
+    }
+
+    .queue-item-remove {
+      opacity: 0;
+      color: var(--hover);
+      transition: opacity 0.25s ease-in-out, color 0.25s ease-in-out;
+
+      &:hover {
+        color: var(--accent);
+      }
+    }
+  }
+}

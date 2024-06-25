@@ -5,7 +5,7 @@ import './thumbnail.scss'
 
 export type ThumbnailProps = {
   image: Nullable<string>,
-  size: `${number}${'%' | 'px' | 'em' | 'vh' | 'vw'}`
+  size: `${number}${'%' | 'px' | 'em' | 'rem' | 'vh' | 'vw'}`
 }
 
 export function Thumbnail({ image, size }: ThumbnailProps) {

@@ -1,8 +1,39 @@
 .dashboard {
+    --gap: 0.5rem;
     height: 100svh;
-}
+    //padding: 0.5rem 0.5rem 7.5rem 0.5rem;
+    padding: var(--gap) var(--gap) calc(7rem + var(--gap)) var(--gap);
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    grid-template-rows: min-content 1fr;
+    grid-template-areas:
+        'header header header'
+        '. . .';
+    gap: var(--gap);
+    --dominant-color: var(--accent);
 
-.loading-gear {
-    width: 50px;
-    height: 50px;
+    > :not(.background, .player-bar) {
+        padding: 1rem;
+        background-color: var(--bg-lvl1);
+        border-radius: 1rem;
+    }
+
+    .dashboard-header {
+        grid-area: header;
+        justify-content: start;
+
+        > .dashboard-header-title {
+            height: 2rem;
+
+            > img {
+                height: 100%;
+                transition: opacity 0.25s ease-in-out;
+            }
+            &:hover > img {
+                opacity: 0.5;
+            }
+            font-weight: bold;
+        }
+    }
 }
