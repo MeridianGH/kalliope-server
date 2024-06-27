@@ -9,9 +9,9 @@ import { ControlBar } from './ControlBar/controlbar'
 import { ServerList } from './ServerList/serverlist'
 import kalliopeTransparentPNG from '../../assets/kalliope_transparent.png'
 import { Link } from 'react-router-dom'
-import { Queue } from './Queue/queue'
 import { Tracks } from './Tracks/tracks'
 import { Controls } from './Controls/controls'
+import kalliopePNG from '../../assets/kalliope.png'
 
 const playerObject: Player = {
   guildId: '610498937874546699',
@@ -119,15 +119,31 @@ export function Dashboard() {
   return (
     <div className={'dashboard'}>
       <Background style={'transparent'}/>
-      <div className={'dashboard-header flex-container nowrap'}>
+      <div className={'dashboard-header flex-container space-between nowrap'}>
         <Link to={'/'} className={'dashboard-header-title flex-container'}>
           <img src={kalliopeTransparentPNG} alt={'Logo'}/>
           <span>{'Kalliope.'}</span>
         </Link>
+        <div className={'dashboard-header-links flex-container nowrap'}>
+          <a href={'https://youtube.com'} target={'_blank'} style={{ backgroundColor: '#ff0000' }} rel={'noreferrer'}><i className={'fab fa-youtube'}></i></a>
+          <a href={'https://spotify.com'} target={'_blank'} className={'source'} style={{ backgroundColor: '#1db954' }} rel={'noreferrer'}><i className={'fab fa-spotify'}></i></a>
+          <a href={'https://twitch.tv'} target={'_blank'} style={{ backgroundColor: '#9146ff' }} rel={'noreferrer'}><i className={'fab fa-twitch'}></i></a>
+          <a href={'https://soundcloud.com'} target={'_blank'} style={{ backgroundColor: '#ff8800' }} rel={'noreferrer'}><i className={'fab fa-soundcloud'}></i></a>
+          <a href={'https://bandcamp.com'} target={'_blank'} style={{ backgroundColor: '#629aa9' }} rel={'noreferrer'}><i className={'fab fa-bandcamp'}></i></a>
+          <a href={'https://vimeo.com'} target={'_blank'} style={{ backgroundColor: '#19b7ea' }} rel={'noreferrer'}><i className={'fab fa-vimeo'}></i></a>
+        </div>
+        <div className={'dashboard-header-user flex-container nowrap'}>
+          <span>{user?.global_name ?? 'Logging in...'}</span>
+          <img src={user ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}` : kalliopePNG} alt={'Avatar'}/>
+          <Link to={'/?logout'} className={'dashboard-header-logout flex-container nowrap'} onClick={() => { localStorage.clear() }}>
+            <i className={'fad fa-sign-out-alt fa-fw'}></i>
+            {'Logout'}
+          </Link>
+        </div>
       </div>
       <ServerList guildClientMap={guildClientMap} playerList={playerList} userGuilds={user?.guilds} setGuildId={setGuildId}/>
       <Tracks guildId={guildId} tracks={player?.queue.tracks}/>
-      <Controls guildId={guildId} filter={player?.filters.current}/>
+      <Controls guildId={guildId} filter={player?.filters.current} channel={player?.voiceChannelId}/>
       <ControlBar
         guildId={guildId}
         current={player?.queue.current}

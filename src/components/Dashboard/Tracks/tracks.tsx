@@ -1,4 +1,4 @@
-import React, { createRef, FormEvent, useCallback, useContext } from 'react'
+import React, { useContext } from 'react'
 import { Nullable, Track } from '../../../types/types'
 import './tracks.scss'
 import { WebSocketContext } from '../../../contexts/websocketContext'
@@ -82,10 +82,8 @@ export function Tracks({ guildId, tracks }: TracksProps) {
             </button>
           </div>
         )) :
-        <div
-          className={'queue-track flex-container'}
-        >
-          {'No upcoming songs! Add songs with \'/play\' or by using the field above.'}
+        <div className={'queue-item flex-container'}>
+          {'No upcoming songs! Add songs with \'/play\' or by using the field on the right.'}
         </div>}
     </div>
   )

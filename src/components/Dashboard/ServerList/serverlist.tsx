@@ -54,7 +54,7 @@ export function ServerList({ guildClientMap, playerList, userGuilds, setGuildId 
   return (
     <div className={'server-container flex-container column start nowrap'}>
       <h5 className={'server-title'}>{'Your Servers'}</h5>
-      {userGuilds.map((guild, index) => (
+      {userGuilds.filter((guild) => Object.keys(guildClientMap ?? {}).includes(guild.id)).map((guild, index) => (
         <div
           key={index}
           className={`server-item ${playerList?.has(guild.id) && 'playing'} flex-container nowrap`}

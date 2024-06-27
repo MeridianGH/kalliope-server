@@ -1,5 +1,11 @@
 .controls-container {
   overflow-y: scroll;
+  position: relative;
+  z-index: 1;
+
+  .controls-spacer {
+    flex-grow: 1;
+  }
 
   .controls-title {
     margin: 0 0 0 0.5rem;
@@ -18,22 +24,23 @@
     gap: 1rem;
     padding: 1rem;
     box-sizing: border-box;
-    background-color: var(--bg-lvl2);
+    background-color: var(--bg-lvl3);
     font-size: 0.8rem;
 
-    &:hover::after {
+    &:hover::after,
+    &:focus-within::after {
       opacity: 1;
     }
 
     &::after {
       content: '';
       position: absolute;
-      z-index: 1;
+      z-index: -1;
       inset: -2px;
       background: linear-gradient(to bottom right, var(--accent), var(--accent-alt));
       border-radius: inherit;
       transition: opacity 0.25s ease-in-out;
-      opacity: 1;
+      opacity: 0;
     }
 
     &.disabled {
@@ -80,7 +87,7 @@
       border: none;
       outline: none;
       border-radius: inherit;
-      background: var(--bg-lvl2);
+      background: inherit;
       cursor: pointer;
       appearance: none;
       -moz-appearance: none;
@@ -89,5 +96,6 @@
   }
 
   .controls-button {
+    outline: none;
   }
 }

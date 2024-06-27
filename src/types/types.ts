@@ -21,6 +21,7 @@ export type GuildClientMapType = Nullable<Record<string, string>>
 export type ClientMessageTypes =
   { type: 'playerData', guildId: string, player: Player } |
   { type: 'clientData', clientData: ClientData } |
+  { type: 'guildChannels', guildId: string, channels: { id: string, name: string }[] } |
   { type: 'error', errorMessage: string, guildId?: string }
 export type ClientMessage = ClientMessageTypes & { requestId?: string, clientId: string }
 
@@ -30,11 +31,13 @@ type PlayerAction =
   { action: 'remove', payload: { index: number } } |
   { action: 'volume', payload: { volume: number } } |
   { action: 'play', payload: { query: string } } |
-  { action: 'filter', payload: { filter: string, filterText: string } }
+  { action: 'filter', payload: { filter: string, filterText: string } } |
+  { action: 'join', payload: { channelId: string } }
 export type UserMessageTypes =
   { type: 'requestClientDataMap' | 'requestGuildClientMap' | 'requestPlayerList' } |
   { type: 'requestClientData', clientId: string } |
   { type: 'requestPlayerData', guildId: string } |
+  { type: 'requestGuildChannels', guildId: string } |
   { type: 'requestPlayerAction', guildId: string } & PlayerAction
 export type UserMessage = UserMessageTypes & { requestId: string, userId: string }
 
