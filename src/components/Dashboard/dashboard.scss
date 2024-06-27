@@ -10,7 +10,6 @@
         'header header header'
         '. . .';
     gap: var(--gap);
-    --dominant-color: var(--accent);
 
     > :not(.background, .player-bar) {
         padding: 1rem;

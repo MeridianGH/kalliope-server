@@ -31,6 +31,8 @@
   background-color: var(--bg);
   font-size: 1rem;
 
+  --dominant-color: var(--accent);
+
   > * {
     width: 30%;
   }

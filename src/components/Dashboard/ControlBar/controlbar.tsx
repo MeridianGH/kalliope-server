@@ -30,6 +30,21 @@ export function ControlBar({ guildId, current, initialPosition, initialVolume, t
     return hours === '0' ? `${minutes}:${seconds.padStart(2, '0')}` : `${hours}:${minutes.padStart(2, '0')}:${seconds.padStart(2, '0')}`
   }, [])
 
+  useEffect(() => {
+    if (!current?.info.artworkUrl) { return }
+
+    fetch(window.location.origin + '/colors', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        url: current.info.artworkUrl,
+        preventSimilar: getComputedStyle(document.documentElement).getPropertyValue('--hover')
+      })
+    }).then((res) => res.json()).then((body: { color?: string }) => {
+      document.querySelector<HTMLDivElement>('.player-bar')!.style.setProperty('--dominant-color', body.color ?? 'var(--accent)')
+    }).catch((error) => console.warn(error))
+  }, [current])
+
   const disabled = !guildId || !current
 
   useEffect(() => {
