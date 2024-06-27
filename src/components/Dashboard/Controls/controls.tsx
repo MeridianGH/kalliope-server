@@ -1,4 +1,4 @@
-import React, { createRef, FormEvent, useCallback, useContext, useEffect, useState } from 'react'
+import React, { createRef, FormEvent, useCallback, useContext } from 'react'
 import './controls.scss'
 import { toast } from 'react-toastify'
 import { WebSocketContext } from '../../../contexts/websocketContext'
@@ -6,20 +6,12 @@ import { Nullable, Player } from '../../../types/types'
 
 type ControlsProps = {
   guildId: Nullable<string>,
-  filter: Nullable<Player['filters']['current']>,
-  channel: Nullable<Player['voiceChannelId']>
+  filter: Nullable<Player['filters']['current']>
 }
 
-export function Controls({ guildId, filter, channel }: ControlsProps) {
+export function Controls({ guildId, filter }: ControlsProps) {
   const webSocket = useContext(WebSocketContext)
   const inputRef = createRef<HTMLInputElement>()
-  const [channels, setChannels] = useState<{ id: string, name: string }[]>([])
-
-  useEffect(() => {
-    if (!webSocket || !guildId) { return }
-    void webSocket.request({ type: 'requestGuildChannels', guildId: guildId }, true)
-      .then((response) => { if (response.type === 'guildChannels') { setChannels(response.channels) } })
-  }, [guildId, webSocket])
 
   const handlePlay = useCallback((event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -95,6 +87,7 @@ export function Controls({ guildId, filter, channel }: ControlsProps) {
           <option value={'vaporwave'}>{'Vaporwave'}</option>
         </select>
       </div>
+      <div className={'controls-spacer'}></div>
       <button
         className={`controls-input controls-button ${!guildId ? 'disabled' : ''}`}
         onClick={() => {
@@ -117,37 +110,6 @@ export function Controls({ guildId, filter, channel }: ControlsProps) {
         <i className={'fas fa-trash-alt'}></i>
         {'Clear queue\r'}
       </button>
-      <div className={'controls-spacer'}></div>
-      <div className={`controls-input controls-select ${!guildId ? 'disabled' : ''}`}>
-        <i className={'fas fa-volume'}></i>
-        <select
-          name={'join'}
-          id={'join'}
-          value={channel ?? 'none'}
-          onChange={(event) => {
-            const channelId = event.target.value
-            const channelName = event.target.options.item(event.target.options.selectedIndex)?.label ?? 'Unknown channel'
-            if (webSocket && guildId && channelId !== 'none') {
-              void toast.promise(
-                webSocket?.request({
-                  type: 'requestPlayerAction',
-                  guildId: guildId,
-                  action: 'join',
-                  payload: { channelId: channelId }
-                }, true),
-                {
-                  pending: `Joining channel '${channelName}'...`,
-                  success: `Successfully joined channel '${channelName}'.`,
-                  error: `Failed to join channel '${channelName}'. Please try again.`
-                }
-              )
-            }
-          }}
-        >
-          <option disabled>{'Select a channel...'}</option>
-          {channels.map(({ id, name }, index) => <option key={index} value={id}>{name}</option>)}
-        </select>
-      </div>
     </div>
   )
 }

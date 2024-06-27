@@ -80,8 +80,13 @@ export function Dashboard() {
   const [guildClientMap, setGuildClientMap] = useState<Nullable<GuildClientMapType>>(null)
   const [playerList, setPlayerList] = useState<Nullable<PlayerListType>>(null)
   const [guildId, setGuildId] = useState<Nullable<string>>(null)
-  const [player, setPlayer] = useState<Nullable<Player>>(!PRODUCTION ? playerObject : null)
+  const [player, setPlayer] = useState<Nullable<Player>>(null)
   useMediaSession(player?.guildId, player?.queue.current, player?.paused)
+
+  useEffect(() => {
+    if (!webSocket || !guildId) { return }
+    webSocket.request({ type: 'requestPlayerData', guildId: guildId })
+  }, [guildId, webSocket])
 
   // WebSocket Effect
   useEffect(() => {
@@ -95,7 +100,7 @@ export function Dashboard() {
       } else if (data.type === 'playerList') {
         setPlayerList(new Set(data.list))
       } else if (data.type === 'playerData') {
-        setGuildId(data.player?.guildId)
+        // setGuildId(data.player?.guildId)
         setPlayer(data.player)
       }
     }
@@ -143,7 +148,7 @@ export function Dashboard() {
       </div>
       <ServerList guildClientMap={guildClientMap} playerList={playerList} userGuilds={user?.guilds} setGuildId={setGuildId}/>
       <Tracks guildId={guildId} tracks={player?.queue.tracks}/>
-      <Controls guildId={guildId} filter={player?.filters.current} channel={player?.voiceChannelId}/>
+      <Controls guildId={guildId} filter={player?.filters.current}/>
       <ControlBar
         guildId={guildId}
         current={player?.queue.current}

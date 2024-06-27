@@ -21,7 +21,6 @@ export type GuildClientMapType = Nullable<Record<string, string>>
 export type ClientMessageTypes =
   { type: 'playerData', guildId: string, player: Player } |
   { type: 'clientData', clientData: ClientData } |
-  { type: 'guildChannels', guildId: string, channels: { id: string, name: string }[] } |
   { type: 'error', errorMessage: string, guildId?: string }
 export type ClientMessage = ClientMessageTypes & { requestId?: string, clientId: string }
 
