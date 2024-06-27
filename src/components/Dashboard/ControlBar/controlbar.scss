@@ -24,14 +24,17 @@
 }
 
 .player-bar {
+  --dominant-color: var(--accent);
+
   position: absolute;
   inset: auto 0 0 0;
-  height: 5rem;
+  height: 7rem;
   padding: 1rem;
   background-color: var(--bg);
+  border-top: 2px solid var(--dominant-color);
+  box-sizing: border-box;
   font-size: 1rem;
 
-  --dominant-color: var(--accent);
 
   > * {
     width: 30%;

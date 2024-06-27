@@ -146,7 +146,7 @@ export function Dashboard() {
           </Link>
         </div>
       </div>
-      <ServerList guildClientMap={guildClientMap} playerList={playerList} userGuilds={user?.guilds} setGuildId={setGuildId}/>
+      <ServerList guildClientMap={guildClientMap} playerList={playerList} userGuilds={user?.guilds} guildId={guildId} setGuildId={setGuildId}/>
       <Tracks guildId={guildId} tracks={player?.queue.tracks}/>
       <Controls guildId={guildId} filter={player?.filters.current}/>
       <ControlBar

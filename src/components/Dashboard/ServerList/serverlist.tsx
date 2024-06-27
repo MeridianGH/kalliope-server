@@ -11,10 +11,11 @@ type ServerListProps = {
   guildClientMap: Nullable<GuildClientMapType>,
   playerList: Nullable<PlayerListType>,
   userGuilds: Nullable<APIGuild[]>,
+  guildId: Nullable<string>,
   setGuildId: (id: string) => void
 }
 
-export function ServerList({ guildClientMap, playerList, userGuilds, setGuildId }: ServerListProps) {
+export function ServerList({ guildClientMap, playerList, userGuilds, guildId, setGuildId }: ServerListProps) {
   const webSocket = useContext(WebSocketContext)
 
   useEffect(() => {
@@ -57,7 +58,7 @@ export function ServerList({ guildClientMap, playerList, userGuilds, setGuildId 
       {userGuilds.filter((guild) => Object.keys(guildClientMap ?? {}).includes(guild.id)).map((guild, index) => (
         <div
           key={index}
-          className={`server-item ${playerList?.has(guild.id) && 'playing'} flex-container nowrap`}
+          className={`server-item ${guildId === guild.id ? 'active' : ''} ${playerList?.has(guild.id) ? 'playing' : ''} flex-container nowrap`}
           onClick={() => { setGuildId(guild.id) }}
         >
           <img
