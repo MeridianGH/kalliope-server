@@ -73,7 +73,7 @@ app.get('/auth', async (req, res) => {
     redirect_uri: `${hostname}/auth`
   })
 
-  const token = await fetch('https://discord.com/api' + Routes.oauth2TokenExchange(), {
+  const token = await fetch('https://discord.com/api/v10' + Routes.oauth2TokenExchange(), {
     method: 'POST',
     body: body,
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' }

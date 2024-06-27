@@ -4,6 +4,8 @@ import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { APIGuild, APIUser, RESTError, Routes } from 'discord-api-types/v10'
 import { toast } from 'react-toastify'
 
+const DiscordAPIBase = 'https://discord.com/api/v10'
+
 export const DiscordUserContext = createContext<Nullable<User>>(undefined)
 
 export function DiscordUserProvider({ children }: PropsWithChildren) {
@@ -36,8 +38,9 @@ export function DiscordUserProvider({ children }: PropsWithChildren) {
   const fetchUser = useCallback(async () => {
     const oauthState = JSON.parse(localStorage.getItem('oauth-state') ?? 'null') as OAuthState
     if (!state || atob(state) !== oauthState?.state) { throw 'OAuth state is missing or does not match stored value.' }
+    if (!type || !token) { throw 'Invalid or no Discord authorization token provided.' }
 
-    const discordUser = await fetch('https://discord.com/api' + Routes.user(), {
+    const discordUser = await fetch(DiscordAPIBase + Routes.user(), {
       method: 'GET',
       headers: { authorization: `${type} ${token}` }
     }).then(async (response) => {
@@ -45,7 +48,7 @@ export function DiscordUserProvider({ children }: PropsWithChildren) {
       return await response.json() as APIUser
     })
 
-    const guilds = await fetch('https://discord.com/api' + Routes.userGuilds(), {
+    const guilds = await fetch(DiscordAPIBase + Routes.userGuilds(), {
       method: 'GET',
       headers: { authorization: `${type} ${token}` }
     }).then(async (response) => {
