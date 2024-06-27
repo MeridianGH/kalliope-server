@@ -8,18 +8,18 @@ import './controlbar.scss'
 type ControlBarProps = {
   guildId: Nullable<string>,
   current: Nullable<Track>,
-  initialPosition: Nullable<number>,
-  initialVolume: Nullable<number>,
+  position: Nullable<number>,
+  volume: Nullable<number>,
   timescale: Nullable<number>,
   paused: Nullable<boolean>,
   repeatMode: Nullable<Player['repeatMode']>,
   settings: Nullable<Player['settings']>
 }
 
-export function ControlBar({ guildId, current, initialPosition, initialVolume, timescale, paused, repeatMode, settings }: ControlBarProps) {
+export function ControlBar({ guildId, current, position, volume, timescale, paused, repeatMode, settings }: ControlBarProps) {
   const webSocket = useContext(WebSocketContext)
-  const [position, setPosition] = useState(initialPosition ?? 0)
-  const [volume, setVolume] = useState(initialVolume ?? 50)
+  const [currentPosition, setCurrentPosition] = useState(position ?? 0)
+  const [currentVolume, setCurrentVolume] = useState(volume ?? 50)
 
   const msToHMS = useCallback((ms: number) => {
     let totalSeconds = ms / 1000
@@ -48,9 +48,10 @@ export function ControlBar({ guildId, current, initialPosition, initialVolume, t
   const disabled = !guildId || !current
 
   useEffect(() => {
-    if (disabled || paused) { return }
+    if (!position || disabled || paused) { return }
+    setCurrentPosition(position)
     const interval = setInterval(() => {
-      setPosition((prevPosition) => {
+      setCurrentPosition((prevPosition) => {
         if (prevPosition >= current.info.duration) {
           clearInterval(interval)
           return current.info.duration
@@ -59,7 +60,7 @@ export function ControlBar({ guildId, current, initialPosition, initialVolume, t
       })
     }, 1000 * (1 / (timescale ?? 1)))
     return () => { clearInterval(interval) }
-  }, [current, disabled, paused, timescale])
+  }, [position, current, disabled, paused, timescale])
 
   return (
     <div className={`player-bar flex-container space-between nowrap`}>
@@ -145,11 +146,11 @@ export function ControlBar({ guildId, current, initialPosition, initialVolume, t
           </button>
         </div>
         <div className={'progress-wrapper flex-container nowrap'}>
-          <span>{disabled ? '-:-' : msToHMS(position)}</span>
+          <span>{disabled ? '-:-' : msToHMS(currentPosition)}</span>
           <div className={'progress-bar-container'}>
             <div
               className={'progress-bar'}
-              style={{ width: `${disabled ? '0%' : current.info.isStream ? '100%' : position / current.info.duration * 100 + '%'}` }}
+              style={{ width: `${disabled ? '0%' : current.info.isStream ? '100%' : currentPosition / current.info.duration * 100 + '%'}` }}
             >
             </div>
           </div>
@@ -216,20 +217,20 @@ export function ControlBar({ guildId, current, initialPosition, initialVolume, t
             </div>
             <div className={'volume-text'}>
               <i
-                className={volume === 0 ? 'fas fa-volume-off' : volume <= 33 ? 'fas fa-volume-down' : volume <= 66 ? 'fas fa-volume' : 'fas fa-volume-up'}
+                className={currentVolume === 0 ? 'fas fa-volume-off' : currentVolume <= 33 ? 'fas fa-volume-down' : currentVolume <= 66 ? 'fas fa-volume' : 'fas fa-volume-up'}
               >
               </i>
-              {volume}
+              {currentVolume}
             </div>
             <div className={'volume-slider-container'}>
               <input
                 type={'range'}
-                defaultValue={volume.toString()}
+                defaultValue={currentVolume.toString()}
                 step={'1'}
                 min={'0'}
                 max={'100'}
                 onInput={() => {
-                  setVolume(parseInt(document.querySelector<HTMLInputElement>('.volume-slider-input')!.value))
+                  setCurrentVolume(parseInt(document.querySelector<HTMLInputElement>('.volume-slider-input')!.value))
                 }}
                 onMouseUp={() => {
                   if (!guildId) {
@@ -243,7 +244,7 @@ export function ControlBar({ guildId, current, initialPosition, initialVolume, t
                   })
                 }}
               />
-              <div className={'volume-slider-range'} style={{ width: `${volume}%` }}></div>
+              <div className={'volume-slider-range'} style={{ width: `${currentVolume}%` }}></div>
             </div>
           </>
         )}

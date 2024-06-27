@@ -152,8 +152,8 @@ export function Dashboard() {
       <ControlBar
         guildId={guildId}
         current={player?.queue.current}
-        initialPosition={player?.position}
-        initialVolume={player?.volume}
+        position={player?.position}
+        volume={player?.volume}
         timescale={player?.filters.timescale}
         paused={player?.paused}
         repeatMode={player?.repeatMode}
