@@ -31,7 +31,10 @@ export function ControlBar({ guildId, current, position, volume, timescale, paus
   }, [])
 
   useEffect(() => {
-    if (!current?.info.artworkUrl) { return }
+    if (!current?.info.artworkUrl) {
+      document.querySelector<HTMLDivElement>('.player-bar')!.style.setProperty('--dominant-color', 'var(--accent)')
+      return
+    }
 
     fetch(window.location.origin + '/colors', {
       method: 'POST',
@@ -48,8 +51,8 @@ export function ControlBar({ guildId, current, position, volume, timescale, paus
   const disabled = !guildId || !current
 
   useEffect(() => {
-    if (!position || disabled || paused) { return }
-    setCurrentPosition(position)
+    if (!Number.isFinite(position) || disabled || paused) { return }
+    setCurrentPosition(position!)
     const interval = setInterval(() => {
       setCurrentPosition((prevPosition) => {
         if (prevPosition >= current.info.duration) {
@@ -68,11 +71,13 @@ export function ControlBar({ guildId, current, position, volume, timescale, paus
         {!disabled && (
           <>
             <div className={'player-song-gradient'}></div>
-            <Thumbnail image={current.info.artworkUrl} size={'5rem'}/>
-            <div className={'player-song flex-container column nowrap'}>
-              <a href={current.info.uri} rel={'noreferrer'} target={'_blank'}><b>{current.info.title}</b></a>
-              <span>{current.info.author}</span>
-            </div>
+            <a className={'flex-container nowrap'} href={current.info.uri} rel={'noreferrer'} target={'_blank'}>
+              <Thumbnail image={current.info.artworkUrl} size={'5rem'}/>
+              <div className={'player-song flex-container column nowrap'}>
+                <b>{current.info.title}</b>
+                <span>{current.info.author}</span>
+              </div>
+            </a>
           </>
         )}
       </div>
@@ -142,7 +147,7 @@ export function ControlBar({ guildId, current, position, volume, timescale, paus
               })
             }}
           >
-            <i className={repeatMode === 'off' ? 'fad fa-repeat-alt' : repeatMode === 'track' ? 'fas fa-repeat-1-alt' : 'fas fa-repeat'}></i>
+            <i className={repeatMode === 'track' ? 'fas fa-repeat-1-alt' : repeatMode === 'queue' ? 'fas fa-repeat' : 'fad fa-repeat-alt'}></i>
           </button>
         </div>
         <div className={'progress-wrapper flex-container nowrap'}>

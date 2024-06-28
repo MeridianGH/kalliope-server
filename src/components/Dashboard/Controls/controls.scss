@@ -38,7 +38,7 @@
       z-index: -1;
       inset: -2px;
       background: linear-gradient(to bottom right, var(--accent), var(--accent-alt));
-      border-radius: inherit;
+      border-radius: calc(0.5rem + 2px);
       transition: opacity 0.25s ease-in-out;
       opacity: 0;
     }

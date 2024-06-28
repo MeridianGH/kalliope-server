@@ -79,8 +79,8 @@ export function Dashboard() {
   const webSocket = useContext(WebSocketContext)
   const [guildClientMap, setGuildClientMap] = useState<Nullable<GuildClientMapType>>(null)
   const [playerList, setPlayerList] = useState<Nullable<PlayerListType>>(null)
-  const [guildId, setGuildId] = useState<Nullable<string>>(null)
-  const [player, setPlayer] = useState<Nullable<Player>>(null)
+  const [guildId, setGuildId] = useState<Nullable<string>>(DEV_SERVER ? playerObject.guildId : null)
+  const [player, setPlayer] = useState<Nullable<Player>>(DEV_SERVER ? playerObject : null)
   useMediaSession(player?.guildId, player?.queue.current, player?.paused)
 
   useEffect(() => {

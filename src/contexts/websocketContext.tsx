@@ -14,7 +14,12 @@ export function WebsocketProvider({ children }: PropsWithChildren) {
     const ws = new WebSocket(`ws${PRODUCTION ? 's' : ''}://${location.host}`)
 
     ws.addEventListener('error', () => {
-      toast.error('WebSocket has been closed unexpectedly. Please reload the page to try again.', { autoClose: false })
+      toast.error('WebSocket has been closed unexpectedly. Click or close this message to try again.', {
+        autoClose: false,
+        style: { cursor: 'pointer' },
+        onClick: () => { window.location.reload() },
+        onClose: () => { window.location.reload() }
+      })
     })
 
     function request(data: UserMessageTypes): void

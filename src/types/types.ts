@@ -36,7 +36,6 @@ export type UserMessageTypes =
   { type: 'requestClientDataMap' | 'requestGuildClientMap' | 'requestPlayerList' } |
   { type: 'requestClientData', clientId: string } |
   { type: 'requestPlayerData', guildId: string } |
-  { type: 'requestGuildChannels', guildId: string } |
   { type: 'requestPlayerAction', guildId: string } & PlayerAction
 export type UserMessage = UserMessageTypes & { requestId: string, userId: string }
 

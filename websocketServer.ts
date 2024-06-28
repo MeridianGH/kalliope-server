@@ -18,6 +18,7 @@ const production = process.argv[2] !== 'development'
 
 type clientConnectionMapType = Nullable<Record<string, HeartbeatWebSocket>>
 type userConnectionByGuildMapType = Nullable<Record<string, Record<string, HeartbeatWebSocket>>>
+type requestConnectionMapType = Nullable<Record<string, HeartbeatWebSocket>>
 
 /**
  * A map containing client data organized by clientId.
@@ -43,6 +44,10 @@ const clientConnectionMap: NonNullable<clientConnectionMapType> = {}
  * @description Structure: { guildId: { userId: WebSocket } }
  */
 const userConnectionsByGuildMap: NonNullable<userConnectionByGuildMapType> = {}
+/**
+ * A map containing the respective WebSocket object for each requestId.
+ */
+const requestConnectionMap: NonNullable<requestConnectionMapType> = {}
 
 class HeartbeatWebSocket extends WebSocket {
   isAlive: boolean
@@ -132,6 +137,9 @@ export function createWebSocketServer(domain: string) {
         case 'requestClientData':
         case 'requestPlayerData':
         case 'requestPlayerAction': {
+          // Store WebSocket with request ID
+          requestConnectionMap[message.requestId] = ws
+
           // Forward data to client
           const clientWs = clientConnectionMap[guildClientMap[websocketGuildId]]
           if (!clientWs) {
@@ -139,6 +147,10 @@ export function createWebSocketServer(domain: string) {
             return
           }
           clientWs.json<MessageToClient>(message)
+          break
+        }
+        default: {
+          logging.warn(`[WebSocket] Received unknown message: ${JSON.stringify(message)}`)
           break
         }
       }
@@ -156,6 +168,18 @@ export function createWebSocketServer(domain: string) {
           let changedGuildClientMap = false
           let changedClientDataMap = false
 
+          if (!message.clientData) {
+            delete clientDataMap[message.clientId]
+            changedClientDataMap = true
+
+            Object.entries(guildClientMap).forEach(([guildId, clientId]) => {
+              if (clientId === message.clientId) {
+                delete guildClientMap[guildId]
+                changedGuildClientMap = true
+              }
+            })
+          }
+
           if (message.clientData?.guilds?.length > 0) {
             message.clientData.guilds.forEach((guildId) => {
               if (guildClientMap[guildId] !== message.clientId) {
@@ -167,19 +191,19 @@ export function createWebSocketServer(domain: string) {
             })
           }
 
-          if (clientDataMap[message.clientId] !== message.clientData) {
+          if (message.clientData && clientDataMap[message.clientId] !== message.clientData) {
             clientDataMap[message.clientId] = message.clientData
             changedClientDataMap = true
           }
-          // eslint-disable-next-line @typescript-eslint/dot-notation
-          Object.values(userConnectionsByGuildMap['noGuild'] ?? {}).forEach((userWs) => {
-            if (changedGuildClientMap) {
-              userWs.json<ServerMessage>({ requestId: message.requestId ?? 'none', type: 'guildClientMap', map: guildClientMap })
-            }
-            if (changedClientDataMap) {
-              userWs.json<ServerMessage>({ requestId: message.requestId ?? 'none', type: 'clientDataMap', map: clientDataMap })
-            }
-          })
+          if (changedClientDataMap) {
+            Object.values(userConnectionsByGuildMap ?? {}).flatMap((guildEntries) => Object.values(guildEntries))
+              .forEach((userWs) => {
+                userWs.json<ServerMessage>({ requestId: message.requestId ?? 'none', type: 'clientDataMap', map: clientDataMap })
+                if (changedGuildClientMap) {
+                  userWs.json<ServerMessage>({ requestId: message.requestId ?? 'none', type: 'guildClientMap', map: guildClientMap })
+                }
+              })
+          }
           break
         }
         case 'playerData': {
@@ -204,9 +228,9 @@ export function createWebSocketServer(domain: string) {
           break
         }
         case 'error': {
-          Object.values(userConnectionsByGuildMap[message.guildId ?? 'noGuild'] ?? {}).forEach((userWs) => {
-            userWs.json<ServerMessage>({ requestId: message.requestId ?? 'none', type: 'error', errorMessage: message.errorMessage })
-          })
+          if (!message.requestId) { break }
+          const userWs = requestConnectionMap[message.requestId]
+          userWs.json<ServerMessage>({ requestId: message.requestId, type: 'error', errorMessage: message.errorMessage })
           break
         }
       }

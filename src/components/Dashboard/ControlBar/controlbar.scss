@@ -92,11 +92,16 @@
 
       &:disabled {
         opacity: 0.5;
+        cursor: default;
       }
 
       &:nth-child(3) {
         color: var(--text);
         font-size: 2rem;
+      }
+
+      &:not([disabled]):hover {
+        color: var(--dominant-color);
       }
 
       &.player-repeat-button:not(:has(.fa-repeat-alt)) {
@@ -113,10 +118,6 @@
           background-color: var(--dominant-color);
           border-radius: 50%;
         }
-      }
-
-      &:hover {
-        color: var(--dominant-color);
       }
     }
   }
