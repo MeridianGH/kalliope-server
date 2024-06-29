@@ -25,13 +25,12 @@ export type ClientMessageTypes =
 export type ClientMessage = ClientMessageTypes & { requestId?: string, clientId: string }
 
 type PlayerAction =
-  { action: 'pause' | 'previous' | 'shuffle' | 'repeat' | 'autoplay' | 'sponsorblock' | 'clear' } |
+  { action: 'pause' | 'previous' | 'shuffle' | 'repeat' | 'autoplay' | 'sponsorblock' | 'clear' | 'join' } |
   { action: 'skip', payload?: { index: number } } |
   { action: 'remove', payload: { index: number } } |
   { action: 'volume', payload: { volume: number } } |
   { action: 'play', payload: { query: string } } |
-  { action: 'filter', payload: { filter: string, filterText: string } } |
-  { action: 'join', payload: { channelId: string } }
+  { action: 'filter', payload: { filter: string, filterText: string } }
 export type UserMessageTypes =
   { type: 'requestClientDataMap' | 'requestGuildClientMap' | 'requestPlayerList' } |
   { type: 'requestClientData', clientId: string } |

@@ -214,11 +214,12 @@ export function createWebSocketServer(domain: string) {
           } else {
             playerList.delete(message.guildId)
           }
+          console.log(previousSize, playerList.size)
           if (playerList.size !== previousSize) {
-            // eslint-disable-next-line @typescript-eslint/dot-notation
-            Object.values(userConnectionsByGuildMap['noGuild'] ?? {}).forEach((userWs) => {
-              userWs.json<ServerMessage>({ requestId: message.requestId ?? 'none', type: 'playerList', list: Array.from(playerList) })
-            })
+            Object.values(userConnectionsByGuildMap ?? {}).flatMap((guildEntries) => Object.values(guildEntries))
+              .forEach((userWs) => {
+                userWs.json<ServerMessage>({ requestId: 'none', type: 'playerList', list: Array.from(playerList) })
+              })
           }
 
           // Forward playerData to users

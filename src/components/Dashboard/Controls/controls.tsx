@@ -6,12 +6,15 @@ import { Nullable, Player } from '../../../types/types'
 
 type ControlsProps = {
   guildId: Nullable<string>,
-  filter: Nullable<Player['filters']['current']>
+  filter: Nullable<Player['filters']['current']>,
+  hasPlayer: boolean
 }
 
-export function Controls({ guildId, filter }: ControlsProps) {
+export function Controls({ guildId, filter, hasPlayer }: ControlsProps) {
   const webSocket = useContext(WebSocketContext)
   const inputRef = createRef<HTMLInputElement>()
+
+  const disabled = !guildId || !hasPlayer
 
   const handlePlay = useCallback((event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -32,7 +35,7 @@ export function Controls({ guildId, filter }: ControlsProps) {
               return `Successfully added '${trackTitle}' to the queue.`
             }
           },
-          error: `Failed to add '${query}' to the queue. Please try again.`
+          error: { render: ({ data }) => `There was an error adding your track: ${(data as string).toString()}` }
         }
       )
     }
@@ -46,7 +49,7 @@ export function Controls({ guildId, filter }: ControlsProps) {
         <input type={'text'} placeholder={'Add to queue'} ref={inputRef}/>
         <button tabIndex={-1}><i className={'fas fa-plus'}></i></button>
       </form>
-      <div className={`controls-input controls-select ${!guildId ? 'disabled' : ''}`}>
+      <div className={`controls-input controls-select ${disabled ? 'disabled' : ''}`}>
         <i className={'fas fa-sliders-v-square'}></i>
         <select
           name={'filter'}
@@ -89,7 +92,7 @@ export function Controls({ guildId, filter }: ControlsProps) {
       </div>
       <div className={'controls-spacer'}></div>
       <button
-        className={`controls-input controls-button ${!guildId ? 'disabled' : ''}`}
+        className={`controls-input controls-button ${disabled ? 'disabled' : ''}`}
         onClick={() => {
           if (webSocket && guildId) {
             void toast.promise(

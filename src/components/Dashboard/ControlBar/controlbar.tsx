@@ -229,6 +229,7 @@ export function ControlBar({ guildId, current, position, volume, timescale, paus
             </div>
             <div className={'volume-slider-container'}>
               <input
+                className={'volume-slider-input'}
                 type={'range'}
                 defaultValue={currentVolume.toString()}
                 step={'1'}

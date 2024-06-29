@@ -148,7 +148,7 @@ export function Dashboard() {
       </div>
       <ServerList guildClientMap={guildClientMap} playerList={playerList} userGuilds={user?.guilds} guildId={guildId} setGuildId={setGuildId}/>
       <Tracks guildId={guildId} tracks={player?.queue.tracks}/>
-      <Controls guildId={guildId} filter={player?.filters.current}/>
+      <Controls guildId={guildId} filter={player?.filters.current} hasPlayer={!!player}/>
       <ControlBar
         guildId={guildId}
         current={player?.queue.current}
