@@ -12,7 +12,7 @@
     color: var(--text);
     background-color: var(--bg-lvl3);
     border-radius: 0.5rem;
-    padding: 0.5rem;
+    padding: 0.8rem;
     opacity: 0;
     transition: opacity 0.25s ease-in-out;
     pointer-events: none;
@@ -146,8 +146,8 @@
     }
 
     .sponsorblock-button {
-      width: 1.2rem;
-      height: 1.2rem;
+      width: 1.5rem;
+      height: 1.5rem;
       position: relative;
       transition: background-color 0.25s ease-in-out;
 

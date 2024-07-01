@@ -5,6 +5,7 @@ import { WebSocketContext } from '../../../contexts/websocketContext'
 import { Thumbnail } from '../Thumbnail/thumbnail'
 import { Play, Trash } from '@phosphor-icons/react'
 import './queue.scss'
+import { LoadingButton } from '../../LoadingButton/loadingbutton'
 
 type QueueProps = {
   guildId: Nullable<string>,
@@ -29,7 +30,7 @@ export function Queue({ guildId, tracks }: QueueProps) {
         tracks.map((track, index) => (
           <div key={index + 1} className={'queue-item flex-container space-between nowrap'}>
             <div className={'flex-container nowrap'}>
-              <button
+              <LoadingButton
                 className={'queue-item-skipto tooltip'}
                 onClick={() => {
                   const trackTitle = tracks[index].info.title
@@ -52,13 +53,13 @@ export function Queue({ guildId, tracks }: QueueProps) {
               >
                 <Thumbnail image={track.info.artworkUrl} size={'4rem'}/>
                 <Play weight={'fill'}/>
-              </button>
+              </LoadingButton>
               <div className={'queue-item-text flex-container column start nowrap'}>
                 <a href={track.info.uri} rel={'noreferrer'} target={'_blank'}><b>{track.info.title}</b></a>
                 <span>{track.info.author}</span>
               </div>
             </div>
-            <button
+            <LoadingButton
               className={'queue-item-remove'}
               onClick={() => {
                 const trackTitle = tracks[index].info.title
@@ -80,7 +81,7 @@ export function Queue({ guildId, tracks }: QueueProps) {
               }}
             >
               <Trash weight={'fill'}/>
-            </button>
+            </LoadingButton>
           </div>
         )) :
         <div className={'queue-item flex-container'}>

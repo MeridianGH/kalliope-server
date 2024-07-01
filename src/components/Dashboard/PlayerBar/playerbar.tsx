@@ -5,6 +5,7 @@ import { WebSocketContext } from '../../../contexts/websocketContext'
 import { Thumbnail } from '../Thumbnail/thumbnail'
 import { LoadingButton } from '../../LoadingButton/loadingbutton'
 import {
+  Infinity,
   PauseCircle,
   PlayCircle,
   Queue, Repeat, RepeatOnce,
@@ -109,7 +110,6 @@ export function PlayerBar({ guildId, current, position, volume, timescale, pause
           </LoadingButton>
           <LoadingButton
             disabled={disabled}
-            // faIcon={'fas fa-step-backward'}
             onClick={() => {
               if (!guildId) { return }
               webSocket?.request({
@@ -123,7 +123,6 @@ export function PlayerBar({ guildId, current, position, volume, timescale, pause
           </LoadingButton>
           <LoadingButton
             disabled={disabled}
-            // faIcon={paused ? 'fas fa-play-circle' : 'fas fa-pause-circle'}
             onClick={() => {
               if (!guildId) { return }
               webSocket?.request({
@@ -137,7 +136,6 @@ export function PlayerBar({ guildId, current, position, volume, timescale, pause
           </LoadingButton>
           <LoadingButton
             disabled={disabled}
-            // faIcon={'fas fa-step-forward'}
             onClick={() => {
               if (!guildId) { return }
               webSocket?.request({
@@ -149,7 +147,7 @@ export function PlayerBar({ guildId, current, position, volume, timescale, pause
           >
             <SkipForward/>
           </LoadingButton>
-          <button
+          <LoadingButton
             className={`player-repeat-button ${repeatMode}`}
             disabled={disabled}
             onClick={() => {
@@ -162,7 +160,7 @@ export function PlayerBar({ guildId, current, position, volume, timescale, pause
             }}
           >
             {repeatMode === 'track' ? <RepeatOnce/> : <Repeat/>}
-          </button>
+          </LoadingButton>
         </div>
         <div className={'progress-wrapper flex-container nowrap'}>
           <span>{disabled ? '-:-' : msToHMS(currentPosition)}</span>
@@ -177,14 +175,12 @@ export function PlayerBar({ guildId, current, position, volume, timescale, pause
         </div>
       </div>
       <div className={'extras-container flex-container nowrap'}>
-        {/* <LoadingButton onClick={() => new Promise((resolve, reject) => setTimeout(resolve, 3000))}/> */}
         {!disabled && (
           <>
             <div className={'flex-container nowrap'}>
-              <button
+              <LoadingButton
                 className={`autoplay-button ${settings?.autoplay ? 'active' : ''} tooltip`}
-                onClick={(event) => {
-                  event.preventDefault()
+                onClick={() => {
                   // TODO: Use state value with autoplay
                   if (webSocket) {
                     void toast.promise(
@@ -204,12 +200,11 @@ export function PlayerBar({ guildId, current, position, volume, timescale, pause
               >
                 <span className={'tooltip-content'}>{'Toggle Autoplay'}</span>
                 <Queue/>
-              </button>
+              </LoadingButton>
               {settings?.sponsorblockSupport && (
-                <button
+                <LoadingButton
                   className={`sponsorblock-button ${settings?.sponsorblock ? 'active' : ''} tooltip`}
-                  onClick={(event) => {
-                    event.preventDefault()
+                  onClick={() => {
                     // TODO: Use state value with SponsorBlock
                     if (webSocket) {
                       void toast.promise(
@@ -229,7 +224,7 @@ export function PlayerBar({ guildId, current, position, volume, timescale, pause
                 >
                   <span className={'tooltip-content'}>{'Toggle SponsorBlock'}</span>
                   <div className={'sponsorblock-logo'}></div>
-                </button>
+                </LoadingButton>
               )}
             </div>
             <div className={'volume-container flex-container column nowrap'}>
