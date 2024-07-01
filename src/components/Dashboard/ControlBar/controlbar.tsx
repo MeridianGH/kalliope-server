@@ -4,6 +4,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { Nullable, Player, Track } from '../../../types/types'
 import { WebSocketContext } from '../../../contexts/websocketContext'
 import './controlbar.scss'
+import { LoadingButton } from '../../LoadingButton/loadingbutton'
 
 type ControlBarProps = {
   guildId: Nullable<string>,
@@ -83,8 +84,9 @@ export function ControlBar({ guildId, current, position, volume, timescale, paus
       </div>
       <div className={'flex-container column nowrap'}>
         <div className={'player-buttons flex-container nowrap'}>
-          <button
+          <LoadingButton
             disabled={disabled}
+            faIcon={'fas fa-random'}
             onClick={() => {
               if (!guildId) { return }
               webSocket?.request({
@@ -93,11 +95,10 @@ export function ControlBar({ guildId, current, position, volume, timescale, paus
                 action: 'shuffle'
               })
             }}
-          >
-            <i className={'fas fa-random'}></i>
-          </button>
-          <button
+          />
+          <LoadingButton
             disabled={disabled}
+            faIcon={'fas fa-step-backward'}
             onClick={() => {
               if (!guildId) { return }
               webSocket?.request({
@@ -106,11 +107,10 @@ export function ControlBar({ guildId, current, position, volume, timescale, paus
                 action: 'previous'
               })
             }}
-          >
-            <i className={'fas fa-step-backward'}></i>
-          </button>
-          <button
+          />
+          <LoadingButton
             disabled={disabled}
+            faIcon={paused ? 'fas fa-play-circle' : 'fas fa-pause-circle'}
             onClick={() => {
               if (!guildId) { return }
               webSocket?.request({
@@ -119,11 +119,10 @@ export function ControlBar({ guildId, current, position, volume, timescale, paus
                 action: 'pause'
               })
             }}
-          >
-            <i className={paused ? 'fas fa-play-circle' : 'fas fa-pause-circle'}></i>
-          </button>
-          <button
+          />
+          <LoadingButton
             disabled={disabled}
+            faIcon={'fas fa-step-forward'}
             onClick={() => {
               if (!guildId) { return }
               webSocket?.request({
@@ -132,9 +131,7 @@ export function ControlBar({ guildId, current, position, volume, timescale, paus
                 action: 'skip'
               })
             }}
-          >
-            <i className={'fas fa-step-forward'}></i>
-          </button>
+          />
           <button
             className={'player-repeat-button'}
             disabled={disabled}
@@ -163,6 +160,7 @@ export function ControlBar({ guildId, current, position, volume, timescale, paus
         </div>
       </div>
       <div className={'extras-container flex-container nowrap'}>
+        <LoadingButton faIcon={'fas fa-question-square'} onClick={() => new Promise((resolve, reject) => setTimeout(resolve, 3000))}/>
         {!disabled && (
           <>
             <div className={'flex-container nowrap'}>
