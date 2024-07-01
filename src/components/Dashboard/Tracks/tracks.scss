@@ -17,7 +17,7 @@
     &:hover {
       background-color: var(--bg-lvl3);
 
-      .queue-item-skipto::after, .queue-item-skipto > i {
+      .queue-item-skipto::after, .queue-item-skipto > svg {
         opacity: 1;
       }
       .queue-item-remove {
@@ -42,29 +42,30 @@
 
     .queue-item-skipto {
       position: relative;
+      z-index: 1;
 
       &::after {
         content: '';
         position: absolute;
         inset: 0;
+        z-index: 2;
         background-color: rgba(0, 0, 0, 0.75);
-        border-radius: 5%;
+        border-radius: 10%;
         opacity: 0;
         transition: opacity 0.25s ease-in-out;
       }
 
-      > i {
+      > svg {
         position: absolute;
-        inset: 0;
-        text-align: center;
-        line-height: 4rem;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
         z-index: 99;
-        font-size: 1.5rem;
         opacity: 0;
         transition: opacity 0.25s ease-in-out, color 0.25s ease-in-out;
       }
 
-      &:hover > i {
+      &:hover > svg {
         color: var(--accent);
       }
     }

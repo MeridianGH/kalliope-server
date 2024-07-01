@@ -3,6 +3,7 @@ import './controls.scss'
 import { toast } from 'react-toastify'
 import { WebSocketContext } from '../../../contexts/websocketContext'
 import { Nullable, Player } from '../../../types/types'
+import { Equalizer, Faders, ListPlus, Trash } from '@phosphor-icons/react'
 
 type ControlsProps = {
   guildId: Nullable<string>,
@@ -44,13 +45,16 @@ export function Controls({ guildId, filter, hasPlayer }: ControlsProps) {
 
   return (
     <div className={'controls-container flex-container column start nowrap'}>
-      <h5 className={'controls-title'}>{'Controls'}</h5>
+      <div className={'flex-container nowrap'}>
+        <Faders/>
+        <h5 className={'controls-title'}>{'Controls'}</h5>
+      </div>
       <form onSubmit={handlePlay} className={`controls-input controls-form ${!guildId ? 'disabled' : ''}`}>
         <input type={'text'} placeholder={'Add to queue'} ref={inputRef}/>
-        <button tabIndex={-1}><i className={'fas fa-plus'}></i></button>
+        <button tabIndex={-1}><ListPlus/></button>
       </form>
       <div className={`controls-input controls-select ${disabled ? 'disabled' : ''}`}>
-        <i className={'fas fa-sliders-v-square'}></i>
+        <Equalizer/>
         <select
           name={'filter'}
           id={'filter'}
@@ -110,7 +114,7 @@ export function Controls({ guildId, filter, hasPlayer }: ControlsProps) {
           }
         }}
       >
-        <i className={'fas fa-trash-alt'}></i>
+        <Trash/>
         {'Clear queue\r'}
       </button>
     </div>

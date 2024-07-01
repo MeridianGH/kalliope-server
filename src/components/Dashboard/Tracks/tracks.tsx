@@ -4,6 +4,7 @@ import './tracks.scss'
 import { WebSocketContext } from '../../../contexts/websocketContext'
 import { toast } from 'react-toastify'
 import { Thumbnail } from '../Thumbnail/thumbnail'
+import { Play, Trash } from '@phosphor-icons/react'
 
 type TracksProps = {
   guildId: Nullable<string>,
@@ -50,7 +51,7 @@ export function Tracks({ guildId, tracks }: TracksProps) {
                 }}
               >
                 <Thumbnail image={track.info.artworkUrl} size={'4rem'}/>
-                <i className={'fas fa-play'}></i>
+                <Play weight={'fill'}/>
               </button>
               <div className={'queue-item-text flex-container column start nowrap'}>
                 <a href={track.info.uri} rel={'noreferrer'} target={'_blank'}><b>{track.info.title}</b></a>
@@ -78,7 +79,7 @@ export function Tracks({ guildId, tracks }: TracksProps) {
                 }
               }}
             >
-              <i className={'fas fa-trash-alt'}></i>
+              <Trash weight={'fill'}/>
             </button>
           </div>
         )) :

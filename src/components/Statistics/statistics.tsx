@@ -5,6 +5,7 @@ import { Loader } from '../Loader/loader'
 import { Background } from '../Background/background'
 import './statistics.scss'
 import { ClientDataMapType, MessageToUser, PlayerListType } from '../../types/types'
+import { ArrowsClockwise, ArrowUUpLeft } from '@phosphor-icons/react'
 
 const clientDataMapObject = {
   '1031853575732740217': {
@@ -120,10 +121,10 @@ export function Statistics() {
                       </p>
                       <button onClick={(event) => {
                         webSocket?.request({ type: 'requestClientData', clientId: clientId })
-                        event.currentTarget.animate([{ rotate: '0deg' }, { rotate: '360deg' }], { duration: 500, easing: 'ease-in-out' })
+                        event.currentTarget.firstElementChild!.animate([{ rotate: '0deg' }, { rotate: '360deg' }], { duration: 500, easing: 'ease-in-out' })
                       }}
                       >
-                        <i className={'fas fa-redo'}></i>
+                        <ArrowsClockwise/>
                       </button>
                     </div>
                   </div>

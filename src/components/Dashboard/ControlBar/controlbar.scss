@@ -85,7 +85,6 @@
   .player-buttons {
     button {
       position: relative;
-      font-size: 1.2rem;
       cursor: pointer;
       color: var(--hover);
       transition: color 0.25s ease-in-out;
@@ -97,14 +96,13 @@
 
       &:nth-child(3) {
         color: var(--text);
-        font-size: 2rem;
       }
 
       &:not([disabled]):hover {
         color: var(--dominant-color);
       }
 
-      &.player-repeat-button:not(:has(.fa-repeat-alt)) {
+      &.player-repeat-button:not(.off) {
         color: var(--dominant-color);
 
         &::after {
@@ -148,8 +146,8 @@
     }
 
     .sponsorblock-button {
-      width: 1.5rem;
-      height: 1.5rem;
+      width: 1.2rem;
+      height: 1.2rem;
       position: relative;
       transition: background-color 0.25s ease-in-out;
 
@@ -178,72 +176,78 @@
       }
     }
 
-    .volume-text {
-      display: flex;
-      flex-wrap: nowrap;
-      align-items: center;
-      gap: 0.2rem;
-    }
+    .volume-container {
+      width: 30%;
 
-    .volume-slider-container {
-      display: flex;
-      width: 25%;
-      height: 10px;
-      margin-top: 4px;
-      position: relative;
-      border-radius: 5px;
-      background-color: var(--hover);
-
-      &:hover > .volume-slider-range {
-        background-color: var(--dominant-color);
-        &:before {
-          background-color: var(--dominant-color);
-        }
+      .volume-text {
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.2rem;
+        width: 3.5rem;
       }
 
-      input {
-        -webkit-appearance: none;
+      .volume-slider-container {
+        display: flex;
         width: 100%;
         height: 10px;
-        margin: 0;
-        background: none;
-        cursor: pointer;
+        margin-top: 4px;
+        position: relative;
+        border-radius: 5px;
+        background-color: var(--hover);
 
-        &::-moz-range-thumb,
-        &::-webkit-slider-thumb {
-          background: none;
-          border: none;
-        }
-      }
-
-      .volume-slider-range {
-        width: 50%;
-        height: 10px;
-        position: absolute;
-        left: 0;
-        pointer-events: none;
-        background-color: var(--text);
-        border-radius: 10px;
-        transition: width 0.1s linear, background-color 0.25s ease-in-out;
-
-        &:before {
-          content: '';
-          position: absolute;
-          top: -5px;
-          right: -10px;
-          width: 20px;
-          height: 20px;
-          border-radius: 15px;
-          background-color: transparent;
-          transition: background-color 0.25s ease-in-out;
-        }
-      }
-
-      &.active {
-        background-color: var(--dominant-color);
-
-        > .volume-slider-range:before {
+        &:hover > .volume-slider-range {
           background-color: var(--dominant-color);
+          &:before {
+            background-color: var(--dominant-color);
+          }
+        }
+
+        input {
+          -webkit-appearance: none;
+          width: 100%;
+          height: 10px;
+          margin: 0;
+          background: none;
+          cursor: pointer;
+
+          &::-moz-range-thumb,
+          &::-webkit-slider-thumb {
+            background: none;
+            border: none;
+          }
+        }
+
+        .volume-slider-range {
+          width: 50%;
+          height: 10px;
+          position: absolute;
+          left: 0;
+          pointer-events: none;
+          background-color: var(--text);
+          border-radius: 10px;
+          transition: width 0.1s linear, background-color 0.25s ease-in-out;
+
+          &:before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            right: -10px;
+            width: 20px;
+            height: 20px;
+            border-radius: 15px;
+            background-color: transparent;
+            transition: background-color 0.25s ease-in-out;
+          }
+        }
+
+        &.active {
+          background-color: var(--dominant-color);
+
+          > .volume-slider-range:before {
+            background-color: var(--dominant-color);
+          }
         }
       }
     }

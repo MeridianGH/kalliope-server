@@ -1,7 +1,7 @@
 .thumbnail-container {
-    border: 2px solid var(--bg-lvl3);
-    border-radius: 5%;
     position: relative;
+    z-index: 1;
+    border-radius: 10%;
     overflow: hidden;
     flex-shrink: 0;
 }

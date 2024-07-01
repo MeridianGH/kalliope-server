@@ -8,7 +8,7 @@
   }
 
   .controls-title {
-    margin: 0 0 0 0.5rem;
+    margin: 0;
   }
 
   .controls-input {
@@ -68,12 +68,16 @@
       width: 100%;
       outline: none;
     }
+
+    > button:hover {
+      color: var(--hover);
+    }
   }
 
   .controls-select {
     padding: 0;
 
-    > i {
+    > svg {
       position: absolute;
       left: 1rem;
       top: 50%;

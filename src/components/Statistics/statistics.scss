@@ -75,6 +75,11 @@
     > button {
       width: 100%;
       text-align: center;
+
+      > svg {
+        width: 1.5rem;
+        height: 1.5rem;
+      }
     }
   }
 

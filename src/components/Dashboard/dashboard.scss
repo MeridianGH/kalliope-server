@@ -14,17 +14,24 @@
     > :not(.background, .player-bar) {
         padding: 1rem;
         background-color: var(--bg-lvl1);
-        border-radius: 1rem;
+        border-radius: 0.5rem;
         box-shadow: 2px 2px 5px black;
     }
 
     .dashboard-header {
         grid-area: header;
-        justify-content: start;
+        justify-content: space-between;
         height: 2rem;
 
-        > .dashboard-header-title {
+        > * {
+            flex: 1 1 0;
+            width: 100%;
             height: 100%;
+        }
+
+        .dashboard-header-title {
+            height: 100%;
+            justify-content: start;
 
             > img {
                 height: 100%;
@@ -36,7 +43,7 @@
             font-weight: bold;
         }
 
-        > .dashboard-header-links {
+        .dashboard-header-links {
             height: 100%;
 
             > a {
@@ -46,7 +53,7 @@
                 place-items: center;
                 font-size: 1rem;
                 border-radius: 0.5rem;
-                box-shadow: 2px 2px 5px black;
+                //box-shadow: 2px 2px 5px black;
                 transition: transform 0.25s ease-in-out;
 
                 &:hover {
@@ -56,14 +63,17 @@
             }
         }
 
-        > .dashboard-header-user {
+        .dashboard-header-user-container {
+            justify-content: end;
+        }
+        .dashboard-header-user {
             position: relative;
             z-index: 1;
+            width: fit-content;
             height: 100%;
-            background-color: var(--bg-lvl3);
-            padding: 0.5rem;
+            font-size: 1rem;
             border-radius: 0.5rem;
-            max-width: calc(25% - 3rem);
+            //max-width: calc(25% - 3rem);
 
             > span {
                 white-space: nowrap;

@@ -5,6 +5,16 @@ import { Nullable, Player, Track } from '../../../types/types'
 import { WebSocketContext } from '../../../contexts/websocketContext'
 import './controlbar.scss'
 import { LoadingButton } from '../../LoadingButton/loadingbutton'
+import {
+  PauseCircle,
+  PlayCircle,
+  Queue, Repeat, RepeatOnce,
+  Shuffle,
+  SkipBack,
+  SkipForward, SpeakerHigh,
+  SpeakerLow, SpeakerNone,
+  SpeakerX
+} from '@phosphor-icons/react'
 
 type ControlBarProps = {
   guildId: Nullable<string>,
@@ -86,7 +96,6 @@ export function ControlBar({ guildId, current, position, volume, timescale, paus
         <div className={'player-buttons flex-container nowrap'}>
           <LoadingButton
             disabled={disabled}
-            faIcon={'fas fa-random'}
             onClick={() => {
               if (!guildId) { return }
               webSocket?.request({
@@ -95,10 +104,12 @@ export function ControlBar({ guildId, current, position, volume, timescale, paus
                 action: 'shuffle'
               })
             }}
-          />
+          >
+            <Shuffle/>
+          </LoadingButton>
           <LoadingButton
             disabled={disabled}
-            faIcon={'fas fa-step-backward'}
+            // faIcon={'fas fa-step-backward'}
             onClick={() => {
               if (!guildId) { return }
               webSocket?.request({
@@ -107,10 +118,12 @@ export function ControlBar({ guildId, current, position, volume, timescale, paus
                 action: 'previous'
               })
             }}
-          />
+          >
+            <SkipBack/>
+          </LoadingButton>
           <LoadingButton
             disabled={disabled}
-            faIcon={paused ? 'fas fa-play-circle' : 'fas fa-pause-circle'}
+            // faIcon={paused ? 'fas fa-play-circle' : 'fas fa-pause-circle'}
             onClick={() => {
               if (!guildId) { return }
               webSocket?.request({
@@ -119,10 +132,12 @@ export function ControlBar({ guildId, current, position, volume, timescale, paus
                 action: 'pause'
               })
             }}
-          />
+          >
+            {paused ? <PlayCircle size={'2rem'} weight={'fill'}/> : <PauseCircle size={'2rem'} weight={'fill'}/>}
+          </LoadingButton>
           <LoadingButton
             disabled={disabled}
-            faIcon={'fas fa-step-forward'}
+            // faIcon={'fas fa-step-forward'}
             onClick={() => {
               if (!guildId) { return }
               webSocket?.request({
@@ -131,9 +146,11 @@ export function ControlBar({ guildId, current, position, volume, timescale, paus
                 action: 'skip'
               })
             }}
-          />
+          >
+            <SkipForward/>
+          </LoadingButton>
           <button
-            className={'player-repeat-button'}
+            className={`player-repeat-button ${repeatMode}`}
             disabled={disabled}
             onClick={() => {
               if (!guildId) { return }
@@ -144,7 +161,7 @@ export function ControlBar({ guildId, current, position, volume, timescale, paus
               })
             }}
           >
-            <i className={repeatMode === 'track' ? 'fas fa-repeat-1-alt' : repeatMode === 'queue' ? 'fas fa-repeat' : 'fad fa-repeat-alt'}></i>
+            {repeatMode === 'track' ? <RepeatOnce/> : <Repeat/>}
           </button>
         </div>
         <div className={'progress-wrapper flex-container nowrap'}>
@@ -160,7 +177,7 @@ export function ControlBar({ guildId, current, position, volume, timescale, paus
         </div>
       </div>
       <div className={'extras-container flex-container nowrap'}>
-        <LoadingButton faIcon={'fas fa-question-square'} onClick={() => new Promise((resolve, reject) => setTimeout(resolve, 3000))}/>
+        {/* <LoadingButton onClick={() => new Promise((resolve, reject) => setTimeout(resolve, 3000))}/> */}
         {!disabled && (
           <>
             <div className={'flex-container nowrap'}>
@@ -186,10 +203,7 @@ export function ControlBar({ guildId, current, position, volume, timescale, paus
                 }}
               >
                 <span className={'tooltip-content'}>{'Toggle Autoplay'}</span>
-                <span className={'fa-stack fa-1x'} style={{ fontSize: '0.8rem' }}>
-                  <i className={'fas fa-play fa-stack-1x'} style={{ fontSize: '0.5rem' }}></i>
-                  <i className={'fas fa-redo-alt fa-stack-2x'}></i>
-                </span>
+                <Queue/>
               </button>
               {settings?.sponsorblockSupport && (
                 <button
@@ -218,37 +232,36 @@ export function ControlBar({ guildId, current, position, volume, timescale, paus
                 </button>
               )}
             </div>
-            <div className={'volume-text'}>
-              <i
-                className={currentVolume === 0 ? 'fas fa-volume-off' : currentVolume <= 33 ? 'fas fa-volume-down' : currentVolume <= 66 ? 'fas fa-volume' : 'fas fa-volume-up'}
-              >
-              </i>
-              {currentVolume}
-            </div>
-            <div className={'volume-slider-container'}>
-              <input
-                className={'volume-slider-input'}
-                type={'range'}
-                defaultValue={currentVolume.toString()}
-                step={'1'}
-                min={'0'}
-                max={'100'}
-                onInput={() => {
-                  setCurrentVolume(parseInt(document.querySelector<HTMLInputElement>('.volume-slider-input')!.value))
-                }}
-                onMouseUp={() => {
-                  if (!guildId) {
-                    return
-                  }
-                  webSocket?.request({
-                    type: 'requestPlayerAction',
-                    guildId: guildId,
-                    action: 'volume',
-                    payload: { volume: parseInt(document.querySelector<HTMLInputElement>('.volume-slider-input')!.value) }
-                  })
-                }}
-              />
-              <div className={'volume-slider-range'} style={{ width: `${currentVolume}%` }}></div>
+            <div className={'volume-container flex-container column nowrap'}>
+              <div className={'volume-text'}>
+                {currentVolume === 0 ? <SpeakerX/> : currentVolume <= 33 ? <SpeakerNone/> : currentVolume <= 66 ? <SpeakerLow/> : <SpeakerHigh/>}
+                {currentVolume}
+              </div>
+              <div className={'volume-slider-container'}>
+                <input
+                  className={'volume-slider-input'}
+                  type={'range'}
+                  defaultValue={currentVolume.toString()}
+                  step={'1'}
+                  min={'0'}
+                  max={'100'}
+                  onInput={() => {
+                    setCurrentVolume(parseInt(document.querySelector<HTMLInputElement>('.volume-slider-input')!.value))
+                  }}
+                  onMouseUp={() => {
+                    if (!guildId) {
+                      return
+                    }
+                    webSocket?.request({
+                      type: 'requestPlayerAction',
+                      guildId: guildId,
+                      action: 'volume',
+                      payload: { volume: parseInt(document.querySelector<HTMLInputElement>('.volume-slider-input')!.value) }
+                    })
+                  }}
+                />
+                <div className={'volume-slider-range'} style={{ width: `${currentVolume}%` }}></div>
+              </div>
             </div>
           </>
         )}
