@@ -1,20 +1,21 @@
 import React, { useContext, useEffect } from 'react'
-import { GuildClientMapType, Nullable, PlayerListType, User } from '../../../types/types'
+import { GuildClientMapType, Nullable, PlayerListType } from '../../../types/types'
+import { APIGuild } from 'discord-api-types/v10'
 import { WebSocketContext } from '../../../contexts/websocketContext'
-import { Loader } from '../../Loader/loader'
 import { Visualizer } from '../Vizualizer/visualizer'
+import { Loader } from '../../Loader/loader'
 import genericServer from '../../../assets/generic_server.png'
 import './servers.scss'
 
-export type ServersProps = {
-  setActiveTab: (tab: number) => void,
-  setGuildId: (guildId: string) => void,
-  userGuilds: Nullable<User['guilds']>,
-  guildClientMap: GuildClientMapType,
-  playerList: PlayerListType
+type ServersProps = {
+  guildClientMap: Nullable<GuildClientMapType>,
+  playerList: Nullable<PlayerListType>,
+  userGuilds: Nullable<APIGuild[]>,
+  guildId: Nullable<string>,
+  setGuildId: (id: string) => void
 }
 
-export function Servers({ setActiveTab, setGuildId, userGuilds = [], guildClientMap, playerList }: ServersProps) {
+export function Servers({ guildClientMap, playerList, userGuilds, guildId, setGuildId }: ServersProps) {
   const webSocket = useContext(WebSocketContext)
 
   useEffect(() => {
@@ -39,24 +40,8 @@ export function Servers({ setActiveTab, setGuildId, userGuilds = [], guildClient
     }
   }, [webSocket, guildClientMap])
 
-  useEffect(() => {
-    const elements = document.querySelectorAll<HTMLDivElement>('.server-card-text')
-    elements.forEach((element) => {
-      const span = element.querySelector<HTMLSpanElement>('span')!
-      if (span.offsetWidth > element.offsetWidth) {
-        span.style.transitionDuration = `${(1 - element.offsetWidth / span.offsetWidth) * 3}s`
-        element.onmouseenter = () => { span.style.marginLeft = element.offsetWidth - span.offsetWidth + 'px' }
-        element.onmouseleave = () => { span.style.marginLeft = '0' }
-      }
-    })
-  }, [])
-
   if (!userGuilds || !guildClientMap) {
-    return (
-      <div className={'server-container flex-container'}>
-        <Loader/>
-      </div>
-    )
+    return <div className={'server-container flex-container'}><Loader/></div>
   }
 
   if (Object.keys(guildClientMap).length === 0) {
@@ -68,22 +53,22 @@ export function Servers({ setActiveTab, setGuildId, userGuilds = [], guildClient
   }
 
   return (
-    <div className={'server-container flex-container'}>
-      {/* eslint-disable-next-line no-extra-parens */}
+    <div className={'server-container flex-container column start nowrap'}>
+      <h5 className={'server-title'}>{'Your Servers'}</h5>
       {userGuilds.filter((guild) => Object.keys(guildClientMap ?? {}).includes(guild.id)).map((guild, index) => (
         <div
           key={index}
-          className={`server-card ${playerList?.has(guild.id) && 'playing'} flex-container column`}
-          onClick={() => {
-            // webSocket?.request({ type: 'requestPlayerData', guildId: guild.id })
-            setGuildId(guild.id)
-            setActiveTab(2)
-          }}
+          className={`server-item ${guildId === guild.id ? 'active' : ''} ${playerList?.has(guild.id) ? 'playing' : ''} flex-container nowrap`}
+          onClick={() => { setGuildId(guild.id) }}
         >
-          <img src={guild.icon ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}?size=1024` : genericServer} alt={'Server Icon'}/>
-          <div className={'server-card-text'}>
-            {playerList?.has(guild.id) && <Visualizer style={'white'}/>}
+          <img
+            src={guild.icon ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}` : genericServer}
+            alt={'Server Icon'}
+            onError={(event) => { event.currentTarget.src = genericServer }}
+          />
+          <div className={'server-item-text flex-container space-between nowrap'}>
             <span>{guild.name}</span>
+            {playerList?.has(guild.id) && <Visualizer style={'white'}/>}
           </div>
         </div>
       ))}

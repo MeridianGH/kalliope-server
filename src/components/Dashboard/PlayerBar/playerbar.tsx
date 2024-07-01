@@ -1,9 +1,8 @@
-import { Thumbnail } from '../Thumbnail/thumbnail'
-import { toast } from 'react-toastify'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
+import { toast } from 'react-toastify'
 import { Nullable, Player, Track } from '../../../types/types'
 import { WebSocketContext } from '../../../contexts/websocketContext'
-import './controlbar.scss'
+import { Thumbnail } from '../Thumbnail/thumbnail'
 import { LoadingButton } from '../../LoadingButton/loadingbutton'
 import {
   PauseCircle,
@@ -15,8 +14,9 @@ import {
   SpeakerLow, SpeakerNone,
   SpeakerX
 } from '@phosphor-icons/react'
+import './playerbar.scss'
 
-type ControlBarProps = {
+type PlayerBarProps = {
   guildId: Nullable<string>,
   current: Nullable<Track>,
   position: Nullable<number>,
@@ -27,7 +27,7 @@ type ControlBarProps = {
   settings: Nullable<Player['settings']>
 }
 
-export function ControlBar({ guildId, current, position, volume, timescale, paused, repeatMode, settings }: ControlBarProps) {
+export function PlayerBar({ guildId, current, position, volume, timescale, paused, repeatMode, settings }: PlayerBarProps) {
   const webSocket = useContext(WebSocketContext)
   const [currentPosition, setCurrentPosition] = useState(position ?? 0)
   const [currentVolume, setCurrentVolume] = useState(volume ?? 50)

@@ -1,42 +1,50 @@
 .server-container {
-    padding: 1rem;
-    height: 100svh;
-    box-sizing: border-box;
-}
+  overflow-y: scroll;
+  position: relative;
+  z-index: 1;
+  font-size: 1rem;
 
-.server-card {
-    width: 200px;
-    padding: 1rem;
-    border-radius: 1rem;
-    background-color: var(--bg-lvl1);
-    box-shadow: 2px 2px 5px black;
+  .server-title {
+    margin: 0 0 0 0.5rem;
+  }
+
+  .server-item {
+    position: relative;
+    width: 100%;
+    padding: 0.5rem;
+    box-sizing: border-box;
+    border-radius: 0.5rem;
     cursor: pointer;
+    background-color: var(--bg-lvl1);
+    transition: background-color 0.25s ease-in-out;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      z-index: -1;
+      opacity: 0;
+      border-radius: calc(0.5rem + 2px);
+      background: linear-gradient(to bottom right, var(--accent), var(--accent-alt));
+      transition: opacity 0.25s ease-in-out;
+    }
+
+    &:hover {
+      background-color: var(--bg-lvl3);
+    }
+
+    &.active::before {
+      opacity: 1;
+    }
 
     > img {
-        height: 100%;
-        width: 100%;
-        border-radius: inherit;
+      height: 4rem;
+      border-radius: 0.5rem;
     }
 
-    &.playing {
-        background: linear-gradient(to bottom right, var(--accent), var(--accent-alt));
-        font-weight: bold;
+    .server-item-text {
+      width: 100%;
+      font-size: 1rem;
     }
-}
-.server-card-text {
-    width: 200px;
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-
-    > span {
-        max-width: 200px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        text-align: center;
-        font-size: 1rem;
-        white-space: nowrap;
-        transition-property: margin-left;
-        transition-timing-function: ease-in-out;
-    }
+  }
 }

@@ -1,18 +1,18 @@
 import React, { useContext, useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { GuildClientMapType, MessageToUser, Nullable, Player, PlayerListType } from '../../types/types'
 import { useDiscordLogin } from '../../hooks/discordLoginHook'
 import { WebSocketContext } from '../../contexts/websocketContext'
 import { useMediaSession } from '../../hooks/mediaSessionHook'
 import { Background } from '../Background/background'
-import './dashboard.scss'
-import { ControlBar } from './ControlBar/controlbar'
-import { ServerList } from './ServerList/serverlist'
-import kalliopeTransparentPNG from '../../assets/kalliope_transparent.png'
-import { Link } from 'react-router-dom'
-import { Tracks } from './Tracks/tracks'
+import { PlayerBar } from './PlayerBar/playerbar'
+import { Servers } from './Servers/servers'
+import { Queue } from './Queue/queue'
 import { Controls } from './Controls/controls'
-import kalliopePNG from '../../assets/kalliope.png'
 import { IconContext, SignOut } from '@phosphor-icons/react'
+import kalliopeTransparentPNG from '../../assets/kalliope_transparent.png'
+import kalliopePNG from '../../assets/kalliope.png'
+import './dashboard.scss'
 
 const playerObject: Player = {
   guildId: '610498937874546699',
@@ -150,10 +150,10 @@ export function Dashboard() {
             </div>
           </div>
         </div>
-        <ServerList guildClientMap={guildClientMap} playerList={playerList} userGuilds={user?.guilds} guildId={guildId} setGuildId={setGuildId}/>
-        <Tracks guildId={guildId} tracks={player?.queue.tracks}/>
+        <Servers guildClientMap={guildClientMap} playerList={playerList} userGuilds={user?.guilds} guildId={guildId} setGuildId={setGuildId}/>
+        <Queue guildId={guildId} tracks={player?.queue.tracks}/>
         <Controls guildId={guildId} filter={player?.filters.current} hasPlayer={!!player}/>
-        <ControlBar
+        <PlayerBar
           guildId={guildId}
           current={player?.queue.current}
           position={player?.position}

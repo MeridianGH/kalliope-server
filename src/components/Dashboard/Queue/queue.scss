@@ -1,158 +1,83 @@
 .queue-container {
-    min-height: 100svh;
-    padding: 0 10vw;
-}
+  overflow-y: scroll;
+  font-size: 1rem;
 
-.queue-current-title {
-    margin: 0;
-}
-.queue-current {
-    gap: 0 !important;
-}
+  .queue-title {
+    margin: 0 0 0 0.5rem;
+  }
 
-.queue-input {
-    position: relative;
-    min-width: 200px;
-    min-height: 30px;
-    padding: 1rem;
+  .queue-item {
+    width: 100%;
+    padding: 0.5rem 2rem 0.5rem 0.5rem;
     box-sizing: border-box;
-    background-color: var(--bg-lvl2);
-    color: var(--text);
-    border: none;
-    outline: none;
-    border-radius: 5px;
-    font-weight: bold;
-    font-size: 0.8rem;
-    cursor: pointer;
+    font-size: 1rem;
+    border-radius: inherit;
+    transition: background-color 0.25s ease-in-out;
 
-    &:hover,
-    &:focus-within {
-        &::before {
-            opacity: 1;
-        }
+    &:hover {
+      background-color: var(--bg-lvl3);
+
+      .queue-item-skipto::after, .queue-item-skipto > svg {
+        opacity: 1;
+      }
+      .queue-item-remove {
+        opacity: 1;
+      }
     }
-    &::before {
+
+    .queue-item-text {
+      gap: 0.5rem;
+
+      > span {
+        color: var(--hover);
+      }
+
+      > .queue-item-placeholder {
+        display: inline-block;
+        width: 5rem;
+        height: 1rem;
+        background-color: var(--hover);
+      }
+    }
+
+    .queue-item-skipto {
+      position: relative;
+      z-index: 1;
+
+      &::after {
         content: '';
         position: absolute;
-        inset: -2px;
-        z-index: -1;
-        border-radius: inherit;
-        background: linear-gradient(to bottom right, var(--accent), var(--accent-alt));
+        inset: 0;
+        z-index: 2;
+        background-color: rgba(0, 0, 0, 0.75);
+        border-radius: 10%;
         opacity: 0;
         transition: opacity 0.25s ease-in-out;
-    }
+      }
 
-    > i {
-        padding-right: 1rem;
-    }
-}
-.queue-input-form {
-    position: relative;
-    padding: 0;
-
-    > input {
-        padding: 1rem;
-        border: none;
-        background: none;
-        color: var(--text);
-        height: 100%;
-        outline: none;
-    }
-    > button {
-        padding-right: 1rem;
-    }
-
-    > i {
+      > svg {
         position: absolute;
-        left: 1rem;
         top: 50%;
-        transform: translateY(-50%);
-        font-size: 1rem;
-    }
-    > select {
-        padding: 1rem 1rem 1rem 3rem;
-        width: 100%;
-        border: none;
-        outline: none;
-        border-radius: inherit;
-        cursor: pointer;
-        background: var(--bg-lvl2);
-        appearance: none;
-        -moz-appearance: none;
-        -webkit-appearance: none;
-    }
-}
-.queue-input-button {
-    height: 30px;
-    text-align: center;
-    box-sizing: border-box;
-    position: absolute;
-    bottom: 0;
-    right: 0.5rem;
-}
-
-.queue-input-toggle {
-    height: 1rem;
-    aspect-ratio: 2/1;
-    display: inline-block;
-    margin-right: 1rem;
-    position: relative;
-    border-radius: 50%;
-    box-shadow: 2px 2px 5px black;
-
-    input {
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 99;
         opacity: 0;
-        width: 0;
-        height: 0;
+        transition: opacity 0.25s ease-in-out, color 0.25s ease-in-out;
+      }
 
-        &:checked + span {
-            &::before {
-                opacity: 1;
-            }
-
-            &::after {
-                left: calc(50% + 2px);
-            }
-        }
+      &:hover > svg {
+        color: var(--accent);
+      }
     }
 
-    span {
-        position: absolute;
-        inset: 0;
-        overflow: hidden;
-        cursor: pointer;
-        border-radius: 15px;
-        background: var(--bg-lvl3);
+    .queue-item-remove {
+      opacity: 0;
+      color: var(--hover);
+      transition: opacity 0.25s ease-in-out, color 0.25s ease-in-out;
 
-        &::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(to bottom right, var(--accent), var(--accent-alt));
-            transition: opacity 0.25s ease-in-out;
-            opacity: 0;
-        }
-
-        &::after {
-            content: '';
-            position: absolute;
-            inset: 2px;
-            height: calc(100% - 2 * 2px);
-            aspect-ratio: 1;
-            border-radius: 50%;
-            background-color: white;
-            transition: left 0.25s ease-in-out;
-        }
+      &:hover {
+        color: var(--accent);
+      }
     }
-}
-
-.queue-track {
-    width: 100%;
-    padding: 1rem 0 2rem;
-    box-sizing: border-box;
-    border-bottom: 2px solid white;
-}
-
-.queue-track-buttons:hover {
-    color: var(--hover);
+  }
 }
