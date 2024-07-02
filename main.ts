@@ -32,7 +32,7 @@ app.use((req, res, next) => {
   try {
     decodeURIComponent(req.path)
   } catch (error) {
-    console.log('Error decoding URL: ' + req.path.toString())
+    logging.error('Error decoding URL: ' + req.path.toString())
     return res.redirect(hostname)
   }
   next()

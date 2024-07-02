@@ -214,7 +214,6 @@ export function createWebSocketServer(domain: string) {
           } else {
             playerList.delete(message.guildId)
           }
-          console.log(previousSize, playerList.size)
           if (playerList.size !== previousSize) {
             Object.values(userConnectionsByGuildMap ?? {}).flatMap((guildEntries) => Object.values(guildEntries))
               .forEach((userWs) => {
