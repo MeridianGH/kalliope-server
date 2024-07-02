@@ -31,7 +31,7 @@
   height: 7rem;
   padding: 1rem;
   background-color: var(--bg);
-  border-top: 2px solid var(--dominant-color);
+  border-top: 2px solid var(--accent);
   box-sizing: border-box;
   font-size: 1rem;
 
@@ -46,7 +46,7 @@
     height: 100%;
     width: 30%;
     background: linear-gradient(to right, var(--dominant-color), transparent);
-    opacity: 0.25;
+    opacity: 0.5;
   }
   .player-song {
     justify-content: center;
@@ -76,8 +76,8 @@
         width: 0;
         height: 100%;
         border-radius: inherit;
-        background-color: var(--dominant-color);
-        transition: width 1s linear, background-color 0.25s ease-in-out;
+        background: linear-gradient(to left, var(--accent), var(--accent-alt));
+        transition: width 1s linear;
       }
     }
   }
@@ -99,11 +99,11 @@
       }
 
       &:not([disabled]):hover {
-        color: var(--dominant-color);
+        color: var(--accent);
       }
 
       &.player-repeat-button:not(.off) {
-        color: var(--dominant-color);
+        color: var(--accent);
 
         &::after {
           content: '';
@@ -113,7 +113,7 @@
           transform: translateX(-50%);
           width: 5px;
           height: 5px;
-          background-color: var(--dominant-color);
+          background-color: var(--accent);
           border-radius: 50%;
         }
       }
@@ -129,7 +129,7 @@
       transition: color 0.25s ease-in-out;
 
       &:hover, &.active {
-        color: var(--dominant-color);
+        color: var(--accent);
       }
 
       &.active::after {
@@ -140,7 +140,7 @@
         transform: translateX(-50%);
         width: 5px;
         height: 5px;
-        background-color: var(--dominant-color);
+        background-color: var(--accent);
         border-radius: 50%;
       }
     }
@@ -152,7 +152,7 @@
       transition: background-color 0.25s ease-in-out;
 
       &:hover > .sponsorblock-logo, &.active > .sponsorblock-logo {
-        background-color: var(--dominant-color);
+        background-color: var(--accent);
       }
 
       &.active::after {
@@ -163,7 +163,7 @@
         transform: translateX(-50%);
         width: 5px;
         height: 5px;
-        background-color: var(--dominant-color);
+        background-color: var(--accent);
         border-radius: 50%;
       }
 
@@ -195,12 +195,12 @@
         margin-top: 4px;
         position: relative;
         border-radius: 5px;
-        background-color: var(--hover);
+        background: var(--hover);
 
         &:hover > .volume-slider-range {
-          background-color: var(--dominant-color);
+          background: linear-gradient(to left, var(--accent), var(--accent-alt));
           &:before {
-            background-color: var(--dominant-color);
+            background-color: var(--accent);
           }
         }
 
