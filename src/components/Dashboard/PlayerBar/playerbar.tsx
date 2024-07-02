@@ -1,19 +1,15 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
-import { toast } from 'react-toastify'
 import { Nullable, Player, Track } from '../../../types/types'
 import { WebSocketContext } from '../../../contexts/websocketContext'
 import { Thumbnail } from '../Thumbnail/thumbnail'
 import { LoadingButton } from '../../LoadingButton/loadingbutton'
 import {
-  Infinity,
-  PauseCircle,
-  PlayCircle,
-  Queue, Repeat, RepeatOnce,
-  Shuffle,
-  SkipBack,
-  SkipForward, SpeakerHigh,
-  SpeakerLow, SpeakerNone,
-  SpeakerX
+  PauseCircle, PlayCircle,
+  Repeat, RepeatOnce,
+  Shuffle, Queue,
+  SkipBack, SkipForward,
+  SpeakerHigh, SpeakerLow,
+  SpeakerNone, SpeakerX
 } from '@phosphor-icons/react'
 import './playerbar.scss'
 
@@ -31,7 +27,7 @@ type PlayerBarProps = {
 export function PlayerBar({ guildId, current, position, volume, timescale, paused, repeatMode, settings }: PlayerBarProps) {
   const webSocket = useContext(WebSocketContext)
   const [currentPosition, setCurrentPosition] = useState(position ?? 0)
-  const [currentVolume, setCurrentVolume] = useState(volume ?? 50)
+  const [currentVolume, setCurrentVolume] = useState(50)
 
   const msToHMS = useCallback((ms: number) => {
     let totalSeconds = ms / 1000
@@ -41,6 +37,10 @@ export function PlayerBar({ guildId, current, position, volume, timescale, pause
     const seconds = Math.floor(totalSeconds % 60).toString()
     return hours === '0' ? `${minutes}:${seconds.padStart(2, '0')}` : `${hours}:${minutes.padStart(2, '0')}:${seconds.padStart(2, '0')}`
   }, [])
+
+  useEffect(() => {
+    if (volume) { setCurrentVolume(volume) }
+  }, [volume])
 
   useEffect(() => {
     if (!current?.info.artworkUrl) {
@@ -97,52 +97,52 @@ export function PlayerBar({ guildId, current, position, volume, timescale, pause
         <div className={'player-buttons flex-container nowrap'}>
           <LoadingButton
             disabled={disabled}
-            onClick={() => {
+            onClick={async () => {
               if (!guildId) { return }
-              webSocket?.request({
+              await webSocket?.request({
                 type: 'requestPlayerAction',
                 guildId: guildId,
                 action: 'shuffle'
-              })
+              }, true)
             }}
           >
             <Shuffle/>
           </LoadingButton>
           <LoadingButton
             disabled={disabled}
-            onClick={() => {
+            onClick={async () => {
               if (!guildId) { return }
-              webSocket?.request({
+              await webSocket?.request({
                 type: 'requestPlayerAction',
                 guildId: guildId,
                 action: 'previous'
-              })
+              }, true)
             }}
           >
             <SkipBack/>
           </LoadingButton>
           <LoadingButton
             disabled={disabled}
-            onClick={() => {
+            onClick={async () => {
               if (!guildId) { return }
-              webSocket?.request({
+              await webSocket?.request({
                 type: 'requestPlayerAction',
                 guildId: guildId,
                 action: 'pause'
-              })
+              }, true)
             }}
           >
             {paused ? <PlayCircle size={'2rem'} weight={'fill'}/> : <PauseCircle size={'2rem'} weight={'fill'}/>}
           </LoadingButton>
           <LoadingButton
             disabled={disabled}
-            onClick={() => {
+            onClick={async () => {
               if (!guildId) { return }
-              webSocket?.request({
+              await webSocket?.request({
                 type: 'requestPlayerAction',
                 guildId: guildId,
                 action: 'skip'
-              })
+              }, true)
             }}
           >
             <SkipForward/>
@@ -150,13 +150,13 @@ export function PlayerBar({ guildId, current, position, volume, timescale, pause
           <LoadingButton
             className={`player-repeat-button ${repeatMode}`}
             disabled={disabled}
-            onClick={() => {
+            onClick={async () => {
               if (!guildId) { return }
-              webSocket?.request({
+              await webSocket?.request({
                 type: 'requestPlayerAction',
                 guildId: guildId,
                 action: 'repeat'
-              })
+              }, true)
             }}
           >
             {repeatMode === 'track' ? <RepeatOnce/> : <Repeat/>}
@@ -180,22 +180,13 @@ export function PlayerBar({ guildId, current, position, volume, timescale, pause
             <div className={'flex-container nowrap'}>
               <LoadingButton
                 className={`autoplay-button ${settings?.autoplay ? 'active' : ''} tooltip`}
-                onClick={() => {
-                  // TODO: Use state value with autoplay
-                  if (webSocket) {
-                    void toast.promise(
-                      webSocket?.request({
-                        type: 'requestPlayerAction',
-                        guildId: guildId,
-                        action: 'autoplay'
-                      }, true),
-                      {
-                        pending: 'Toggling autoplay...',
-                        success: 'Successfully toggled autoplay.',
-                        error: 'Failed to toggle autoplay. Please try again.'
-                      }
-                    )
-                  }
+                onClick={async () => {
+                  if (!guildId) { return }
+                  await webSocket?.request({
+                    type: 'requestPlayerAction',
+                    guildId: guildId,
+                    action: 'autoplay'
+                  }, true)
                 }}
               >
                 <span className={'tooltip-content'}>{'Toggle Autoplay'}</span>
@@ -204,22 +195,13 @@ export function PlayerBar({ guildId, current, position, volume, timescale, pause
               {settings?.sponsorblockSupport && (
                 <LoadingButton
                   className={`sponsorblock-button ${settings?.sponsorblock ? 'active' : ''} tooltip`}
-                  onClick={() => {
-                    // TODO: Use state value with SponsorBlock
-                    if (webSocket) {
-                      void toast.promise(
-                        webSocket?.request({
-                          type: 'requestPlayerAction',
-                          guildId: guildId,
-                          action: 'sponsorblock'
-                        }, true),
-                        {
-                          pending: 'Toggling SponsorBlock...',
-                          success: 'Successfully toggled SponsorBlock.',
-                          error: 'Failed to toggle SponsorBlock. Please try again.'
-                        }
-                      )
-                    }
+                  onClick={async () => {
+                    if (!guildId) { return }
+                    await webSocket?.request({
+                      type: 'requestPlayerAction',
+                      guildId: guildId,
+                      action: 'sponsorblock'
+                    }, true)
                   }}
                 >
                   <span className={'tooltip-content'}>{'Toggle SponsorBlock'}</span>
@@ -244,9 +226,7 @@ export function PlayerBar({ guildId, current, position, volume, timescale, pause
                     setCurrentVolume(parseInt(document.querySelector<HTMLInputElement>('.volume-slider-input')!.value))
                   }}
                   onMouseUp={() => {
-                    if (!guildId) {
-                      return
-                    }
+                    if (!guildId) { return }
                     webSocket?.request({
                       type: 'requestPlayerAction',
                       guildId: guildId,
