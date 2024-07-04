@@ -1,0 +1,75 @@
+.queue-track {
+    width: 100%;
+    padding: 0.5rem 2rem 0.5rem 0.5rem;
+    box-sizing: border-box;
+    font-size: 1rem;
+    border-radius: inherit;
+    transition: background-color 0.25s ease-in-out;
+
+    &:hover, &:focus-within {
+        background-color: var(--bg-lvl3);
+
+        .queue-track-skipto::after, .queue-track-skipto > svg {
+            opacity: 1;
+        }
+
+        .queue-track-remove, .queue-track-draghandle {
+            opacity: 1;
+        }
+    }
+
+    .queue-track-text {
+        gap: 0.5rem;
+
+        > span {
+            color: var(--hover);
+        }
+
+        > .queue-track-placeholder {
+            display: inline-block;
+            width: 5rem;
+            height: 1rem;
+            background-color: var(--hover);
+        }
+    }
+
+    .queue-track-skipto {
+        position: relative;
+        z-index: 1;
+
+        &::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            background-color: rgba(0, 0, 0, 0.75);
+            border-radius: 10%;
+            opacity: 0;
+            transition: opacity 0.25s ease-in-out;
+        }
+
+        > svg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 99;
+            opacity: 0;
+            transition: opacity 0.25s ease-in-out, color 0.25s ease-in-out;
+        }
+
+        &:hover > svg {
+            color: var(--accent);
+        }
+    }
+
+    .queue-track-remove, .queue-track-draghandle {
+        opacity: 0;
+        color: var(--hover);
+        transition: opacity 0.25s ease-in-out, color 0.25s ease-in-out;
+
+        &:hover {
+            color: var(--accent);
+        }
+    }
+}

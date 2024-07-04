@@ -45,6 +45,24 @@ const playerObject: Player = {
           displayName: 'Meridian',
           displayAvatarURL: 'https://cdn.discordapp.com/avatars/360817252158930954/5ca503af7e9f9b64c1eee2d4f947a29d.webp'
         }
+      },
+      {
+        info: {
+          identifier: 'QQX2hpmtMJs',
+          title: 'Jim Yosef x RIELL - Animal (Lyric Video)',
+          author: 'Jim Yosef',
+          duration: 177000,
+          artworkUrl: 'https://i.ytimg.com/vi/QQX2hpmtMJs/maxresdefault.jpg',
+          uri: 'https://www.youtube.com/watch?v=QQX2hpmtMJs',
+          sourceName: 'youtube',
+          isSeekable: true,
+          isStream: false,
+          isrc: null
+        },
+        requester: {
+          displayName: 'Meridian',
+          displayAvatarURL: 'https://cdn.discordapp.com/avatars/360817252158930954/5ca503af7e9f9b64c1eee2d4f947a29d.webp'
+        }
       }
     ],
     current: {

@@ -4,6 +4,7 @@ import { APIGuild } from 'discord-api-types/v10'
 import { WebSocketContext } from '../../../contexts/websocketContext'
 import { Visualizer } from '../Vizualizer/visualizer'
 import { Loader } from '../../Loader/loader'
+import { DiscordLogo } from '@phosphor-icons/react'
 import genericServer from '../../../assets/generic_server.png'
 import './servers.scss'
 
@@ -40,22 +41,24 @@ export function Servers({ guildClientMap, playerList, userGuilds, guildId, setGu
     }
   }, [webSocket, guildClientMap])
 
-  if (!userGuilds || !guildClientMap) {
-    return <div className={'server-container flex-container'}><Loader/></div>
-  }
-
-  if (Object.keys(guildClientMap).length === 0) {
-    return (
-      <div className={'server-container flex-container'}>
-        <p>{'You have no servers in common with any instance of Kalliope.'}<br/>{'Host your own instance now using the '}<a href={'https://github.com/MeridianGH/kalliope#installation'} className={'underline'}>{'instructions'}</a>{' and make sure it\'s properly configured.'}</p>
-      </div>
-    )
-  }
+  console.log(userGuilds, guildClientMap)
 
   return (
     <div className={'server-container flex-container column start nowrap'}>
-      <h5 className={'server-title'}>{'Your Servers'}</h5>
-      {userGuilds.filter((guild) => Object.keys(guildClientMap ?? {}).includes(guild.id)).map((guild, index) => (
+      <div className={'flex-container nowrap'}>
+        <DiscordLogo/>
+        <h5 className={'server-title'}>{'Your Servers'}</h5>
+      </div>
+
+      {(!userGuilds || !guildClientMap) && <div className={'flex-container'} style={{ width: '100%', height: '100%' }}><Loader/></div>}
+
+      {guildClientMap && Object.keys(guildClientMap).length === 0 && (
+        <div className={'flex-container'} style={{ width: '100%' }}>
+          <p>{'You have no servers in common with any instance of Kalliope.'}<br/>{'Host your own instance now using the '}<a href={'https://github.com/MeridianGH/kalliope#installation'} className={'underline'}>{'instructions'}</a>{' and make sure it\'s properly configured.'}</p>
+        </div>
+      )}
+
+      {userGuilds?.filter((guild) => Object.keys(guildClientMap ?? {}).includes(guild.id)).map((guild, index) => (
         <div
           key={index}
           className={`server-item ${guildId === guild.id ? 'active' : ''} ${playerList?.has(guild.id) ? 'playing' : ''} flex-container nowrap`}
