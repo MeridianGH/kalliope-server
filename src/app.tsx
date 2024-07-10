@@ -25,10 +25,12 @@ const UserWebsocketProvider = ({ children }: PropsWithChildren) => (
   </DiscordUserProvider>
 )
 
+const isMobile = window.matchMedia('screen and (max-width: 768px)').matches
+
 export function App() {
   return (
     <Fragment>
-      <ToastContainer position={'bottom-right'} theme={'dark'} transition={Slide}/>
+      <ToastContainer position={isMobile ? 'top-center' : 'bottom-right'} theme={'dark'} transition={Slide}/>
       <BrowserRouter>
         <Routes>
           <Route

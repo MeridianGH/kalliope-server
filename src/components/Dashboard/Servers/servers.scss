@@ -4,9 +4,22 @@
   z-index: 1;
   font-size: 1rem;
 
-  .server-title {
-    margin: 0;
-    font-size: 1.2rem;
+  &.collapsed {
+    //height: 2rem;
+    overflow-y: hidden;
+  }
+
+  .server-title-container {
+    width: 100%;
+
+    .server-title {
+      margin: 0;
+      font-size: 1.2rem;
+    }
+
+    svg {
+      transition: rotate 0.25s ease-in-out;
+    }
   }
 
   .server-item {

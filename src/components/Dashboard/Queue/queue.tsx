@@ -1,8 +1,17 @@
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
-import { closestCenter, DndContext, DragEndEvent, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
+import React, { useContext, useEffect, useRef, useState } from 'react'
+import {
+  closestCenter,
+  DndContext,
+  DragEndEvent,
+  KeyboardSensor,
+  PointerSensor,
+  TouchSensor,
+  useSensor,
+  useSensors
+} from '@dnd-kit/core'
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
-import { Id, toast } from 'react-toastify'
+import { toast } from 'react-toastify'
 import { WebSocketContext } from '../../../contexts/websocketContext'
 import { QueueTrack } from '../QueueTrack/queuetrack'
 import { Nullable, Track } from '../../../types/types'
@@ -16,22 +25,39 @@ type QueueProps = {
 
 export function Queue({ guildId, tracks }: QueueProps) {
   const webSocket = useContext(WebSocketContext)
-  const [items, setItems] = useState(Array.from({ length: tracks?.length ?? 0 }, (_, i) => i + 1))
-  const toastId = useRef<Id>()
+  const [items, setItems] = useState<number[] | undefined>()
+  const timeoutId = useRef<number>()
+
+  const [prevTracks, setPrevTracks] = useState(tracks)
+  if (tracks !== prevTracks) {
+    setPrevTracks(tracks)
+    setItems(Array.from({ length: tracks?.length ?? 0 }, (_, i) => i + 1))
+  }
 
   const sensors = useSensors(
     useSensor(PointerSensor),
+    useSensor(TouchSensor),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   )
 
   useEffect(() => {
-    setItems(Array.from({ length: tracks?.length ?? 0 }, (_, i) => i + 1))
-  }, [tracks?.length])
+    if (!items || items.length === 0) { return }
 
-  const handleToastClose = useCallback(() => {
-    if (!webSocket || !guildId) { return }
-    if (items.every((id, index) => id - 1 === index)) { return }
-    if (items) {
+    const progress = document.querySelector<HTMLDivElement>('.queue-reorder-container')!
+
+    if (items.every((id, index) => id - 1 === index)) {
+      progress.classList.remove('reordering')
+      if (timeoutId.current) {
+        clearTimeout(timeoutId.current)
+        timeoutId.current = undefined
+      }
+      return
+    }
+
+    function requestReorder() {
+      if (!webSocket || !guildId || !items || items.length === 0) { return }
+      if (items.every((id, index) => id - 1 === index)) { return }
+
       void toast.promise(webSocket.request({
         type: 'requestPlayerAction',
         guildId: guildId,
@@ -43,31 +69,27 @@ export function Queue({ guildId, tracks }: QueueProps) {
         success: 'Successfully reordered queue.'
       })
     }
+
+    if (timeoutId.current) {
+      clearTimeout(timeoutId.current)
+    }
+    const progressBar = document.querySelector<HTMLDivElement>('.queue-reorder-progress')!
+    progress.classList.add('reordering')
+    progressBar.style.animation = 'none'
+    window.requestAnimationFrame(() => {
+      progressBar.style.animation = 'progress 5s linear'
+    })
+    timeoutId.current = setTimeout(requestReorder, 5000)
   }, [guildId, items, webSocket])
-
-  useEffect(() => {
-    console.log(items)
-    if (items.every((id, index) => id - 1 === index)) {
-      console.log('no change')
-      if (toastId.current) {
-        toast.dismiss(toastId.current)
-        toastId.current = undefined
-      }
-      return
-    }
-
-    if (toastId.current) {
-      toast.update(toastId.current, { autoClose: 5000 })
-    } else {
-      toastId.current = toast.info('Reordering queue...', { closeButton: false, autoClose: 5000, onClose: handleToastClose })
-    }
-  }, [handleToastClose, items])
 
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event
+    const target = event.activatorEvent.target as HTMLElement
+    target.blur()
 
     if (over !== null && active.id !== over.id) {
       setItems((items) => {
+        if (!items) { return }
         const oldIndex = items.indexOf(active.id as number)
         const newIndex = items.indexOf(over.id as number)
 
@@ -90,7 +112,7 @@ export function Queue({ guildId, tracks }: QueueProps) {
         <Playlist/>
         <h5 className={'queue-title'}>{'Queue'}</h5>
       </div>
-      {items.length > 0 ?
+      {items && items.length > 0 && items.length === (tracks?.length ?? 0) ?
         (
           <>
             <DndContext
@@ -110,6 +132,10 @@ export function Queue({ guildId, tracks }: QueueProps) {
             {'No upcoming songs! Add songs with \'/play\' or by using the field on the right.'}
           </div>
         )}
+      <div className={'queue-reorder-container flex-container'}>
+        {'Reordering...'}
+        <div className={'queue-reorder-progress'}></div>
+      </div>
     </div>
   )
 }

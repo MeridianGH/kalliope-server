@@ -30,7 +30,7 @@ export function LoadingButton({ children, className, disabled, onClick }: Loadin
   }, [onClick])
 
   return (
-    <button className={`loading-button ${className}`} disabled={disabled ?? isLoading} onClick={(event) => void handleClick(event)}>
+    <button className={`loading-button ${className ?? ''}`} disabled={disabled ?? isLoading} onClick={(event) => void handleClick(event)}>
       {children}
       {isLoading && (
         <div className={'button-loader-container'}>

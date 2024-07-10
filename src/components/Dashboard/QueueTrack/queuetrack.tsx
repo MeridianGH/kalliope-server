@@ -56,7 +56,7 @@ export function QueueTrack({ index, guildId, trackInfo }: QueueTrackProps) {
             }
           }}
         >
-          <Thumbnail image={trackInfo.artworkUrl} size={'4rem'}/>
+          <Thumbnail image={trackInfo.artworkUrl} fitTo={'height'}/>
           <Play weight={'fill'}/>
         </LoadingButton>
         <div className={'queue-track-text flex-container column start nowrap'}>

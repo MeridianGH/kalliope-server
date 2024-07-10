@@ -228,10 +228,15 @@ export function createWebSocketServer(domain: string) {
           break
         }
         case 'error': {
-          if (!message.requestId) { break }
-          const userWs = requestConnectionMap[message.requestId]
-          userWs.json<ServerMessage>({ requestId: message.requestId, type: 'error', errorMessage: message.errorMessage })
-          break
+          if (message.requestId) {
+            const userWs = requestConnectionMap[message.requestId]
+            userWs.json<ServerMessage>({ requestId: message.requestId, type: 'error', errorMessage: message.errorMessage })
+            break
+          } else if (message.guildId) {
+            Object.values(userConnectionsByGuildMap[message.guildId] ?? {}).forEach((userWs) => {
+              userWs.json<ServerMessage>({ requestId: 'none', type: 'error', errorMessage: message.errorMessage })
+            })
+          }
         }
       }
     }

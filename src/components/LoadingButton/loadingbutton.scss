@@ -14,8 +14,8 @@
         .button-loader {
             --uib-size: 2.5rem;
             --uib-color: var(--accent);
-            --uib-speed: 3s;
-            --uib-bg-opacity: 0;
+            --uib-speed: 0.8s;
+            --uib-bg-opacity: 0.25;
             height: var(--uib-size);
             width: var(--uib-size);
             transform-origin: center;
@@ -26,11 +26,9 @@
             .car {
                 fill: none;
                 stroke: var(--uib-color);
-                stroke-dasharray: 1, 200;
+                stroke-dasharray: 25, 75;
                 stroke-dashoffset: 0;
                 stroke-linecap: round;
-                animation: stretch calc(var(--uib-speed) * 0.75) ease-in-out infinite;
-                will-change: stroke-dasharray, stroke-dashoffset;
                 transition: stroke 0.5s ease;
             }
 
@@ -43,20 +41,6 @@
 
             @keyframes rotate {
                 100% { transform: rotate(360deg); }
-            }
-
-            @keyframes stretch {
-                0% {
-                    stroke-dasharray: 0, 150;
-                    stroke-dashoffset: 0;
-                }
-                50% {
-                    stroke-dasharray: 75, 150;
-                    stroke-dashoffset: -25;
-                }
-                100% {
-                    stroke-dashoffset: -100;
-                }
             }
         }
 

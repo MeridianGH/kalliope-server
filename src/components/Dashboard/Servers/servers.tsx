@@ -1,10 +1,10 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { GuildClientMapType, Nullable, PlayerListType } from '../../../types/types'
 import { APIGuild } from 'discord-api-types/v10'
 import { WebSocketContext } from '../../../contexts/websocketContext'
 import { Visualizer } from '../Vizualizer/visualizer'
 import { Loader } from '../../Loader/loader'
-import { DiscordLogo } from '@phosphor-icons/react'
+import { CaretUp, DiscordLogo } from '@phosphor-icons/react'
 import genericServer from '../../../assets/generic_server.png'
 import './servers.scss'
 
@@ -18,6 +18,8 @@ type ServersProps = {
 
 export function Servers({ guildClientMap, playerList, userGuilds, guildId, setGuildId }: ServersProps) {
   const webSocket = useContext(WebSocketContext)
+  const [collapsed, setCollapsed] = useState(false)
+  const isMobile = window.matchMedia('screen and (max-width: 768px)').matches
 
   useEffect(() => {
     if (webSocket?.readyState === 1) {
@@ -41,16 +43,17 @@ export function Servers({ guildClientMap, playerList, userGuilds, guildId, setGu
     }
   }, [webSocket, guildClientMap])
 
-  console.log(userGuilds, guildClientMap)
-
   return (
-    <div className={'server-container flex-container column start nowrap'}>
-      <div className={'flex-container nowrap'}>
-        <DiscordLogo/>
-        <h5 className={'server-title'}>{'Your Servers'}</h5>
+    <div className={`server-container ${collapsed ? 'collapsed' : ''} flex-container column start nowrap`}>
+      <div className={'server-title-container flex-container space-between nowrap'}>
+        <div className={'flex-container nowrap'}>
+          <DiscordLogo/>
+          <h5 className={'server-title'}>{'Your Servers'}</h5>
+        </div>
+        {isMobile && <button onClick={() => setCollapsed(!collapsed)}><CaretUp style={collapsed ? { rotate: '180deg' } : undefined}/></button>}
       </div>
 
-      {(!userGuilds || !guildClientMap) && <div className={'flex-container'} style={{ width: '100%', height: '100%' }}><Loader/></div>}
+      {!userGuilds || !guildClientMap && <div className={'flex-container'} style={{ width: '100%', height: '100%' }}><Loader/></div>}
 
       {guildClientMap && Object.keys(guildClientMap).length === 0 && (
         <div className={'flex-container'} style={{ width: '100%' }}>
@@ -58,7 +61,7 @@ export function Servers({ guildClientMap, playerList, userGuilds, guildId, setGu
         </div>
       )}
 
-      {userGuilds?.filter((guild) => Object.keys(guildClientMap ?? {}).includes(guild.id)).map((guild, index) => (
+      {guildClientMap && userGuilds?.filter((guild) => Object.keys(guildClientMap).includes(guild.id)).map((guild, index) => (
         <div
           key={index}
           className={`server-item ${guildId === guild.id ? 'active' : ''} ${playerList?.has(guild.id) ? 'playing' : ''} flex-container nowrap`}

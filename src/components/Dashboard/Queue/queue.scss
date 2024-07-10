@@ -1,9 +1,38 @@
 .queue-container {
   overflow-y: scroll;
   font-size: 1rem;
+  position: relative;
+  z-index: 1;
 
   .queue-title {
     margin: 0;
     font-size: 1.2rem;
+  }
+
+  .queue-reorder-container {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 1rem;
+    width: 100%;
+    font-size: 0.8rem;
+    opacity: 0;
+    transition: opacity 0.25s ease-in-out;
+
+    .queue-reorder-progress {
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background: linear-gradient(to right, var(--accent-alt), var(--accent));
+
+      @keyframes progress {
+        0% { width: 100%; }
+        100% { width: 0; }
+      }
+    }
+
+    &.reordering {
+      opacity: 1;
+    }
   }
 }

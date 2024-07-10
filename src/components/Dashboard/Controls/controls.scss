@@ -6,6 +6,11 @@
   .controls-spacer {
     flex-grow: 1;
   }
+  @media screen and (max-width: 768px) {
+    .controls-spacer {
+      display: none;
+    }
+  }
 
   .controls-title {
     margin: 0;

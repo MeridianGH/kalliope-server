@@ -13,6 +13,7 @@ import { IconContext, SignOut } from '@phosphor-icons/react'
 import kalliopeTransparentPNG from '../../assets/kalliope_transparent.png'
 import kalliopePNG from '../../assets/kalliope.png'
 import './dashboard.scss'
+import { toast } from 'react-toastify'
 
 const playerObject: Player = {
   guildId: '610498937874546699',
@@ -114,13 +115,19 @@ export function Dashboard() {
     function onMessage(message: MessageEvent<string>) {
       const data = JSON.parse(message.data) as MessageToUser
       if (!PRODUCTION) { console.log('client received:', data) }
-      if (data.type === 'guildClientMap') {
-        setGuildClientMap(data.map)
-      } else if (data.type === 'playerList') {
-        setPlayerList(new Set(data.list))
-      } else if (data.type === 'playerData') {
-        // setGuildId(data.player?.guildId)
-        setPlayer(data.player)
+      switch (data.type) {
+        case 'guildClientMap':
+          setGuildClientMap(data.map)
+          break
+        case 'playerList':
+          setPlayerList(new Set(data.list))
+          break
+        case 'playerData':
+          setPlayer(data.player)
+          break
+        case 'error':
+          toast.error(data.errorMessage, { autoClose: false })
+          break
       }
     }
 

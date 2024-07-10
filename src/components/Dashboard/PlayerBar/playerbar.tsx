@@ -9,7 +9,8 @@ import {
   Shuffle, Queue,
   SkipBack, SkipForward,
   SpeakerHigh, SpeakerLow,
-  SpeakerNone, SpeakerX
+  SpeakerNone, SpeakerX,
+  IconContext, CaretDown, YoutubeLogo
 } from '@phosphor-icons/react'
 import './playerbar.scss'
 
@@ -28,6 +29,8 @@ export function PlayerBar({ guildId, current, position, volume, timescale, pause
   const webSocket = useContext(WebSocketContext)
   const [currentPosition, setCurrentPosition] = useState(position ?? 0)
   const [currentVolume, setCurrentVolume] = useState(50)
+  const [expanded, setExpanded] = useState(false)
+  const isMobile = window.matchMedia('screen and (max-width: 768px)').matches
 
   const msToHMS = useCallback((ms: number) => {
     let totalSeconds = ms / 1000
@@ -78,14 +81,15 @@ export function PlayerBar({ guildId, current, position, volume, timescale, pause
   }, [position, current, disabled, paused, timescale])
 
   return (
-    <div className={`player-bar flex-container space-between nowrap`}>
-      <div className={'flex-container start nowrap'}>
+    <div className={`player-bar ${expanded ? 'expanded' : ''} flex-container space-between nowrap`}>
+      {expanded && <button onClick={() => setExpanded(false)}><CaretDown/></button>}
+      <div className={'player-song flex-container start nowrap'} onClick={!expanded ? () => setExpanded(true) : undefined}>
         {!disabled && (
           <>
             <div className={'player-song-gradient'}></div>
-            <a className={'flex-container nowrap'} href={current.info.uri} rel={'noreferrer'} target={'_blank'}>
-              <Thumbnail image={current.info.artworkUrl} size={'5rem'}/>
-              <div className={'player-song flex-container column nowrap'}>
+            <a className={`flex-container ${expanded ? 'column' : ''} start nowrap`} href={current.info.uri} rel={'noreferrer'} target={'_blank'}>
+              <Thumbnail image={current.info.artworkUrl} fitTo={expanded ? 'width' : 'height'}/>
+              <div className={'player-song-title flex-container column start nowrap'}>
                 <b>{current.info.title}</b>
                 <span>{current.info.author}</span>
               </div>
@@ -95,75 +99,85 @@ export function PlayerBar({ guildId, current, position, volume, timescale, pause
       </div>
       <div className={'flex-container column nowrap'}>
         <div className={'player-buttons flex-container nowrap'}>
-          <LoadingButton
-            disabled={disabled}
-            onClick={async () => {
-              if (!guildId) { return }
-              await webSocket?.request({
-                type: 'requestPlayerAction',
-                guildId: guildId,
-                action: 'shuffle'
-              }, true)
-            }}
-          >
-            <Shuffle/>
-          </LoadingButton>
-          <LoadingButton
-            disabled={disabled}
-            onClick={async () => {
-              if (!guildId) { return }
-              await webSocket?.request({
-                type: 'requestPlayerAction',
-                guildId: guildId,
-                action: 'previous'
-              }, true)
-            }}
-          >
-            <SkipBack/>
-          </LoadingButton>
-          <LoadingButton
-            disabled={disabled}
-            onClick={async () => {
-              if (!guildId) { return }
-              await webSocket?.request({
-                type: 'requestPlayerAction',
-                guildId: guildId,
-                action: 'pause'
-              }, true)
-            }}
-          >
-            {paused ? <PlayCircle size={'2rem'} weight={'fill'}/> : <PauseCircle size={'2rem'} weight={'fill'}/>}
-          </LoadingButton>
-          <LoadingButton
-            disabled={disabled}
-            onClick={async () => {
-              if (!guildId) { return }
-              await webSocket?.request({
-                type: 'requestPlayerAction',
-                guildId: guildId,
-                action: 'skip'
-              }, true)
-            }}
-          >
-            <SkipForward/>
-          </LoadingButton>
-          <LoadingButton
-            className={`player-repeat-button ${repeatMode}`}
-            disabled={disabled}
-            onClick={async () => {
-              if (!guildId) { return }
-              await webSocket?.request({
-                type: 'requestPlayerAction',
-                guildId: guildId,
-                action: 'repeat'
-              }, true)
-            }}
-          >
-            {repeatMode === 'track' ? <RepeatOnce/> : <Repeat/>}
-          </LoadingButton>
+          <IconContext.Provider value={{ size: expanded ? '2rem' : '1.5rem' }}>
+            {(!isMobile || expanded) && (
+              <>
+                <LoadingButton
+                  disabled={disabled}
+                  onClick={async () => {
+                    if (!guildId) { return }
+                    await webSocket?.request({
+                      type: 'requestPlayerAction',
+                      guildId: guildId,
+                      action: 'shuffle'
+                    }, true)
+                  }}
+                >
+                  <Shuffle/>
+                </LoadingButton>
+                <LoadingButton
+                  disabled={disabled}
+                  onClick={async () => {
+                    if (!guildId) { return }
+                    await webSocket?.request({
+                      type: 'requestPlayerAction',
+                      guildId: guildId,
+                      action: 'previous'
+                    }, true)
+                  }}
+                >
+                  <SkipBack/>
+                </LoadingButton>
+              </>)}
+            <LoadingButton
+              disabled={disabled}
+              onClick={async () => {
+                if (!guildId) { return }
+                await webSocket?.request({
+                  type: 'requestPlayerAction',
+                  guildId: guildId,
+                  action: 'pause'
+                }, true)
+              }}
+            >
+              {paused ?
+                <PlayCircle size={expanded ? '4rem' : '3rem'} weight={'fill'}/> :
+                <PauseCircle size={expanded ? '4rem' : '3rem'} weight={'fill'}/>}
+            </LoadingButton>
+            {(!isMobile || expanded) && (
+              <>
+                <LoadingButton
+                  disabled={disabled}
+                  onClick={async () => {
+                    if (!guildId) { return }
+                    await webSocket?.request({
+                      type: 'requestPlayerAction',
+                      guildId: guildId,
+                      action: 'skip'
+                    }, true)
+                  }}
+                >
+                  <SkipForward/>
+                </LoadingButton>
+                <LoadingButton
+                  className={`player-repeat-button ${repeatMode}`}
+                  disabled={disabled}
+                  onClick={async () => {
+                    if (!guildId) { return }
+                    await webSocket?.request({
+                      type: 'requestPlayerAction',
+                      guildId: guildId,
+                      action: 'repeat'
+                    }, true)
+                  }}
+                >
+                  {repeatMode === 'track' ? <RepeatOnce/> : <Repeat/>}
+                </LoadingButton>
+              </>)}
+          </IconContext.Provider>
         </div>
         <div className={'progress-wrapper flex-container nowrap'}>
-          <span>{disabled ? '-:-' : msToHMS(currentPosition)}</span>
+          {(!isMobile || expanded) && <span>{disabled ? '-:-' : msToHMS(currentPosition)}</span>}
           <div className={'progress-bar-container'}>
             <div
               className={'progress-bar'}
@@ -171,76 +185,84 @@ export function PlayerBar({ guildId, current, position, volume, timescale, pause
             >
             </div>
           </div>
-          <span>{disabled ? '-:-' : !current.info.isStream ? msToHMS(current.info.duration) : '🔴 Live'}</span>
+          {(!isMobile || expanded) && <span>{disabled ? '-:-' : !current.info.isStream ? msToHMS(current.info.duration) : '🔴 Live'}</span>}
         </div>
       </div>
-      <div className={'extras-container flex-container nowrap'}>
-        {!disabled && (
-          <>
-            <div className={'flex-container nowrap'}>
-              <LoadingButton
-                className={`autoplay-button ${settings?.autoplay ? 'active' : ''} tooltip`}
-                onClick={async () => {
-                  if (!guildId) { return }
-                  await webSocket?.request({
-                    type: 'requestPlayerAction',
-                    guildId: guildId,
-                    action: 'autoplay'
-                  }, true)
-                }}
-              >
-                <span className={'tooltip-content'}>{'Toggle Autoplay'}</span>
-                <Queue/>
-              </LoadingButton>
-              {settings?.sponsorblockSupport && (
+      {(!isMobile || expanded) && (
+        <div className={'extras-container flex-container nowrap'}>
+          {!disabled && (
+            <>
+              <div className={'flex-container nowrap'}>
                 <LoadingButton
-                  className={`sponsorblock-button ${settings?.sponsorblock ? 'active' : ''} tooltip`}
+                  className={`autoplay-button ${settings?.autoplay ? 'active' : ''} tooltip`}
                   onClick={async () => {
                     if (!guildId) { return }
                     await webSocket?.request({
                       type: 'requestPlayerAction',
                       guildId: guildId,
-                      action: 'sponsorblock'
+                      action: 'autoplay'
                     }, true)
                   }}
                 >
-                  <span className={'tooltip-content'}>{'Toggle SponsorBlock'}</span>
-                  <div className={'sponsorblock-logo'}></div>
+                  <span className={'tooltip-content'}>{'Toggle Autoplay'}</span>
+                  <Queue/>
                 </LoadingButton>
-              )}
-            </div>
-            <div className={'volume-container flex-container column nowrap'}>
-              <div className={'volume-text'}>
-                {currentVolume === 0 ? <SpeakerX/> : currentVolume <= 33 ? <SpeakerNone/> : currentVolume <= 66 ? <SpeakerLow/> : <SpeakerHigh/>}
-                {currentVolume}
+                {settings?.sponsorblockSupport && (
+                  <LoadingButton
+                    className={`sponsorblock-button ${settings?.sponsorblock ? 'active' : ''} tooltip`}
+                    onClick={async () => {
+                      if (!guildId) { return }
+                      await webSocket?.request({
+                        type: 'requestPlayerAction',
+                        guildId: guildId,
+                        action: 'sponsorblock'
+                      }, true)
+                    }}
+                  >
+                    <span className={'tooltip-content'}>{'Toggle SponsorBlock'}</span>
+                    <div className={'sponsorblock-logo'}></div>
+                  </LoadingButton>
+                )}
               </div>
-              <div className={'volume-slider-container'}>
-                <input
-                  className={'volume-slider-input'}
-                  type={'range'}
-                  defaultValue={currentVolume.toString()}
-                  step={'1'}
-                  min={'0'}
-                  max={'100'}
-                  onInput={() => {
-                    setCurrentVolume(parseInt(document.querySelector<HTMLInputElement>('.volume-slider-input')!.value))
-                  }}
-                  onMouseUp={() => {
-                    if (!guildId) { return }
-                    webSocket?.request({
-                      type: 'requestPlayerAction',
-                      guildId: guildId,
-                      action: 'volume',
-                      payload: { volume: parseInt(document.querySelector<HTMLInputElement>('.volume-slider-input')!.value) }
-                    })
-                  }}
-                />
-                <div className={'volume-slider-range'} style={{ width: `${currentVolume}%` }}></div>
+              <div className={'volume-container flex-container column nowrap'}>
+                <div className={'volume-text'}>
+                  {currentVolume === 0 ?
+                    <SpeakerX/> :
+                    currentVolume <= 33 ?
+                      <SpeakerNone/> :
+                      currentVolume <= 66 ?
+                        <SpeakerLow/> :
+                        <SpeakerHigh/>}
+                  {currentVolume}
+                </div>
+                <div className={'volume-slider-container'}>
+                  <input
+                    className={'volume-slider-input'}
+                    type={'range'}
+                    defaultValue={currentVolume.toString()}
+                    step={'1'}
+                    min={'0'}
+                    max={'100'}
+                    onInput={() => {
+                      setCurrentVolume(parseInt(document.querySelector<HTMLInputElement>('.volume-slider-input')!.value))
+                    }}
+                    onMouseUp={() => {
+                      if (!guildId) { return }
+                      webSocket?.request({
+                        type: 'requestPlayerAction',
+                        guildId: guildId,
+                        action: 'volume',
+                        payload: { volume: parseInt(document.querySelector<HTMLInputElement>('.volume-slider-input')!.value) }
+                      })
+                    }}
+                  />
+                  <div className={'volume-slider-range'} style={{ width: `${currentVolume}%` }}></div>
+                </div>
               </div>
-            </div>
-          </>
-        )}
-      </div>
+            </>
+          )}
+        </div>
+      )}
     </div>
   )
 }

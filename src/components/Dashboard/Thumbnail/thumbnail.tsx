@@ -5,12 +5,15 @@ import './thumbnail.scss'
 
 export type ThumbnailProps = {
   image: Nullable<string>,
-  size: `${number}${'%' | 'px' | 'em' | 'rem' | 'vh' | 'vw'}`
+  // size: `${number}${'%' | 'px' | 'em' | 'rem' | 'vh' | 'vw'}`
+  fitTo: 'width' | 'height'
 }
 
-export function Thumbnail({ image, size }: ThumbnailProps) {
+export function Thumbnail({ image, fitTo }: ThumbnailProps) {
+  const style = {}
+  style[fitTo] = '100%'
   return (
-    <div className={'thumbnail-container'} style={{ width: size, height: size }}>
+    <div className={'thumbnail-container'} style={style}>
       <img className={'thumbnail-backdrop'} src={image ?? imagePlaceholder} alt={'Thumbnail Background'}/>
       <img className={'thumbnail'} src={image ?? imagePlaceholder} alt={'Video Thumbnail'}/>
     </div>

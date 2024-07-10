@@ -11,6 +11,35 @@
         '. . .';
     gap: var(--gap);
 
+    @media screen and (max-width: 768px) {
+        & {
+            height: auto;
+            grid-template-columns: 1fr;
+            grid-template-rows: min-content 1fr min-content min-content;
+            grid-template-areas:
+                'header'
+                '.'
+                '.'
+                '.';
+            transition: grid-template-rows 0.5s ease-in-out;
+
+            &:has(.server-container.collapsed) {
+                grid-template-rows: min-content 0fr min-content min-content;
+            }
+            &:has(.player-bar.expanded) {
+                height: 0;
+            }
+            > :not(.background, .player-bar):not(.\9) {
+                max-height: 50svh;
+                min-height: 2rem;
+            }
+
+            .dashboard-header .dashboard-header-links {
+                display: none;
+            }
+        }
+    }
+
     > :not(.background, .player-bar) {
         padding: 1rem;
         background-color: var(--bg-lvl1);
