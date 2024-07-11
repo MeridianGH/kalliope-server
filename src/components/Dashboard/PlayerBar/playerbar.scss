@@ -43,6 +43,7 @@
       border-radius: 0.5rem;
       border: none;
       height: 5rem;
+      overflow: hidden;
 
       > * {
         width: auto;
@@ -75,35 +76,40 @@
         height: 5px;
       }
     }
-  }
-  &.expanded {
-    height: 100vh;
-    width: 100vw;
-    z-index: 9999;
-    flex-direction: column;
+    &.expanded {
+      height: 100vh;
+      width: 100vw;
+      z-index: 9999;
+      flex-direction: column;
+      border: none;
 
-    > * {
-      width: 100%;
-    }
-
-    .player-song {
-      width: 100%;
-      max-width: 20rem;
-      height: fit-content;
-
-      .player-song-gradient {
-        display: none;
+      > * {
+        width: 100%;
       }
 
-      .player-song-title {
-        max-width: 100%;
+      .player-song {
+        width: 100%;
+        max-width: 20rem;
+        height: fit-content;
+
+        .player-song-gradient {
+          z-index: -1;
+          background: linear-gradient(to bottom, var(--dominant-color), transparent);
+          height: 100%;
+          width: 100%;
+          opacity: 0.25;
+        }
+
+        .player-song-title {
+          max-width: 100%;
+        }
       }
-    }
-    .player-buttons {
-      font-size: 2rem;
-    }
-    .extras-container {
-      justify-content: space-between;
+      .player-buttons {
+        font-size: 2rem;
+      }
+      .extras-container {
+        justify-content: space-between;
+      }
     }
   }
 

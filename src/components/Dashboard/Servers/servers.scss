@@ -7,6 +7,15 @@
   &.collapsed {
     //height: 2rem;
     overflow-y: hidden;
+
+    > :not(.server-title-container) {
+      opacity: 0;
+    }
+  }
+
+  > * {
+    opacity: 1;
+    transition: opacity 0.25s ease-in-out;
   }
 
   .server-title-container {

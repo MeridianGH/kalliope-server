@@ -53,7 +53,7 @@ export function Servers({ guildClientMap, playerList, userGuilds, guildId, setGu
         {isMobile && <button onClick={() => setCollapsed(!collapsed)}><CaretUp style={collapsed ? { rotate: '180deg' } : undefined}/></button>}
       </div>
 
-      {!userGuilds || !guildClientMap && <div className={'flex-container'} style={{ width: '100%', height: '100%' }}><Loader/></div>}
+      {(!userGuilds || !guildClientMap) && <div className={'flex-container'} style={{ width: '100%', height: '100px' }}><Loader/></div>}
 
       {guildClientMap && Object.keys(guildClientMap).length === 0 && (
         <div className={'flex-container'} style={{ width: '100%' }}>

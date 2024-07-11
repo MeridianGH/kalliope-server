@@ -31,12 +31,30 @@
             }
             > :not(.background, .player-bar):not(.\9) {
                 max-height: 50svh;
-                min-height: 2rem;
+                min-height: 1.75rem;
             }
 
-            .dashboard-header .dashboard-header-links {
-                display: none;
+            .dashboard-header.dashboard-header {
+                .dashboard-header-links {
+                    display: none;
+                }
+                .dashboard-header-user .dashboard-header-logout {
+                    opacity: 1;
+                    position: relative;
+                    background: none;
+                    text-indent: 100%;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    width: 1.5rem;
+                    height: 1.5rem;
+
+                    svg {
+                        position: absolute;
+                        inset: 0;
+                    }
+                }
             }
+
         }
     }
 
