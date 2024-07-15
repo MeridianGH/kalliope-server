@@ -4,15 +4,23 @@ import { WebSocketContext } from '../../../contexts/websocketContext'
 import { Thumbnail } from '../Thumbnail/thumbnail'
 import { LoadingButton } from '../../LoadingButton/loadingbutton'
 import {
-  PauseCircle, PlayCircle,
-  Repeat, RepeatOnce,
-  Shuffle, Queue,
-  SkipBack, SkipForward,
-  SpeakerHigh, SpeakerLow,
-  SpeakerNone, SpeakerX,
-  IconContext, CaretDown, YoutubeLogo
+  CaretDown,
+  IconContext,
+  PauseCircle,
+  PlayCircle,
+  Queue,
+  Repeat,
+  RepeatOnce,
+  Shuffle,
+  SkipBack,
+  SkipForward,
+  SpeakerHigh,
+  SpeakerLow,
+  SpeakerNone,
+  SpeakerX
 } from '@phosphor-icons/react'
 import './playerbar.scss'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 type PlayerBarProps = {
   guildId: Nullable<string>,
@@ -31,6 +39,7 @@ export function PlayerBar({ guildId, current, position, volume, timescale, pause
   const [currentVolume, setCurrentVolume] = useState(50)
   const [expanded, setExpanded] = useState(false)
   const isMobile = window.matchMedia('screen and (max-width: 768px)').matches
+  const disabled = !guildId || !current
 
   const msToHMS = useCallback((ms: number) => {
     let totalSeconds = ms / 1000
@@ -63,7 +72,26 @@ export function PlayerBar({ guildId, current, position, volume, timescale, pause
     }).catch((error) => console.warn(error))
   }, [current])
 
-  const disabled = !guildId || !current
+  const location = useLocation()
+  const navigate = useNavigate()
+
+  const expand = useCallback(() => {
+    if (!isMobile) { return }
+    navigate('/dashboard', { state: 'expanded' })
+  }, [isMobile, navigate])
+  const collapse = useCallback(() => {
+    if (!isMobile) { return }
+    navigate(-1)
+  }, [isMobile, navigate])
+
+  useEffect(() => {
+    if (!isMobile) { return }
+    setExpanded(location.state === 'expanded')
+  }, [expanded, isMobile, location.state, navigate])
+  useEffect(() => {
+    if (!isMobile) { return }
+    if (expanded && location.state === 'expanded' && disabled) { collapse() }
+  }, [collapse, disabled, expanded, isMobile, location.state])
 
   useEffect(() => {
     if (!Number.isFinite(position) || disabled || paused) { return }
@@ -82,8 +110,8 @@ export function PlayerBar({ guildId, current, position, volume, timescale, pause
 
   return (
     <div className={`player-bar ${expanded ? 'expanded' : ''} flex-container space-between nowrap`}>
-      {expanded && <button onClick={() => setExpanded(false)}><CaretDown/></button>}
-      <div className={'player-song flex-container start nowrap'} onClick={!expanded ? () => setExpanded(true) : undefined}>
+      {expanded && <button className={'player-collapse-button'} onClick={collapse}><CaretDown/></button>}
+      <div className={'player-song flex-container start nowrap'} onClick={!disabled && !expanded ? expand : undefined}>
         {!disabled && (
           <>
             <div className={'player-song-gradient'}></div>
@@ -140,7 +168,7 @@ export function PlayerBar({ guildId, current, position, volume, timescale, pause
                 }, true)
               }}
             >
-              {paused ?
+              {paused ?? disabled ?
                 <PlayCircle size={expanded ? '4rem' : '3rem'} weight={'fill'}/> :
                 <PauseCircle size={expanded ? '4rem' : '3rem'} weight={'fill'}/>}
             </LoadingButton>
