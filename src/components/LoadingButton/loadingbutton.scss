@@ -4,15 +4,15 @@
     line-height: 0;
 
     .button-loader-container {
-        width: 2.5rem;
-        height: 2.5rem;
+        width: 110%;
+        height: 110%;
         position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
 
         .button-loader {
-            --uib-size: 2.5rem;
+            --uib-size: 100%;
             --uib-color: var(--accent);
             --uib-speed: 0.8s;
             --uib-bg-opacity: 0.25;
