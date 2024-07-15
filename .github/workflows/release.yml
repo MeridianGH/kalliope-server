@@ -29,7 +29,7 @@ jobs:
       - name: Create release
         uses: ncipollo/release-action@v1
         with:
-          body: ${{steps.create_changelog.outputs.changelog}}
+          bodyFile: CHANGELOG.md
           tag: ${{ github.ref }}
           name: ${{ github.ref_name }}
 
