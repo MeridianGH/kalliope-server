@@ -12,7 +12,7 @@
     "lint": "eslint .",
     "docs": "typedoc --tsconfig ./src/tsconfig.json",
     "prepare": "husky",
-    "release": "commit-and-tag-version --skip.changelog --releaseCommitMessageFormat \"chore: release {{currentTag}}\" --tag-prefix \"\""
+    "release": "commit-and-tag-version --releaseCommitMessageFormat \"chore: release {{currentTag}}\" --tag-prefix \"\""
   },
   "dependencies": {
     "@dnd-kit/modifiers": "^7.0.0",
