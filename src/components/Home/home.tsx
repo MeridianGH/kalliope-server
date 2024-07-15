@@ -6,8 +6,7 @@ import './home.scss'
 import {
   AppWindow, ArrowSquareOut, Download, GithubLogo,
   Headphones, List,
-  ListChecks,
-  MagnifyingGlass, Playlist,
+  Playlist,
   SquaresFour, Terminal,
   Waveform,
   YoutubeLogo

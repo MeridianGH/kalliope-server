@@ -5,7 +5,7 @@ import { Loader } from '../Loader/loader'
 import { Background } from '../Background/background'
 import './statistics.scss'
 import { ClientDataMapType, MessageToUser, PlayerListType } from '../../types/types'
-import { ArrowsClockwise, ArrowUUpLeft } from '@phosphor-icons/react'
+import { ArrowsClockwise } from '@phosphor-icons/react'
 
 const clientDataMapObject = {
   '1031853575732740217': {
