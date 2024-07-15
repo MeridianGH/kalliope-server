@@ -1,6 +1,6 @@
 {
   "name": "kalliopeserver",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "main": "main.js",
   "type": "module",
   "private": true,
@@ -12,7 +12,7 @@
     "lint": "eslint .",
     "docs": "typedoc --tsconfig ./src/tsconfig.json",
     "prepare": "husky",
-    "release": "commit-and-tag-version --skip.changelog --releaseCommitMessageFormat \"chore: release %s\""
+    "release": "commit-and-tag-version --skip.changelog --releaseCommitMessageFormat \"chore: release {{currentTag}}\" --tag-prefix \"\""
   },
   "dependencies": {
     "@dnd-kit/modifiers": "^7.0.0",
