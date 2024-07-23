@@ -73,4 +73,41 @@
             color: var(--accent);
         }
     }
+
+    @media screen and (max-width: 768px) {
+        & {
+            position: relative;
+
+            > div {
+                width: 100%;
+                height: 3rem;
+            }
+            .queue-track-skipto {
+                height: 3rem;
+            }
+            .queue-track-text {
+                white-space: nowrap;
+                max-width: calc(100% - 4rem);
+                font-size: 0.8rem;
+                > * {
+                    max-width: 100%;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+            }
+            .queue-track-actions {
+                display: none;
+            }
+            &.selected, &hover, &:focus-within {
+                .queue-track-actions {
+                    display: flex;
+                    position: absolute;
+                    left: auto;
+                    right: 0;
+                    width: fit-content;
+                    background-color: var(--bg-lvl3)
+                }
+            }
+        }
+    }
 }

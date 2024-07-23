@@ -28,7 +28,7 @@ export function Queue({ guildId, tracks }: QueueProps) {
   const [items, setItems] = useState<number[] | undefined>()
   const timeoutId = useRef<number>()
 
-  const [prevTracks, setPrevTracks] = useState(tracks)
+  const [prevTracks, setPrevTracks] = useState<Nullable<Track[]>>()
   if (tracks !== prevTracks) {
     setPrevTracks(tracks)
     setItems(Array.from({ length: tracks?.length ?? 0 }, (_, i) => i + 1))

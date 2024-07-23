@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { toast } from 'react-toastify'
 import { LoadingButton } from '../../LoadingButton/loadingbutton'
 import { Thumbnail } from '../Thumbnail/thumbnail'
@@ -24,6 +24,8 @@ export function QueueTrack({ index, guildId, trackInfo }: QueueTrackProps) {
       easing: 'ease-in-out'
     }
   })
+  const [selected, setSelected] = useState(false)
+  const isMobile = window.matchMedia('screen and (max-width: 768px)').matches
 
   const style = {
     transform: CSS.Transform.toString(sortable.transform),
@@ -33,8 +35,14 @@ export function QueueTrack({ index, guildId, trackInfo }: QueueTrackProps) {
   }
 
   return (
-    <div key={index + 1} className={'queue-track flex-container space-between nowrap'} style={style} ref={sortable.setNodeRef}>
-      <div className={'flex-container nowrap'}>
+    <div
+      key={index + 1}
+      className={`queue-track ${selected ? 'selected' : ''} flex-container space-between nowrap`}
+      onClick={isMobile ? () => setSelected(!selected) : undefined}
+      style={style}
+      ref={sortable.setNodeRef}
+    >
+      <div className={`flex-container nowrap ${isMobile ? 'start' : ''}`}>
         <LoadingButton
           className={'queue-track-skipto tooltip'}
           onClick={() => {
@@ -60,11 +68,11 @@ export function QueueTrack({ index, guildId, trackInfo }: QueueTrackProps) {
           <Play weight={'fill'}/>
         </LoadingButton>
         <div className={'queue-track-text flex-container column start nowrap'}>
-          <a href={trackInfo.uri} rel={'noreferrer'} target={'_blank'}><b>{trackInfo.title}</b></a>
+          <a href={trackInfo.uri} rel={'noreferrer'} target={'_blank'} style={isMobile ? { pointerEvents: 'none' } : undefined}><b>{trackInfo.title}</b></a>
           <span>{trackInfo.author}</span>
         </div>
       </div>
-      <div className={'flex-container nowrap'}>
+      <div className={'queue-track-actions flex-container nowrap'}>
         <LoadingButton
           className={'queue-track-remove'}
           onClick={() => {
