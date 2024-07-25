@@ -3,6 +3,11 @@
   font-size: 1rem;
   position: relative;
   z-index: 1;
+  transition: padding-bottom 0.25s ease-in-out;
+
+  &:has(.queue-reorder-container.reordering) {
+    padding-bottom: 1.5rem;
+  }
 
   .queue-title {
     margin: 0;
@@ -24,11 +29,6 @@
       inset: 0;
       z-index: -1;
       background: linear-gradient(to right, var(--accent-alt), var(--accent));
-
-      @keyframes progress {
-        0% { width: 100%; }
-        100% { width: 0; }
-      }
     }
 
     &.reordering {

@@ -4,7 +4,7 @@ import {
   DndContext,
   DragEndEvent,
   KeyboardSensor,
-  PointerSensor,
+  MouseSensor,
   TouchSensor,
   useSensor,
   useSensors
@@ -35,7 +35,7 @@ export function Queue({ guildId, tracks }: QueueProps) {
   }
 
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(MouseSensor),
     useSensor(TouchSensor),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   )
@@ -73,12 +73,9 @@ export function Queue({ guildId, tracks }: QueueProps) {
     if (timeoutId.current) {
       clearTimeout(timeoutId.current)
     }
-    const progressBar = document.querySelector<HTMLDivElement>('.queue-reorder-progress')!
     progress.classList.add('reordering')
-    progressBar.style.animation = 'none'
-    window.requestAnimationFrame(() => {
-      progressBar.style.animation = 'progress 5s linear'
-    })
+    const progressBar = document.querySelector<HTMLDivElement>('.queue-reorder-progress')!
+    progressBar.animate([{ width: '100%' }, { width: '0' }], { duration: 5000, fill: 'forwards' })
     timeoutId.current = setTimeout(requestReorder, 5000)
   }, [guildId, items, webSocket])
 
@@ -107,35 +104,33 @@ export function Queue({ guildId, tracks }: QueueProps) {
   }
 
   return (
-    <div className={'queue-container flex-container column start nowrap'}>
-      <div className={'flex-container nowrap'}>
-        <Playlist/>
-        <h5 className={'queue-title'}>{'Queue'}</h5>
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragEnd={handleDragEnd}
+      modifiers={[restrictToVerticalAxis]}
+    >
+      <div className={'queue-container flex-container column start nowrap'}>
+        <div className={'flex-container nowrap'}>
+          <Playlist/>
+          <h5 className={'queue-title'}>{'Queue'}</h5>
+        </div>
+        {items && items.length > 0 && items.length === (tracks?.length ?? 0) ?
+          (
+            <SortableContext items={items} strategy={verticalListSortingStrategy}>
+              {items.map((id) => <QueueTrack key={id} index={id - 1} guildId={guildId} trackInfo={tracks![id - 1].info}/>)}
+            </SortableContext>
+          ) :
+          (
+            <div className={'queue-item flex-container'}>
+              {'No upcoming songs! Add songs with \'/play\' or by using the field on the right.'}
+            </div>
+          )}
+        <div className={'queue-reorder-container flex-container'}>
+          {'Reordering...'}
+          <div className={'queue-reorder-progress'}></div>
+        </div>
       </div>
-      {items && items.length > 0 && items.length === (tracks?.length ?? 0) ?
-        (
-          <>
-            <DndContext
-              sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragEnd={handleDragEnd}
-              modifiers={[restrictToVerticalAxis]}
-            >
-              <SortableContext items={items} strategy={verticalListSortingStrategy}>
-                {items.map((id) => <QueueTrack key={id} index={id - 1} guildId={guildId} trackInfo={tracks![id - 1].info}/>)}
-              </SortableContext>
-            </DndContext>
-          </>
-        ) :
-        (
-          <div className={'queue-item flex-container'}>
-            {'No upcoming songs! Add songs with \'/play\' or by using the field on the right.'}
-          </div>
-        )}
-      <div className={'queue-reorder-container flex-container'}>
-        {'Reordering...'}
-        <div className={'queue-reorder-progress'}></div>
-      </div>
-    </div>
+    </DndContext>
   )
 }

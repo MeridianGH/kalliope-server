@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react'
 import { toast } from 'react-toastify'
 import { LoadingButton } from '../../LoadingButton/loadingbutton'
 import { Thumbnail } from '../Thumbnail/thumbnail'
-import { DotsSixVertical, Play, Trash } from '@phosphor-icons/react'
+import { DotsSixVertical, DotsThreeVertical, Play, Trash } from '@phosphor-icons/react'
 import './queuetrack.scss'
 import { Track } from '../../../types/types'
 import { WebSocketContext } from '../../../contexts/websocketContext'
@@ -24,7 +24,7 @@ export function QueueTrack({ index, guildId, trackInfo }: QueueTrackProps) {
       easing: 'ease-in-out'
     }
   })
-  const [selected, setSelected] = useState(false)
+  const [expanded, setExpanded] = useState(false)
   const isMobile = window.matchMedia('screen and (max-width: 768px)').matches
 
   const style = {
@@ -34,45 +34,50 @@ export function QueueTrack({ index, guildId, trackInfo }: QueueTrackProps) {
     zIndex: sortable.isDragging ? 999 : 'unset'
   }
 
+  const handleSkipTo = () => {
+    const trackTitle = trackInfo.title
+    if (webSocket) {
+      void toast.promise(
+        webSocket?.request({
+          type: 'requestPlayerAction',
+          guildId: guildId,
+          action: 'skip',
+          payload: { index: index + 1 }
+        }, true),
+        {
+          pending: `Skipping to '${trackTitle}'...`,
+          success: `Successfully skipped to '${trackTitle}'.`,
+          error: `Failed to skip to '${trackTitle}'. Please try again.`
+        }
+      )
+    }
+  }
+
   return (
     <div
       key={index + 1}
-      className={`queue-track ${selected ? 'selected' : ''} flex-container space-between nowrap`}
-      onClick={isMobile ? () => setSelected(!selected) : undefined}
+      className={`queue-track ${expanded ? 'expanded' : ''} flex-container space-between nowrap`}
       style={style}
       ref={sortable.setNodeRef}
+      onBlur={() => setExpanded(false)}
     >
       <div className={`flex-container nowrap ${isMobile ? 'start' : ''}`}>
-        <LoadingButton
-          className={'queue-track-skipto tooltip'}
-          onClick={() => {
-            const trackTitle = trackInfo.title
-            if (webSocket) {
-              void toast.promise(
-                webSocket?.request({
-                  type: 'requestPlayerAction',
-                  guildId: guildId,
-                  action: 'skip',
-                  payload: { index: index + 1 }
-                }, true),
-                {
-                  pending: `Skipping to '${trackTitle}'...`,
-                  success: `Successfully skipped to '${trackTitle}'.`,
-                  error: `Failed to skip to '${trackTitle}'. Please try again.`
-                }
-              )
-            }
-          }}
-        >
-          <Thumbnail image={trackInfo.artworkUrl} fitTo={'height'}/>
-          <Play weight={'fill'}/>
-        </LoadingButton>
+        {isMobile ?
+          <Thumbnail image={trackInfo.artworkUrl} fitTo={'height'}/> :
+          (
+            <LoadingButton className={'queue-track-skipto'} onClick={handleSkipTo}>
+              <Thumbnail image={trackInfo.artworkUrl} fitTo={'height'}/>
+              <Play weight={'fill'}/>
+            </LoadingButton>
+          )}
         <div className={'queue-track-text flex-container column start nowrap'}>
           <a href={trackInfo.uri} rel={'noreferrer'} target={'_blank'} style={isMobile ? { pointerEvents: 'none' } : undefined}><b>{trackInfo.title}</b></a>
           <span>{trackInfo.author}</span>
         </div>
       </div>
-      <div className={'queue-track-actions flex-container nowrap'}>
+      {isMobile && <button onClick={() => setExpanded(!expanded)}><DotsThreeVertical/></button>}
+      <div className={`queue-track-actions flex-container ${isMobile ? 'space-between' : ''} nowrap`}>
+        {isMobile && <LoadingButton onClick={handleSkipTo}><Play weight={'fill'}/></LoadingButton>}
         <LoadingButton
           className={'queue-track-remove'}
           onClick={() => {
