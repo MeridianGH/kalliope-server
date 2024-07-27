@@ -117,9 +117,11 @@ export function Queue({ guildId, tracks }: QueueProps) {
         </div>
         {items && items.length > 0 && items.length === (tracks?.length ?? 0) ?
           (
-            <SortableContext items={items} strategy={verticalListSortingStrategy}>
-              {items.map((id) => <QueueTrack key={id} index={id - 1} guildId={guildId} trackInfo={tracks![id - 1].info}/>)}
-            </SortableContext>
+            <div className={'queue-tracks-list'}>
+              <SortableContext items={items} strategy={verticalListSortingStrategy}>
+                {items.map((id) => <QueueTrack key={id} index={id - 1} guildId={guildId} trackInfo={tracks![id - 1].info}/>)}
+              </SortableContext>
+            </div>
           ) :
           (
             <div className={'queue-item flex-container'}>

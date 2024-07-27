@@ -79,6 +79,7 @@
     }
     //noinspection CssOverwrittenProperties
     &.expanded {
+      position: fixed;
       height: 100vh;
       height: 100svh;
       width: 100vw;
@@ -149,6 +150,7 @@
       gap: 0.25rem;
       z-index: 1;
       height: 100%;
+      max-width: calc(100% - 6rem);
 
       > * {
         max-width: 100%;

@@ -188,7 +188,7 @@ export function PlayerBar({ guildId, current, position, volume, timescale, pause
                   <SkipForward/>
                 </LoadingButton>
                 <LoadingButton
-                  className={`player-repeat-button ${repeatMode}`}
+                  className={`player-repeat-button ${repeatMode ?? 'off'}`}
                   disabled={disabled}
                   onClick={async () => {
                     if (!guildId) { return }
