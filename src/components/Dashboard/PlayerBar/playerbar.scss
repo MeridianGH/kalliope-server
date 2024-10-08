@@ -59,6 +59,7 @@
           width: 100%;
           background-color: var(--dominant-color);
           opacity: 0.2;
+          pointer-events: none;
         }
         .player-song-title {
           font-size: 0.8rem;
