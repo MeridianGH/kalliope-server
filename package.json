@@ -12,7 +12,7 @@
     "lint": "eslint .",
     "docs": "typedoc --tsconfig ./src/tsconfig.json",
     "prepare": "husky",
-    "release": "rimraf ./CHANGELOG.md && commit-and-tag-version --releaseCommitMessageFormat \"chore: release {{currentTag}}\" --tag-prefix \"\"",
+    "release": "commit-and-tag-version",
     "preview-release": "npm run release -- --dry-run"
   },
   "dependencies": {
