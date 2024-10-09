@@ -1,9 +1,7 @@
 import React from 'react'
 import './background.scss'
 
-export type BackgroundProps = {
-  style?: 'solid' | 'gradient' | 'transparent'
-}
+export type BackgroundProps = { style?: 'solid' | 'gradient' | 'transparent' }
 
 export function Background({ style = 'gradient' }: BackgroundProps) {
   return (

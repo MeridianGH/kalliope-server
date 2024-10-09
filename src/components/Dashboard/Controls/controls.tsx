@@ -35,7 +35,7 @@ export function Controls({ guildId, filter, hasPlayer }: ControlsProps) {
             return `Successfully added '${trackTitle}' to the queue.`
           }
         },
-        error: { render: ({ data }) => `There was an error adding your track: ${(data as string).toString()}` }
+        error: { render: ({ data }) => `There was an error adding your track: ${(data as Error).message}` }
       }
     )
     if (input) { input.value = '' }

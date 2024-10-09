@@ -31,7 +31,7 @@ app.use(express.static('dist', { index: '' }))
 app.use((req, res, next) => {
   try {
     decodeURIComponent(req.path)
-  } catch (error) {
+  } catch {
     logging.error('Error decoding URL: ' + req.path.toString())
     return res.redirect(hostname)
   }

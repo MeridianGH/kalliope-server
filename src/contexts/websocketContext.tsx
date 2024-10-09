@@ -14,7 +14,6 @@ export function WebsocketProvider({ children }: PropsWithChildren) {
     let ws = new WebSocket(`ws${PRODUCTION ? 's' : ''}://${location.host}`)
 
     ws.addEventListener('close', (event) => {
-      console.log(event.code)
       if (event.code === 1000) { return }
       void toast.promise(
         new Promise<void>((resolve) => {
@@ -40,7 +39,7 @@ export function WebsocketProvider({ children }: PropsWithChildren) {
         if (!PRODUCTION) { console.log('client sent:', data) }
         ws.send(JSON.stringify(data))
       } catch (e) {
-        throw `WebSocket request ${requestId} failed with error: ${e}`
+        throw new Error(`WebSocket request ${requestId} failed with error: ${e}`)
       }
       if (!awaitResponse) { return }
 
@@ -50,7 +49,7 @@ export function WebsocketProvider({ children }: PropsWithChildren) {
           if (data.requestId === requestId) {
             clearTimeout(timeout)
             ws.removeEventListener('message', messageListener)
-            if (data.type === 'error') { reject(data.errorMessage) }
+            if (data.type === 'error') { reject(new Error(data.errorMessage)) }
             resolve(data)
           }
         }
@@ -58,7 +57,7 @@ export function WebsocketProvider({ children }: PropsWithChildren) {
 
         const timeout = setTimeout(() => {
           ws.removeEventListener('message', messageListener)
-          reject(`WebSocket request ${requestId} timed out.`)
+          reject(new Error(`WebSocket request ${requestId} timed out.`))
         }, 30000)
       })
     }

@@ -37,14 +37,14 @@ export function DiscordUserProvider({ children }: PropsWithChildren) {
 
   const fetchUser = useCallback(async () => {
     const oauthState = JSON.parse(localStorage.getItem('oauth-state') ?? 'null') as OAuthState
-    if (!state || atob(state) !== oauthState?.state) { throw 'OAuth state is missing or does not match stored value.' }
-    if (!type || !token) { throw 'Invalid or no Discord authorization token provided.' }
+    if (!state || atob(state) !== oauthState?.state) { throw new Error('OAuth state is missing or does not match stored value.') }
+    if (!type || !token) { throw new Error('Invalid or no Discord authorization token provided.') }
 
     const discordUser = await fetch(DiscordAPIBase + Routes.user(), {
       method: 'GET',
       headers: { authorization: `${type} ${token}` }
     }).then(async (response) => {
-      if (!response.ok) { throw 'Failed to fetch user info: ' + (await response.json() as RESTError).message }
+      if (!response.ok) { throw new Error('Failed to fetch user info: ' + (await response.json() as RESTError).message) }
       return await response.json() as APIUser
     })
 
@@ -52,11 +52,11 @@ export function DiscordUserProvider({ children }: PropsWithChildren) {
       method: 'GET',
       headers: { authorization: `${type} ${token}` }
     }).then(async (response) => {
-      if (!response.ok) { throw 'Failed to fetch guild info: ' + (await response.json() as RESTError).message }
+      if (!response.ok) { throw new Error('Failed to fetch guild info: ' + (await response.json() as RESTError).message) }
       return await response.json() as Promise<APIGuild[]>
     })
 
-    if (!discordUser || !guilds) { throw 'Failed to fetch user or guild info.' }
+    if (!discordUser || !guilds) { throw new Error('Failed to fetch user or guild info.') }
 
     const user: User = Object.assign(discordUser, { guilds: guilds })
     localStorage.setItem('user', JSON.stringify(user))
@@ -77,7 +77,7 @@ export function DiscordUserProvider({ children }: PropsWithChildren) {
 
     fetchUser().catch((e: unknown) => {
       console.error(e)
-      navigate('/?error=' + (typeof e === 'string' ? encodeURIComponent(e) : 'An unknown error occured.'))
+      navigate('/?error=' + (e instanceof Error ? encodeURIComponent(e.message) : 'An unknown error occured.'))
     })
   }, [fetchUser, navigate, requestAuth, token, user])
 

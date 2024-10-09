@@ -29,7 +29,7 @@ export function preventSimilarColor(color: string, reference: string, brighten =
   }
   try {
     return changeColor(color, reference, brighten)
-  } catch (e) {
+  } catch {
     return color
   }
 }
