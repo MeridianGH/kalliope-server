@@ -8,7 +8,7 @@ import { CaretUp, DiscordLogo } from '@phosphor-icons/react'
 import genericServer from '../../../assets/generic_server.png'
 import './servers.scss'
 
-type ServersProps = {
+export type ServersProps = {
   guildClientMap: Nullable<GuildClientMapType>,
   playerList: Nullable<PlayerListType>,
   userGuilds: Nullable<APIGuild[]>,

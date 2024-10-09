@@ -9,7 +9,7 @@ import { WebSocketContext } from '../../../contexts/websocketContext'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 
-type QueueTrackProps = {
+export type QueueTrackProps = {
   index: number,
   guildId: string,
   trackInfo: Track['info']

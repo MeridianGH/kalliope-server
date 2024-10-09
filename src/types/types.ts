@@ -24,7 +24,7 @@ export type ClientMessageTypes =
   { type: 'error', errorMessage: string, guildId?: string }
 export type ClientMessage = ClientMessageTypes & { requestId?: string, clientId: string }
 
-type PlayerAction =
+export type PlayerAction =
   { action: 'pause' | 'previous' | 'shuffle' | 'repeat' | 'autoplay' | 'sponsorblock' | 'clear' | 'join' } |
   { action: 'skip', payload?: { index: number } } |
   { action: 'remove', payload: { index: number } } |

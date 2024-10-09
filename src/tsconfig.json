@@ -10,6 +10,6 @@
     "entryPointStrategy": "expand",
     "entryPoints": "./",
     "exclude": "./types/modules.d.ts",
-    "name": "KalliopeServer | Docs"
+    "name": "KalliopeServer. | Docs"
   }
 }

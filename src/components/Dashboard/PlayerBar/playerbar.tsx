@@ -22,7 +22,7 @@ import {
 import './playerbar.scss'
 import { useLocation, useNavigate } from 'react-router-dom'
 
-type PlayerBarProps = {
+export type PlayerBarProps = {
   guildId: Nullable<string>,
   current: Nullable<Track>,
   position: Nullable<number>,

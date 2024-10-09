@@ -5,7 +5,7 @@ import { WebSocketContext } from '../../../contexts/websocketContext'
 import { Nullable, Player } from '../../../types/types'
 import { Equalizer, Faders, ListPlus, Trash } from '@phosphor-icons/react'
 
-type ControlsProps = {
+export type ControlsProps = {
   guildId: Nullable<string>,
   filter: Nullable<Player['filters']['current']>,
   hasPlayer: boolean

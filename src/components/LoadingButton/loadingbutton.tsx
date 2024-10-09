@@ -2,7 +2,7 @@ import React, { useCallback, useEffect } from 'react'
 import './loadingbutton.scss'
 import { Warning } from '@phosphor-icons/react'
 
-type LoadingButtonProps = {
+export type LoadingButtonProps = {
   children: React.ReactNode,
   className?: string,
   disabled?: boolean,

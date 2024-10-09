@@ -1,7 +1,7 @@
 import React from 'react'
 import './visualizer.scss'
 
-type VisualizerProps = {
+export type VisualizerProps = {
   style: 'white' | 'gradient',
   paused?: boolean
 } | {

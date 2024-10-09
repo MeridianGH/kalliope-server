@@ -18,7 +18,7 @@ import { Nullable, Track } from '../../../types/types'
 import { Playlist } from '@phosphor-icons/react'
 import './queue.scss'
 
-type QueueProps = {
+export type QueueProps = {
   guildId: Nullable<string>,
   tracks: Nullable<Track[]>
 }
