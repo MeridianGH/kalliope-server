@@ -11,15 +11,23 @@ export function WebsocketProvider({ children }: PropsWithChildren) {
 
   useEffect(() => {
     if (DEV_SERVER) { return }
-    const ws = new WebSocket(`ws${PRODUCTION ? 's' : ''}://${location.host}`)
+    let ws = new WebSocket(`ws${PRODUCTION ? 's' : ''}://${location.host}`)
 
-    ws.addEventListener('error', () => {
-      toast.error('WebSocket has been closed unexpectedly. Click or close this message to try again.', {
-        autoClose: false,
-        style: { cursor: 'pointer' },
-        onClick: () => { window.location.reload() },
-        onClose: () => { window.location.reload() }
-      })
+    ws.addEventListener('close', (event) => {
+      console.log(event.code)
+      if (event.code === 1000) { return }
+      void toast.promise(
+        new Promise<void>((resolve) => {
+          setTimeout(() => {
+            ws = new WebSocket(`ws${PRODUCTION ? 's' : ''}://${location.host}`)
+            ws.addEventListener('open', () => { resolve() }, { once: true })
+          }, 1000)
+        }),
+        {
+          pending: 'WebSocket has been closed unexpectedly. Reloading...',
+          success: 'Reloaded WebSocket.'
+        }
+      )
     })
 
     function request(data: UserMessageTypes): void
@@ -57,8 +65,12 @@ export function WebsocketProvider({ children }: PropsWithChildren) {
     ws.request = request
     setWebSocket(ws)
 
+    const close = () => { ws.close(1000, 'WebSocket was closed by user.') }
+    window.addEventListener('beforeunload', close)
+
     return () => {
-      ws.close(1000, 'WebSocket was closed by user.')
+      window.removeEventListener('beforeunload', close)
+      close()
     }
   }, [user?.id])
 
