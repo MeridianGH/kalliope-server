@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { toast } from 'react-toastify'
 import { GuildClientMapType, MessageToUser, Nullable, Player, PlayerListType } from '../../types/types'
 import { useDiscordLogin } from '../../hooks/discordLoginHook'
 import { WebSocketContext } from '../../contexts/websocketContext'
@@ -9,11 +10,10 @@ import { PlayerBar } from './PlayerBar/playerbar'
 import { Servers } from './Servers/servers'
 import { Queue } from './Queue/queue'
 import { Controls } from './Controls/controls'
-import { IconContext, SignOut } from '@phosphor-icons/react'
 import kalliopeTransparentPNG from '../../assets/kalliope_transparent.png'
 import kalliopePNG from '../../assets/kalliope.png'
 import './dashboard.scss'
-import { toast } from 'react-toastify'
+import { IconContext, SignOut } from '@phosphor-icons/react'
 
 const playerObject: Player = {
   guildId: '610498937874546699',

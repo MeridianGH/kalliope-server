@@ -1,7 +1,7 @@
 import React, { createContext, PropsWithChildren, useEffect, useState } from 'react'
-import { MessageToUser, Nullable, UserMessageTypes } from '../types/types'
 import { useDiscordLogin } from '../hooks/discordLoginHook'
 import { toast } from 'react-toastify'
+import { MessageToUser, Nullable, UserMessageTypes } from '../types/types'
 
 export const WebSocketContext = createContext<Nullable<WebSocket>>(null)
 

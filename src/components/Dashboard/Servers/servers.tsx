@@ -32,11 +32,12 @@ export function Servers({ guildClientMap, playerList, userGuilds, guildId, setGu
     }
   }, [webSocket])
   useEffect(() => {
+    if (!webSocket) { return }
     if (!guildClientMap) {
-      if (webSocket?.readyState === 1) {
+      if (webSocket.readyState === 1) {
         webSocket.request({ type: 'requestGuildClientMap' })
       } else {
-        webSocket?.addEventListener('open', () => {
+        webSocket.addEventListener('open', () => {
           webSocket.request({ type: 'requestGuildClientMap' })
         }, { once: true })
       }

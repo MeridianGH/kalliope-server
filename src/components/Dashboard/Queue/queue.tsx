@@ -55,7 +55,8 @@ export function Queue({ guildId, tracks }: QueueProps) {
     }
 
     function requestReorder() {
-      if (!webSocket || !guildId || !items || items.length === 0) { return }
+      if (!webSocket || !guildId) { return }
+      if (!items || items.length === 0) { return }
       if (items.every((id, index) => id - 1 === index)) { return }
 
       void toast.promise(webSocket.request({

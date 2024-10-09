@@ -1,4 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Nullable, Player, Track } from '../../../types/types'
 import { WebSocketContext } from '../../../contexts/websocketContext'
 import { Thumbnail } from '../Thumbnail/thumbnail'
@@ -20,7 +21,6 @@ import {
   SpeakerX
 } from '@phosphor-icons/react'
 import './playerbar.scss'
-import { useLocation, useNavigate } from 'react-router-dom'
 
 export type PlayerBarProps = {
   guildId: Nullable<string>,
@@ -133,8 +133,8 @@ export function PlayerBar({ guildId, current, position, volume, timescale, pause
                 <LoadingButton
                   disabled={disabled}
                   onClick={async () => {
-                    if (!guildId) { return }
-                    await webSocket?.request({
+                    if (!webSocket || !guildId) { return }
+                    await webSocket.request({
                       type: 'requestPlayerAction',
                       guildId: guildId,
                       action: 'shuffle'
@@ -146,8 +146,8 @@ export function PlayerBar({ guildId, current, position, volume, timescale, pause
                 <LoadingButton
                   disabled={disabled}
                   onClick={async () => {
-                    if (!guildId) { return }
-                    await webSocket?.request({
+                    if (!webSocket || !guildId) { return }
+                    await webSocket.request({
                       type: 'requestPlayerAction',
                       guildId: guildId,
                       action: 'previous'
@@ -160,8 +160,8 @@ export function PlayerBar({ guildId, current, position, volume, timescale, pause
             <LoadingButton
               disabled={disabled}
               onClick={async () => {
-                if (!guildId) { return }
-                await webSocket?.request({
+                if (!webSocket || !guildId) { return }
+                await webSocket.request({
                   type: 'requestPlayerAction',
                   guildId: guildId,
                   action: 'pause'
@@ -177,8 +177,8 @@ export function PlayerBar({ guildId, current, position, volume, timescale, pause
                 <LoadingButton
                   disabled={disabled}
                   onClick={async () => {
-                    if (!guildId) { return }
-                    await webSocket?.request({
+                    if (!webSocket || !guildId) { return }
+                    await webSocket.request({
                       type: 'requestPlayerAction',
                       guildId: guildId,
                       action: 'skip'
@@ -191,8 +191,8 @@ export function PlayerBar({ guildId, current, position, volume, timescale, pause
                   className={`player-repeat-button ${repeatMode ?? 'off'}`}
                   disabled={disabled}
                   onClick={async () => {
-                    if (!guildId) { return }
-                    await webSocket?.request({
+                    if (!webSocket || !guildId) { return }
+                    await webSocket.request({
                       type: 'requestPlayerAction',
                       guildId: guildId,
                       action: 'repeat'
@@ -224,8 +224,8 @@ export function PlayerBar({ guildId, current, position, volume, timescale, pause
                 <LoadingButton
                   className={`autoplay-button ${settings?.autoplay ? 'active' : ''} tooltip`}
                   onClick={async () => {
-                    if (!guildId) { return }
-                    await webSocket?.request({
+                    if (!webSocket || !guildId) { return }
+                    await webSocket.request({
                       type: 'requestPlayerAction',
                       guildId: guildId,
                       action: 'autoplay'
@@ -239,8 +239,8 @@ export function PlayerBar({ guildId, current, position, volume, timescale, pause
                   <LoadingButton
                     className={`sponsorblock-button ${settings?.sponsorblock ? 'active' : ''} tooltip`}
                     onClick={async () => {
-                      if (!guildId) { return }
-                      await webSocket?.request({
+                      if (!webSocket || !guildId) { return }
+                      await webSocket.request({
                         type: 'requestPlayerAction',
                         guildId: guildId,
                         action: 'sponsorblock'
@@ -275,8 +275,8 @@ export function PlayerBar({ guildId, current, position, volume, timescale, pause
                       setCurrentVolume(parseInt(document.querySelector<HTMLInputElement>('.volume-slider-input')!.value))
                     }}
                     onMouseUp={() => {
-                      if (!guildId) { return }
-                      webSocket?.request({
+                      if (!webSocket || !guildId) { return }
+                      webSocket.request({
                         type: 'requestPlayerAction',
                         guildId: guildId,
                         action: 'volume',

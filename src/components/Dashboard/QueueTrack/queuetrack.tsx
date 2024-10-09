@@ -36,21 +36,20 @@ export function QueueTrack({ index, guildId, trackInfo }: QueueTrackProps) {
 
   const handleSkipTo = () => {
     const trackTitle = trackInfo.title
-    if (webSocket) {
-      void toast.promise(
-        webSocket?.request({
-          type: 'requestPlayerAction',
-          guildId: guildId,
-          action: 'skip',
-          payload: { index: index + 1 }
-        }, true),
-        {
-          pending: `Skipping to '${trackTitle}'...`,
-          success: `Successfully skipped to '${trackTitle}'.`,
-          error: `Failed to skip to '${trackTitle}'. Please try again.`
-        }
-      )
-    }
+    if (!webSocket || !guildId) { return }
+    void toast.promise(
+      webSocket?.request({
+        type: 'requestPlayerAction',
+        guildId: guildId,
+        action: 'skip',
+        payload: { index: index + 1 }
+      }, true),
+      {
+        pending: `Skipping to '${trackTitle}'...`,
+        success: `Successfully skipped to '${trackTitle}'.`,
+        error: `Failed to skip to '${trackTitle}'. Please try again.`
+      }
+    )
   }
 
   return (
@@ -82,21 +81,20 @@ export function QueueTrack({ index, guildId, trackInfo }: QueueTrackProps) {
           className={'queue-track-remove'}
           onClick={() => {
             const trackTitle = trackInfo.title
-            if (webSocket) {
-              void toast.promise(
-                webSocket?.request({
-                  type: 'requestPlayerAction',
-                  guildId: guildId,
-                  action: 'remove',
-                  payload: { index: index + 1 }
-                }, true),
-                {
-                  pending: `Removing '${trackTitle}' from the queue...`,
-                  success: `Successfully removed '${trackTitle}' from the queue.`,
-                  error: `Failed to remove '${trackTitle}' from the queue. Please try again.`
-                }
-              )
-            }
+            if (!webSocket || !guildId) { return }
+            void toast.promise(
+              webSocket?.request({
+                type: 'requestPlayerAction',
+                guildId: guildId,
+                action: 'remove',
+                payload: { index: index + 1 }
+              }, true),
+              {
+                pending: `Removing '${trackTitle}' from the queue...`,
+                success: `Successfully removed '${trackTitle}' from the queue.`,
+                error: `Failed to remove '${trackTitle}' from the queue. Please try again.`
+              }
+            )
           }}
         >
           <Trash weight={'fill'}/>

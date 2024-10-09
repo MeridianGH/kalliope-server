@@ -19,27 +19,25 @@ export function Controls({ guildId, filter, hasPlayer }: ControlsProps) {
 
   const handlePlay = useCallback((event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    if (!guildId) { return }
+    if (!webSocket || !guildId) { return }
     const input = inputRef.current
     const query = input?.value
     if (!query) { return }
-    if (webSocket) {
-      void toast.promise(
-        webSocket.request({ type: 'requestPlayerAction', guildId: guildId, action: 'play', payload: { query: query } }, true),
-        {
-          pending: `Adding '${query}' to queue...`,
-          success: {
-            render: ({ data }) => {
-              const trackTitle = data.type === 'playerData' ?
-                (data.player.queue.tracks?.at(-1) ?? data.player.queue.current).info.title :
-                'Unknown track'
-              return `Successfully added '${trackTitle}' to the queue.`
-            }
-          },
-          error: { render: ({ data }) => `There was an error adding your track: ${(data as string).toString()}` }
-        }
-      )
-    }
+    void toast.promise(
+      webSocket.request({ type: 'requestPlayerAction', guildId: guildId, action: 'play', payload: { query: query } }, true),
+      {
+        pending: `Adding '${query}' to queue...`,
+        success: {
+          render: ({ data }) => {
+            const trackTitle = data.type === 'playerData' ?
+              (data.player.queue.tracks?.at(-1) ?? data.player.queue.current).info.title :
+              'Unknown track'
+            return `Successfully added '${trackTitle}' to the queue.`
+          }
+        },
+        error: { render: ({ data }) => `There was an error adding your track: ${(data as string).toString()}` }
+      }
+    )
     if (input) { input.value = '' }
   }, [guildId, inputRef, webSocket])
 
@@ -62,24 +60,23 @@ export function Controls({ guildId, filter, hasPlayer }: ControlsProps) {
           onChange={(event) => {
             const filter = event.target.value
             const filterText = event.target.options.item(event.target.options.selectedIndex)?.label ?? 'Unknown filter'
-            if (webSocket && guildId) {
-              void toast.promise(
-                webSocket?.request({
-                  type: 'requestPlayerAction',
-                  guildId: guildId,
-                  action: 'filter',
-                  payload: {
-                    filter: filter,
-                    filterText: filterText
-                  }
-                }, true),
-                {
-                  pending: `Setting filter '${filterText}'...`,
-                  success: `Successfully set filter to '${filterText}'.`,
-                  error: `Failed to set filter '${filterText}'. Please try again.`
+            if (!webSocket || !guildId) { return }
+            void toast.promise(
+              webSocket.request({
+                type: 'requestPlayerAction',
+                guildId: guildId,
+                action: 'filter',
+                payload: {
+                  filter: filter,
+                  filterText: filterText
                 }
-              )
-            }
+              }, true),
+              {
+                pending: `Setting filter '${filterText}'...`,
+                success: `Successfully set filter to '${filterText}'.`,
+                error: `Failed to set filter '${filterText}'. Please try again.`
+              }
+            )
           }}
         >
           <option disabled>{'Select a filter...'}</option>
@@ -98,20 +95,19 @@ export function Controls({ guildId, filter, hasPlayer }: ControlsProps) {
       <button
         className={`controls-input controls-button ${disabled ? 'disabled' : ''}`}
         onClick={() => {
-          if (webSocket && guildId) {
-            void toast.promise(
-              webSocket.request({
-                type: 'requestPlayerAction',
-                guildId: guildId,
-                action: 'clear'
-              }, true),
-              {
-                pending: 'Clearing the queue...',
-                success: 'Successfully cleared the queue.',
-                error: 'Failed to clear the queue. Please try again.'
-              }
-            )
-          }
+          if (!webSocket || !guildId) { return }
+          void toast.promise(
+            webSocket.request({
+              type: 'requestPlayerAction',
+              guildId: guildId,
+              action: 'clear'
+            }, true),
+            {
+              pending: 'Clearing the queue...',
+              success: 'Successfully cleared the queue.',
+              error: 'Failed to clear the queue. Please try again.'
+            }
+          )
         }}
       >
         <Trash/>
