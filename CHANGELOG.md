@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [2.3.0](https://github.com/MeridianGH/kalliope-server/compare/2.2.0...2.3.0) (2024-10-09)
+
+
+### Features
+
+* implement page title hook to fix title reset ([77ba433](https://github.com/MeridianGH/kalliope-server/commit/77ba4332aba4aa094de13b7cef8d15c633fc9ab6))
+* improve websocket closure handling ([62df3c0](https://github.com/MeridianGH/kalliope-server/commit/62df3c0484a8bc225f471b0c29e22f1c37eed241))
+* track functions are now accessible on mobile ([b6c119c](https://github.com/MeridianGH/kalliope-server/commit/b6c119c1a7376bf1db3a48993275e5b122927db0))
+* work on mobile feature accessibility ([c40699e](https://github.com/MeridianGH/kalliope-server/commit/c40699e0981c434fdf01d96383cef3799a3edab1))
+
+
+### Bug Fixes
+
+* current song link is not clickable in some places ([d92e3f3](https://github.com/MeridianGH/kalliope-server/commit/d92e3f38f161536daecad2a852f2ebdfc4ded166))
+* export types for correct docs generation ([b12a63d](https://github.com/MeridianGH/kalliope-server/commit/b12a63d4bf9866ffcb70f08b8a10b69a579a518f))
+* toast hidden behind playerbar ([848cbf6](https://github.com/MeridianGH/kalliope-server/commit/848cbf64ac59121726e231aac4a943efb817799b))
+* various layout fixes ([bd3a90c](https://github.com/MeridianGH/kalliope-server/commit/bd3a90c24d90df9709845e72252edf96a0951207))
+
 ## [2.2.0](https://github.com/MeridianGH/kalliope-server/compare/2.1.0...2.2.0) (2024-07-15)
 
 ## [2.1.0](https://github.com/MeridianGH/kalliope-server/compare/2.0.0...2.1.0) (2024-07-15)
