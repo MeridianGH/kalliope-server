@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { toast } from 'react-toastify'
 import VanillaTilt from 'vanilla-tilt'
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import { usePageTitle } from '../../hooks/pageTitleHook'
 import './home.scss'
 import {
   AppWindow, ArrowSquareOut, Download, GithubLogo,
@@ -13,6 +14,7 @@ import {
 } from '@phosphor-icons/react'
 
 export function Home() {
+  usePageTitle('Kalliope.')
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
 

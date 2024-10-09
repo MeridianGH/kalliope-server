@@ -3,6 +3,7 @@ import { WebSocketContext } from '../../contexts/websocketContext'
 import { Navbar } from '../Navbar/navbar'
 import { Loader } from '../Loader/loader'
 import { Background } from '../Background/background'
+import { usePageTitle } from '../../hooks/pageTitleHook'
 import './statistics.scss'
 import { ClientDataMapType, MessageToUser, PlayerListType } from '../../types/types'
 import { ArrowsClockwise } from '@phosphor-icons/react'
@@ -20,8 +21,7 @@ const clientDataMapObject = {
 }
 
 export function Statistics() {
-  document.title = 'Kalliope. | Statistics'
-
+  usePageTitle('Kalliope. | Statistics')
   const webSocket = useContext(WebSocketContext)
   const [clientDataMap, setClientDataMap] = useState<ClientDataMapType>(DEV_SERVER ? clientDataMapObject : null)
   const [playerList, setPlayerList] = useState<PlayerListType>(new Set())

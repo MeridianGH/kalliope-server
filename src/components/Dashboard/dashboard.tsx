@@ -10,6 +10,7 @@ import { PlayerBar } from './PlayerBar/playerbar'
 import { Servers } from './Servers/servers'
 import { Queue } from './Queue/queue'
 import { Controls } from './Controls/controls'
+import { usePageTitle } from '../../hooks/pageTitleHook'
 import kalliopeTransparentPNG from '../../assets/kalliope_transparent.png'
 import kalliopePNG from '../../assets/kalliope.png'
 import './dashboard.scss'
@@ -93,8 +94,7 @@ const playerObject: Player = {
 }
 
 export function Dashboard() {
-  document.title = 'Kalliope. | Dashboard'
-
+  usePageTitle('Kalliope. | Dashboard')
   const user = useDiscordLogin()
   const webSocket = useContext(WebSocketContext)
   const [guildClientMap, setGuildClientMap] = useState<Nullable<GuildClientMapType>>(null)
