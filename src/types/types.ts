@@ -65,7 +65,7 @@ export type Player = {
   },
   queue: {
     tracks: Track[],
-    current: Track & { segments: [{ category: string, start: number, end: number }] | null }
+    current: Track & { segments: { category: string, start: number, end: number }[] | null }
   },
   filters: {
     current: string,
