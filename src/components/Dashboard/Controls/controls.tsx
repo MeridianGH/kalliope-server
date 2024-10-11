@@ -30,7 +30,7 @@ export function Controls({ guildId, filter, hasPlayer }: ControlsProps) {
         success: {
           render: ({ data }) => {
             const trackTitle = data.type === 'playerData' ?
-              (data.player.queue.tracks?.at(-1) ?? data.player.queue.current).info.title :
+              (data.player?.queue.tracks?.at(-1) ?? data.player?.queue.current)?.info.title :
               'Unknown track'
             return `Successfully added '${trackTitle}' to the queue.`
           }
