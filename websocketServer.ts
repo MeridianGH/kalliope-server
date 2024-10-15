@@ -141,7 +141,8 @@ export function createWebSocketServer(domain: string) {
           requestConnectionMap[message.requestId] = ws
 
           // Forward data to client
-          const clientWs = clientConnectionMap[guildClientMap[websocketGuildId]]
+          const clientId = message.type === 'requestClientData' ? message?.clientId : guildClientMap[websocketGuildId]
+          const clientWs = clientConnectionMap[clientId]
           if (!clientWs) {
             ws.json<ServerMessage>({ requestId: message.requestId, type: 'error', errorMessage: 'Could not identify client.' })
             return

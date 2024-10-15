@@ -39,10 +39,8 @@ export function Statistics() {
       }
     }
 
-    webSocket.addEventListener('open', () => {
-      webSocket.request({ type: 'requestClientDataMap' })
-      webSocket.request({ type: 'requestPlayerList' })
-    }, { once: true })
+    webSocket.request({ type: 'requestClientDataMap' })
+    webSocket.request({ type: 'requestPlayerList' })
 
     webSocket.addEventListener('message', onMessage)
 
