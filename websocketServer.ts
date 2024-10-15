@@ -180,8 +180,8 @@ export function createWebSocketServer(domain: string) {
             })
           }
 
-          if (message.clientData?.guilds?.length > 0) {
-            message.clientData.guilds.forEach((guildId) => {
+          if (message.clientData?.guilds?.length ?? 0 > 0) {
+            message.clientData?.guilds.forEach((guildId) => {
               if (guildClientMap[guildId] !== message.clientId) {
                 const oldClientId = guildClientMap[guildId]
                 guildClientMap[guildId] = message.clientId
