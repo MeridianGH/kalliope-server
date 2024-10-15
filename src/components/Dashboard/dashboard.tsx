@@ -110,7 +110,7 @@ export function Dashboard() {
 
   // WebSocket Effect
   useEffect(() => {
-    if (!webSocket || !user?.id) { return }
+    if (!webSocket) { return }
 
     function onMessage(message: MessageEvent<string>) {
       const data = JSON.parse(message.data) as MessageToUser
@@ -145,7 +145,7 @@ export function Dashboard() {
       webSocket.removeEventListener('message', onMessage)
       webSocket.removeEventListener('close', onClose)
     }
-  }, [user?.id, webSocket])
+  }, [webSocket])
 
   return (
     <IconContext.Provider value={{ size: '1.5rem' }}>
