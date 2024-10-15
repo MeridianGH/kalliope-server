@@ -1,33 +1,17 @@
-import React, { createContext, PropsWithChildren, useEffect, useState } from 'react'
+import React, { createContext, PropsWithChildren, useCallback, useEffect, useRef, useState } from 'react'
 import { useDiscordLogin } from '../hooks/discordLoginHook'
-import { toast } from 'react-toastify'
+import { Id, toast } from 'react-toastify'
 import { MessageToUser, Nullable, UserMessageTypes } from '../types/types'
 
 export const WebSocketContext = createContext<Nullable<WebSocket>>(null)
 
 export function WebsocketProvider({ children }: PropsWithChildren) {
   const [webSocket, setWebSocket] = useState<Nullable<WebSocket>>(null)
+  const reloadingToast = useRef<Nullable<Id>>(null)
   const user = useDiscordLogin()
 
-  useEffect(() => {
-    if (DEV_SERVER) { return }
-    let ws = new WebSocket(`ws${PRODUCTION ? 's' : ''}://${location.host}`)
-
-    ws.addEventListener('close', (event) => {
-      if (event.code === 1000) { return }
-      void toast.promise(
-        new Promise<void>((resolve) => {
-          setTimeout(() => {
-            ws = new WebSocket(`ws${PRODUCTION ? 's' : ''}://${location.host}`)
-            ws.addEventListener('open', () => { resolve() }, { once: true })
-          }, 1000)
-        }),
-        {
-          pending: 'WebSocket has been closed unexpectedly. Reloading...',
-          success: 'Reloaded WebSocket.'
-        }
-      )
-    })
+  const connectSocket = useCallback(() => {
+    const ws = new WebSocket(`ws${PRODUCTION ? 's' : ''}://${location.host}`)
 
     function request(data: UserMessageTypes): void
     function request(data: UserMessageTypes, awaitResponse: true): Promise<MessageToUser>
@@ -62,16 +46,38 @@ export function WebsocketProvider({ children }: PropsWithChildren) {
       })
     }
     ws.request = request
-    setWebSocket(ws)
 
-    const close = () => { ws.close(1000, 'WebSocket was closed by user.') }
+    ws.addEventListener('open', () => {
+      setWebSocket(ws)
+      if (reloadingToast.current) {
+        toast.update(reloadingToast.current, { type: 'success', render: 'WebSocket reconnected successfully.', isLoading: false, autoClose: 5000 })
+        reloadingToast.current = null
+      }
+    })
+    ws.addEventListener('close', (event) => {
+      setWebSocket(null)
+      if (event.code === 1000) { return }
+
+      connectSocket()
+      if (!reloadingToast.current) { reloadingToast.current = toast.loading('WebSocket has been closed unexpectedly. Reconnecting...') }
+    })
+    return ws
+  }, [user?.id])
+
+  useEffect(() => {
+    if (DEV_SERVER) { return }
+
+    const ws = connectSocket()
+
+    const close = () => {
+      ws.close(1000, 'WebSocket was closed by user.')
+    }
     window.addEventListener('beforeunload', close)
-
     return () => {
       window.removeEventListener('beforeunload', close)
       close()
     }
-  }, [user?.id])
+  }, [connectSocket])
 
   return (
     <WebSocketContext.Provider value={webSocket}>
