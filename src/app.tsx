@@ -16,7 +16,6 @@ import './app.scss'
 
 document.querySelector<HTMLLinkElement>('link[rel=icon]')!.href = kalliopeTransparentPNG
 
-// eslint-disable-next-line no-extra-parens
 const UserWebsocketProvider = ({ children }: PropsWithChildren) => (
   <DiscordUserProvider>
     <WebsocketProvider>

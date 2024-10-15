@@ -91,7 +91,6 @@ export function Statistics() {
               <br/>
               <br/>
               <div className={'stats-node-grid'}>
-                {/* eslint-disable-next-line no-extra-parens */}
                 {Object.entries(clientDataMap ?? {}).map(([clientId, data], index) => (
                   <div className={'stats-node-container'} key={index}>
                     <div className={`stats-node ${data.guilds.filter((guildId) => playerList?.has(guildId)).length > 0 ? 'playing' : ''}`} style={{ backgroundImage: `url(${data.displayAvatarURL})` }}/>
