@@ -86,12 +86,12 @@
     &.expanded {
       position: fixed;
       height: 100vh;
-      height: 100svh;
+      height: 100lvh;
       width: 100vw;
       z-index: 99;
       flex-direction: column;
       border: none;
-      padding-top: 3rem;
+      padding-top: 10rem;
 
       > * {
         width: 100%;
