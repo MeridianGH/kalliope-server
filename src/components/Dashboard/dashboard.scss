@@ -10,8 +10,6 @@
         'header header header'
         '. . .';
     gap: var(--gap);
-    // Disable pull to refresh
-    touch-action: pan-x;
 
     @media screen and (max-width: 768px) {
         & {
