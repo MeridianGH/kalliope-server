@@ -147,6 +147,24 @@ export function Dashboard() {
     }
   }, [webSocket])
 
+  // Disable pull to refresh
+  useEffect(() => {
+    const disablePullToRefresh = (event: TouchEvent) => {
+      // Prevent default action if the touch move is vertical
+      if (event.touches.length > 1 || event.touches[0].clientY > 0) {
+        event.preventDefault()
+      }
+    }
+
+    // Add event listener to the document
+    document.addEventListener('touchmove', disablePullToRefresh, { passive: false })
+
+    // Clean up the event listener on unmount
+    return () => {
+      document.removeEventListener('touchmove', disablePullToRefresh)
+    }
+  }, [])
+
   return (
     <IconContext.Provider value={{ size: '1.5rem' }}>
       <div className={'dashboard'}>
