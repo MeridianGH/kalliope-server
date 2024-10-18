@@ -21,6 +21,7 @@ import {
   SpeakerX
 } from '@phosphor-icons/react'
 import './playerbar.scss'
+import { useSwipeable } from 'react-swipeable'
 
 export type PlayerBarProps = {
   guildId: Nullable<string>,
@@ -108,8 +109,18 @@ export function PlayerBar({ guildId, current, position, volume, timescale, pause
     return () => { clearInterval(interval) }
   }, [position, current, disabled, paused, timescale])
 
+  const swipeableHandlers = useSwipeable({
+    onSwipedDown: () => {
+      if (isMobile && expanded) { collapse() }
+    },
+    onSwipedUp: () => {
+      if (isMobile && !expanded) { expand() }
+    },
+    swipeDuration: 500,
+    preventScrollOnSwipe: true
+  })
   return (
-    <div className={`player-bar ${expanded ? 'expanded' : ''} flex-container space-between nowrap`}>
+    <div {...swipeableHandlers} className={`player-bar ${expanded ? 'expanded' : ''} flex-container space-between nowrap`}>
       {expanded && <button className={'player-collapse-button'} onClick={collapse}><CaretDown/></button>}
       <div className={'player-song flex-container start nowrap'} onClick={!disabled && !expanded ? expand : undefined}>
         {!disabled && (

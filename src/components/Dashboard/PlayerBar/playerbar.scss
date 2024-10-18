@@ -50,6 +50,19 @@
       height: 5rem;
       overflow: hidden;
 
+      &::after {
+        content: '';
+        position: absolute;
+        inset: 0.5rem 50% auto 50%;
+        translate: -50% 0;
+        width: 2rem;
+        height: 0.25rem;
+        background-color: var(--hover);
+        z-index: 99;
+        border-radius: 0.125rem;
+        opacity: 0.5;
+      }
+
       > * {
         width: auto;
       }
