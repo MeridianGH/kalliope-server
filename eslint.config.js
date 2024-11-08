@@ -2,7 +2,7 @@ import eslint from '@eslint/js'
 import { fixupPluginRules } from '@eslint/compat'
 import tseslint from 'typescript-eslint'
 import stylistic from '@stylistic/eslint-plugin'
-import reactPluginConfig from 'eslint-plugin-react/configs/recommended.js'
+import reactPlugin from 'eslint-plugin-react'
 import reactHooksPlugin from 'eslint-plugin-react-hooks'
 import globals from 'globals'
 
@@ -78,7 +78,7 @@ export default tseslint.config(
       'jsx-self-closing-comp': ['warn', { component: true, html: false }]
     }).map(([rule, options]) => ['@stylistic/' + rule, options]))
   },
-  reactPluginConfig,
+  reactPlugin.configs.flat.recommended,
   {
     plugins: { 'react-hooks': fixupPluginRules(reactHooksPlugin) },
     rules: { ...reactHooksPlugin.configs.recommended.rules }
