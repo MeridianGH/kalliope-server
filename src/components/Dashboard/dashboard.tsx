@@ -126,7 +126,7 @@ export function Dashboard() {
           setPlayer(data.player)
           break
         case 'error':
-          toast.error(data.errorMessage, { autoClose: false })
+          toast.error(data.errorMessage)
           break
       }
     }
@@ -168,10 +168,10 @@ export function Dashboard() {
             <div className={'dashboard-header-user flex-container nowrap'}>
               <img src={user ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}` : kalliopePNG} alt={'Avatar'}/>
               <span>{user?.global_name ?? 'Logging in...'}</span>
-              <Link to={'/?logout'} className={'dashboard-header-logout flex-container nowrap'} onClick={() => { localStorage.clear() }}>
+              <a href={'/logout'} className={'dashboard-header-logout flex-container nowrap'}>
                 <SignOut weight={'bold'}/>
                 {'Logout'}
-              </Link>
+              </a>
             </div>
           </div>
         </div>

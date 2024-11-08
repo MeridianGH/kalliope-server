@@ -1,85 +1,50 @@
 import React, { createContext, PropsWithChildren, useCallback, useEffect, useState } from 'react'
-import { Nullable, User } from '../types/types'
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
-import { APIGuild, APIUser, RESTError, Routes } from 'discord-api-types/v10'
-import { toast } from 'react-toastify'
-
-const DiscordAPIBase = 'https://discord.com/api/v10'
+import { Nullable, User, UserAPIResult } from '../types/types'
+import { useNavigate } from 'react-router-dom'
 
 export const DiscordUserContext = createContext<Nullable<User>>(undefined)
 
 export function DiscordUserProvider({ children }: PropsWithChildren) {
-  const [user, setUser] = useState<Nullable<User>>(JSON.parse(localStorage.getItem('user') ?? 'null') as User | null)
-  const location = useLocation()
-  const [searchParams] = useSearchParams()
+  const [user, setUser] = useState<Nullable<User>>(null)
   const navigate = useNavigate()
 
-  const token = searchParams.get('token')
-  const type = searchParams.get('type')
-  const state = searchParams.get('state')
-
-  type OAuthState = { state: string, redirect: string } | null
-
-  const generateState = () => {
-    let randomString = ''
-    const randomNumber = Math.floor(Math.random() * 10)
-    for (let i = 0; i < 20 + randomNumber; i++) {
-      randomString += String.fromCharCode(33 + Math.floor(Math.random() * 94))
-    }
-    return randomString
-  }
-
-  const requestAuth = useCallback(() => {
-    const randomState = generateState()
-    localStorage.setItem('oauth-state', JSON.stringify({ state: randomState, redirect: location.pathname } as OAuthState))
-    window.location.replace('/login?state=' + btoa(randomState))
-  }, [location.pathname])
-
   const fetchUser = useCallback(async () => {
-    const oauthState = JSON.parse(localStorage.getItem('oauth-state') ?? 'null') as OAuthState
-    if (!state || atob(state) !== oauthState?.state) { throw new Error('OAuth state is missing or does not match stored value.') }
-    if (!type || !token) { throw new Error('Invalid or no Discord authorization token provided.') }
+    const csrfToken = document.cookie.split('; ').find((cookie) => cookie.startsWith('csrf_token='))?.split('=')[1]
 
-    const discordUser = await fetch(DiscordAPIBase + Routes.user(), {
+    const userResponse = await fetch('/api/user', {
       method: 'GET',
-      headers: { authorization: `${type} ${token}` }
-    }).then(async (response) => {
-      if (!response.ok) { throw new Error('Failed to fetch user info: ' + (await response.json() as RESTError).message) }
-      return await response.json() as APIUser
+      headers: { 'X-CSRF-Token': csrfToken ?? '' },
+      credentials: 'include'
     })
+      .then(async (response) => {
+        if (response.status === 401) {
+          console.info('Requesting user authentication...')
+          setTimeout(() => window.location.replace('/login'), 1000)
+          return
+        }
+        const result = await response.json() as UserAPIResult
+        console.log(result)
+        if ('error' in result) {
+          navigate(`/?error=${encodeURIComponent(result.error)}`)
+          return
+        }
+        if (!response.ok) {
+          navigate(`/?error=${encodeURIComponent('Unknown error')}`)
+          return
+        }
+        return result
+      })
+      .catch(() => {
+        navigate(`/?error=${encodeURIComponent('Unknown error')}`)
+      })
 
-    const guilds = await fetch(DiscordAPIBase + Routes.userGuilds(), {
-      method: 'GET',
-      headers: { authorization: `${type} ${token}` }
-    }).then(async (response) => {
-      if (!response.ok) { throw new Error('Failed to fetch guild info: ' + (await response.json() as RESTError).message) }
-      return await response.json() as Promise<APIGuild[]>
-    })
-
-    if (!discordUser || !guilds) { throw new Error('Failed to fetch user or guild info.') }
-
-    const user: User = Object.assign(discordUser, { guilds: guilds })
-    localStorage.setItem('user', JSON.stringify(user))
-    setUser(user)
-
-    toast.success('Successfully logged in with Discord.')
-    navigate(oauthState.redirect, { replace: true })
-  }, [navigate, state, token, type])
+    if (!userResponse) { return }
+    setUser(userResponse)
+  }, [navigate])
 
   useEffect(() => {
-    if (user) { return }
-
-    if (!token) {
-      console.info('No OAuth token provided. Requesting user authentication...')
-      const redirectTimeout = setTimeout(requestAuth, 2000)
-      return () => { clearTimeout(redirectTimeout) }
-    }
-
-    fetchUser().catch((e: unknown) => {
-      console.error(e)
-      navigate('/?error=' + (e instanceof Error ? encodeURIComponent(e.message) : 'An unknown error occured.'))
-    })
-  }, [fetchUser, navigate, requestAuth, token, user])
+    void fetchUser()
+  }, [fetchUser])
 
   return (
     <DiscordUserContext.Provider value={user}>

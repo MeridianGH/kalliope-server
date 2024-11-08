@@ -1,27 +1,30 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { GuildClientMapType, Nullable, PlayerListType } from '../../../types/types'
-import { APIGuild } from 'discord-api-types/v10'
+import { RESTAPIPartialCurrentUserGuild } from 'discord-api-types/v10'
 import { WebSocketContext } from '../../../contexts/websocketContext'
 import { Visualizer } from '../Vizualizer/visualizer'
 import { Loader } from '../../Loader/loader'
 import { CaretUp, DiscordLogo } from '@phosphor-icons/react'
 import genericServer from '../../../assets/generic_server.png'
 import './servers.scss'
+import { useDiscordLogin } from '../../../hooks/discordLoginHook'
 
 export type ServersProps = {
   guildClientMap: Nullable<GuildClientMapType>,
   playerList: Nullable<PlayerListType>,
-  userGuilds: Nullable<APIGuild[]>,
+  userGuilds: Nullable<RESTAPIPartialCurrentUserGuild[]>,
   guildId: Nullable<string>,
   setGuildId: (id: string) => void
 }
 
 export function Servers({ guildClientMap, playerList, userGuilds, guildId, setGuildId }: ServersProps) {
+  const user = useDiscordLogin()
   const webSocket = useContext(WebSocketContext)
   const [collapsed, setCollapsed] = useState(false)
   const isMobile = window.matchMedia('screen and (max-width: 768px)').matches
 
   useEffect(() => {
+    if (!user) { return }
     if (webSocket?.readyState === 1) {
       // Always ask for new playerList in order to allow server to update this connection
       webSocket.request({ type: 'requestPlayerList' })
@@ -30,9 +33,9 @@ export function Servers({ guildClientMap, playerList, userGuilds, guildId, setGu
         webSocket.request({ type: 'requestPlayerList' })
       }, { once: true })
     }
-  }, [webSocket])
+  }, [user, webSocket])
   useEffect(() => {
-    if (!webSocket) { return }
+    if (!user || !webSocket) { return }
     if (!guildClientMap) {
       if (webSocket.readyState === 1) {
         webSocket.request({ type: 'requestGuildClientMap' })
@@ -42,7 +45,7 @@ export function Servers({ guildClientMap, playerList, userGuilds, guildId, setGu
         }, { once: true })
       }
     }
-  }, [webSocket, guildClientMap])
+  }, [webSocket, guildClientMap, user])
 
   return (
     <div className={`server-container ${collapsed ? 'collapsed' : ''} flex-container column start nowrap`}>
