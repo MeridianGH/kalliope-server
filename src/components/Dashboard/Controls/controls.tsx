@@ -1,7 +1,7 @@
-import React, { createRef, FormEvent, useCallback, useContext } from 'react'
+import React, { createRef, FormEvent, useCallback } from 'react'
 import './controls.scss'
 import { toast } from 'react-toastify'
-import { WebSocketContext } from '../../../contexts/websocketContext'
+import { useWebSocket } from '../../../hooks/webSocketHook'
 import { Nullable, Player } from '../../../types/types'
 import { Equalizer, Faders, ListPlus, Trash } from '@phosphor-icons/react'
 
@@ -12,7 +12,7 @@ export type ControlsProps = {
 }
 
 export function Controls({ guildId, filter, hasPlayer }: ControlsProps) {
-  const webSocket = useContext(WebSocketContext)
+  const webSocket = useWebSocket()
   const inputRef = createRef<HTMLInputElement>()
 
   const disabled = !guildId || !hasPlayer

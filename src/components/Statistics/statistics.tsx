@@ -1,5 +1,5 @@
-import React, { Fragment, useContext, useEffect, useState } from 'react'
-import { WebSocketContext } from '../../contexts/websocketContext'
+import React, { Fragment, useEffect, useState } from 'react'
+import { useWebSocket } from '../../hooks/webSocketHook'
 import { Navbar } from '../Navbar/navbar'
 import { Loader } from '../Loader/loader'
 import { Background } from '../Background/background'
@@ -22,7 +22,7 @@ const clientDataMapObject = {
 
 export function Statistics() {
   usePageTitle('Kalliope. | Statistics')
-  const webSocket = useContext(WebSocketContext)
+  const webSocket = useWebSocket()
   const [clientDataMap, setClientDataMap] = useState<ClientDataMapType>(DEV_SERVER ? clientDataMapObject : null)
   const [playerList, setPlayerList] = useState<PlayerListType>(new Set())
 

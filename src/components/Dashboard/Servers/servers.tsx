@@ -1,7 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { GuildClientMapType, Nullable, PlayerListType } from '../../../types/types'
 import { RESTAPIPartialCurrentUserGuild } from 'discord-api-types/v10'
-import { WebSocketContext } from '../../../contexts/websocketContext'
+import { useWebSocket } from '../../../hooks/webSocketHook'
 import { Visualizer } from '../Vizualizer/visualizer'
 import { Loader } from '../../Loader/loader'
 import { CaretUp, DiscordLogo } from '@phosphor-icons/react'
@@ -18,13 +18,11 @@ export type ServersProps = {
 }
 
 export function Servers({ guildClientMap, playerList, userGuilds, guildId, setGuildId }: ServersProps) {
-  const user = useDiscordLogin()
-  const webSocket = useContext(WebSocketContext)
+  const webSocket = useWebSocket()
   const [collapsed, setCollapsed] = useState(false)
   const isMobile = window.matchMedia('screen and (max-width: 768px)').matches
 
   useEffect(() => {
-    if (!user) { return }
     if (webSocket?.readyState === 1) {
       // Always ask for new playerList in order to allow server to update this connection
       webSocket.request({ type: 'requestPlayerList' })
@@ -33,9 +31,9 @@ export function Servers({ guildClientMap, playerList, userGuilds, guildId, setGu
         webSocket.request({ type: 'requestPlayerList' })
       }, { once: true })
     }
-  }, [user, webSocket])
+  }, [webSocket])
   useEffect(() => {
-    if (!user || !webSocket) { return }
+    if (!webSocket) { return }
     if (!guildClientMap) {
       if (webSocket.readyState === 1) {
         webSocket.request({ type: 'requestGuildClientMap' })
@@ -45,7 +43,7 @@ export function Servers({ guildClientMap, playerList, userGuilds, guildId, setGu
         }, { once: true })
       }
     }
-  }, [webSocket, guildClientMap, user])
+  }, [webSocket, guildClientMap])
 
   return (
     <div className={`server-container ${collapsed ? 'collapsed' : ''} flex-container column start nowrap`}>

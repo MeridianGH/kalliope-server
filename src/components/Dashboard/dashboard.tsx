@@ -1,9 +1,9 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { GuildClientMapType, MessageToUser, Nullable, Player, PlayerListType } from '../../types/types'
 import { useDiscordLogin } from '../../hooks/discordLoginHook'
-import { WebSocketContext } from '../../contexts/websocketContext'
+import { useWebSocket } from '../../hooks/webSocketHook'
 import { useMediaSession } from '../../hooks/mediaSessionHook'
 import { Background } from '../Background/background'
 import { PlayerBar } from './PlayerBar/playerbar'
@@ -96,7 +96,7 @@ const playerObject: Player = {
 export function Dashboard() {
   usePageTitle('Kalliope. | Dashboard')
   const user = useDiscordLogin()
-  const webSocket = useContext(WebSocketContext)
+  const webSocket = useWebSocket()
   const [guildClientMap, setGuildClientMap] = useState<Nullable<GuildClientMapType>>(null)
   const [playerList, setPlayerList] = useState<Nullable<PlayerListType>>(null)
   const [guildId, setGuildId] = useState<Nullable<string>>(DEV_SERVER ? playerObject.guildId : null)

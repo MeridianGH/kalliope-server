@@ -1,12 +1,12 @@
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import { Track } from '../types/types'
-import { WebSocketContext } from '../contexts/websocketContext'
+import { useWebSocket } from './webSocketHook'
 import nearSilence from '../assets/near-silence.mp3'
 
 export function useMediaSession(guildId?: string, track?: Track, paused?: boolean) {
   const [hasError, setHasError] = useState<boolean>(false)
-  const webSocket = useContext(WebSocketContext)
+  const webSocket = useWebSocket()
 
   useEffect(() => {
     if (!('mediaSession' in navigator) || !track) { return }

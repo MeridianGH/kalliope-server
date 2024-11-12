@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {
   closestCenter,
   DndContext,
@@ -12,7 +12,7 @@ import {
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
 import { toast } from 'react-toastify'
-import { WebSocketContext } from '../../../contexts/websocketContext'
+import { useWebSocket } from '../../../hooks/webSocketHook'
 import { QueueTrack } from '../QueueTrack/queuetrack'
 import { Nullable, Track } from '../../../types/types'
 import { Playlist } from '@phosphor-icons/react'
@@ -24,7 +24,7 @@ export type QueueProps = {
 }
 
 export function Queue({ guildId, tracks }: QueueProps) {
-  const webSocket = useContext(WebSocketContext)
+  const webSocket = useWebSocket()
   const [items, setItems] = useState<number[] | undefined>()
   const timeoutId = useRef<number>()
 
