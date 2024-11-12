@@ -1,8 +1,9 @@
-import { APIGuild, APIUser } from 'discord-api-types/v10'
+import { RESTGetAPICurrentUserGuildsResult, RESTGetAPIUserResult } from 'discord-api-types/v10'
 
 export type Nullable<T> = T | null | undefined
 
-export type User = APIUser & { guilds: APIGuild[] }
+export type User = RESTGetAPIUserResult & { guilds: RESTGetAPICurrentUserGuildsResult }
+export type UserAPIResult = User | { error: string }
 
 export type ClientData = {
   guilds: string[],

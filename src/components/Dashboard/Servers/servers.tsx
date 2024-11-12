@@ -1,23 +1,24 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { GuildClientMapType, Nullable, PlayerListType } from '../../../types/types'
-import { APIGuild } from 'discord-api-types/v10'
-import { WebSocketContext } from '../../../contexts/websocketContext'
+import { RESTAPIPartialCurrentUserGuild } from 'discord-api-types/v10'
+import { useWebSocket } from '../../../hooks/webSocketHook'
 import { Visualizer } from '../Vizualizer/visualizer'
 import { Loader } from '../../Loader/loader'
 import { CaretUp, DiscordLogo } from '@phosphor-icons/react'
 import genericServer from '../../../assets/generic_server.png'
 import './servers.scss'
+import { useDiscordLogin } from '../../../hooks/discordLoginHook'
 
 export type ServersProps = {
   guildClientMap: Nullable<GuildClientMapType>,
   playerList: Nullable<PlayerListType>,
-  userGuilds: Nullable<APIGuild[]>,
+  userGuilds: Nullable<RESTAPIPartialCurrentUserGuild[]>,
   guildId: Nullable<string>,
   setGuildId: (id: string) => void
 }
 
 export function Servers({ guildClientMap, playerList, userGuilds, guildId, setGuildId }: ServersProps) {
-  const webSocket = useContext(WebSocketContext)
+  const webSocket = useWebSocket()
   const [collapsed, setCollapsed] = useState(false)
   const isMobile = window.matchMedia('screen and (max-width: 768px)').matches
 

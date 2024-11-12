@@ -21,7 +21,7 @@ export function Home() {
   useEffect(() => {
     if (searchParams.size > 0) {
       if (searchParams.has('logout')) { toast.success('Successfully logged out.') }
-      if (searchParams.has('error')) { toast.error(`Discord authentication error:\n"${searchParams.get('error')}"`) }
+      if (searchParams.has('error')) { toast.error(`Discord authentication error:\n${decodeURIComponent(searchParams.get('error') ?? 'Unknown error')}`) }
       navigate('/', { replace: true })
     }
   }, [navigate, searchParams])

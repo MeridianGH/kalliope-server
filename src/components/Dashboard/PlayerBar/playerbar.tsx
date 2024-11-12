@@ -1,7 +1,7 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Nullable, Player, Track } from '../../../types/types'
-import { WebSocketContext } from '../../../contexts/websocketContext'
+import { useWebSocket } from '../../../hooks/webSocketHook'
 import { Thumbnail } from '../Thumbnail/thumbnail'
 import { LoadingButton } from '../../LoadingButton/loadingbutton'
 import {
@@ -35,7 +35,7 @@ export type PlayerBarProps = {
 }
 
 export function PlayerBar({ guildId, current, position, volume, timescale, paused, repeatMode, settings }: PlayerBarProps) {
-  const webSocket = useContext(WebSocketContext)
+  const webSocket = useWebSocket()
   const [currentPosition, setCurrentPosition] = useState(position ?? 0)
   const [currentVolume, setCurrentVolume] = useState(50)
   const [expanded, setExpanded] = useState(false)

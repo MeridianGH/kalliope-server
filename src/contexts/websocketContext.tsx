@@ -11,13 +11,14 @@ export function WebsocketProvider({ children }: PropsWithChildren) {
   const user = useDiscordLogin()
 
   const connectSocket = useCallback(() => {
+    if (!user) { return null }
     const ws = new WebSocket(`ws${PRODUCTION ? 's' : ''}://${location.host}`)
 
     function request(data: UserMessageTypes): void
     function request(data: UserMessageTypes, awaitResponse: true): Promise<MessageToUser>
     function request(data: UserMessageTypes, awaitResponse?: true) {
       const requestId = Date.now() + '-' + Math.floor(Math.random() * 100)
-      Object.assign(data, { requestId: requestId, userId: user?.id })
+      Object.assign(data, { requestId: requestId, userId: user!.id })
 
       try {
         if (!PRODUCTION) { console.log('client sent:', data) }
@@ -62,12 +63,13 @@ export function WebsocketProvider({ children }: PropsWithChildren) {
       if (!reloadingToast.current) { reloadingToast.current = toast.loading('WebSocket has been closed unexpectedly. Reconnecting...') }
     })
     return ws
-  }, [user?.id])
+  }, [user])
 
   useEffect(() => {
     if (DEV_SERVER) { return }
 
     const ws = connectSocket()
+    if (!ws) { return }
 
     const close = () => {
       ws.close(1000, 'WebSocket was closed by user.')

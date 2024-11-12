@@ -4,7 +4,6 @@ import { createRoot } from 'react-dom/client'
 import { Slide, ToastContainer } from 'react-toastify'
 import { WebsocketProvider } from './contexts/websocketContext'
 import { DiscordUserProvider } from './contexts/discordUserContext'
-import { Auth } from './components/Auth/auth'
 import { Navbar } from './components/Navbar/navbar'
 import { Header } from './components/Header/header'
 import { Home } from './components/Home/home'
@@ -41,14 +40,6 @@ export function App() {
                 <Home/>
                 <Footer/>
               </Fragment>
-            )}
-          />
-          <Route
-            path={'/auth'}
-            element={(
-              <DiscordUserProvider>
-                <Auth/>
-              </DiscordUserProvider>
             )}
           />
           <Route
