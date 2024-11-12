@@ -98,8 +98,12 @@ export function Queue({ guildId, tracks }: QueueProps) {
 
   if (!guildId) {
     return (
-      <div className={'queue-container flex-container'}>
-        <p>{'Select a server using the list on the left to view the queue.'}</p>
+      <div className={'queue-container flex-container column start nowrap'}>
+        <div className={'flex-container nowrap'}>
+          <Playlist/>
+          <h5 className={'queue-title'}>{'Queue'}</h5>
+        </div>
+        <div className={'flex-container'} style={{ width: '100%', height: '100%' }}>{'Select a server to view the queue.'}</div>
       </div>
     )
   }
@@ -125,8 +129,8 @@ export function Queue({ guildId, tracks }: QueueProps) {
             </div>
           ) :
           (
-            <div className={'queue-item flex-container'}>
-              {'No upcoming songs! Add songs with \'/play\' or by using the field on the right.'}
+            <div className={'flex-container'} style={{ width: '100%', height: '100%' }}>
+              {'No upcoming songs! Add songs with \'/play\' or by using the \'Add to queue\' field.'}
             </div>
           )}
         <div className={'queue-reorder-container flex-container'}>

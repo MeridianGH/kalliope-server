@@ -6,7 +6,7 @@ import { Background } from '../Background/background'
 import { usePageTitle } from '../../hooks/pageTitleHook'
 import './statistics.scss'
 import { ClientDataMapType, MessageToUser, PlayerListType } from '../../types/types'
-import { ArrowsClockwise } from '@phosphor-icons/react'
+import { ArrowsClockwise, ChartBar } from '@phosphor-icons/react'
 
 const clientDataMapObject = {
   '1031853575732740217': {
@@ -58,8 +58,11 @@ export function Statistics() {
         <Background/>
       </div>
       <div className={'stats-container flex-container column'}>
-        <h1>{'Statistics'}</h1>
-        <div className={'stats-card'}>
+        <div className={'stats-card flex-container column'}>
+          <div className={'flex-container nowrap'}>
+            <ChartBar size={'3rem'}/>
+            <h1>{'Statistics'}</h1>
+          </div>
           {clientDataMap === null && <div className={'flex-container column'}><Loader/></div>}
           {!!clientDataMap && clientData.length === 0 && (
             <p>
@@ -71,23 +74,45 @@ export function Statistics() {
             </p>
           )}
           {clientData.length > 0 && (
-            <div>
-              {'Total guilds: '}
-              {clientData.reduce((acc, cur) => cur.guilds.length + acc, 0)}
-              <br/>
-              {'Total users: '}
-              {clientData.reduce((acc, cur) => cur.users + acc, 0)}
-              <br/>
-              {'Average latency: '}
-              {clientData.reduce((acc, cur) => (cur.ping === -1 ? 0 : cur.ping) + acc, 0) / (clientData.filter((data) => data.ping !== -1).length || 1)}
-              {'ms'}
-              <br/>
-              {'Currently playing in '}
-              {playerList?.size ?? 0}
-              {' '}
-              {'guilds.'}
-              <br/>
-              <br/>
+            <div className={'flex-container column nowrap'} style={{ width: '100%' }}>
+              <div className={'stats-metrics-container'}>
+                <div className={'stats-metric flex-container space-between column start nowrap'}>
+                  {'Total guilds:'}
+                  <span>
+                    {clientData.reduce((acc, cur) => cur.guilds.length + acc, 0)}
+                    {' guilds'}
+                  </span>
+                </div>
+                <div className={'stats-metric flex-container space-between column start nowrap'}>
+                  {'Total users: '}
+                  <span>
+                    {clientData.reduce((acc, cur) => cur.users + acc, 0)}
+                    {' users'}
+                  </span>
+                </div>
+                <div className={'stats-metric flex-container space-between column start nowrap'}>
+                  {'Average latency: '}
+                  <span>
+                    {clientData.reduce((acc, cur) => (cur.ping === -1 ? 0 : cur.ping) + acc, 0) / (clientData.filter((data) => data.ping !== -1).length || 1)}
+                    <wbr/>
+                    {'ms'}
+                  </span>
+                </div>
+                <div className={'stats-metric flex-container space-between column start nowrap'}>
+                  {'Currently playing in:'}
+                  <span>
+                    {playerList?.size ?? 0}
+                    {' guilds'}
+                  </span>
+                </div>
+                <div className={'stats-metric flex-container space-between column start nowrap'}>
+                  {'Currently connected:'}
+                  <span>
+                    {clientData.length}
+                    {' clients'}
+                  </span>
+                </div>
+              </div>
               <div className={'stats-node-grid'}>
                 {Object.entries(clientDataMap ?? {}).map(([clientId, data], index) => (
                   <div className={'stats-node-container'} key={index}>
