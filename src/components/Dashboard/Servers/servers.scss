@@ -60,8 +60,9 @@
       opacity: 1;
     }
 
-    > img {
+    .server-logo {
       height: 4rem;
+      aspect-ratio: 1/1;
       border-radius: 0.5rem;
     }
 
