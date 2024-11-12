@@ -7,7 +7,6 @@ import { Loader } from '../../Loader/loader'
 import { CaretUp, DiscordLogo } from '@phosphor-icons/react'
 import genericServer from '../../../assets/generic_server.png'
 import './servers.scss'
-import { useDiscordLogin } from '../../../hooks/discordLoginHook'
 
 export type ServersProps = {
   guildClientMap: Nullable<GuildClientMapType>,
