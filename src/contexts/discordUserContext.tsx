@@ -23,7 +23,6 @@ export function DiscordUserProvider({ children }: PropsWithChildren) {
           return
         }
         const result = await response.json() as UserAPIResult
-        console.log(result)
         if ('error' in result) {
           navigate(`/?error=${encodeURIComponent(result.error)}`)
           return

@@ -43,7 +43,7 @@ export default {
   },
   plugins: [
     new HtmlWebpackPlugin({ template: './src/index.html' }),
-    new MiniCssExtractPlugin(),
+    new MiniCssExtractPlugin({ filename: '[name].[contenthash].css' }),
     new ForkTsCheckerWebpackPlugin(),
     new webpack.DefinePlugin({
       PRODUCTION: JSON.stringify(production),

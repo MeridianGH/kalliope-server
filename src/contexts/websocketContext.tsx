@@ -69,7 +69,10 @@ export function WebsocketProvider({ children }: PropsWithChildren) {
     if (DEV_SERVER) { return }
 
     const ws = connectSocket()
-    if (!ws) { return }
+    if (!ws) {
+      if (reloadingToast.current) { toast.dismiss(reloadingToast.current) }
+      return
+    }
 
     const close = () => {
       ws.close(1000, 'WebSocket was closed by user.')

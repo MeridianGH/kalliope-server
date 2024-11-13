@@ -1,5 +1,7 @@
+import { RuleConfigSeverity } from '@commitlint/types'
+
 // noinspection JSUnusedGlobalSymbols
 export default {
   extends: ['@commitlint/config-conventional'],
-  rules: { 'scope-enum': [2, 'always', ['server', 'websocket-server', 'frontend']] }
+  rules: { 'scope-enum': [RuleConfigSeverity.Error, 'always', ['server', 'websocket-server', 'frontend']] }
 }
