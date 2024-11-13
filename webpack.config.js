@@ -2,6 +2,8 @@ import path from 'path'
 import * as url from 'url'
 import webpack from 'webpack'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
+import MiniCssExtractPlugin from 'mini-css-extract-plugin'
+import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin'
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 const production = process.argv[process.argv.indexOf('--mode') + 1] !== 'development'
@@ -16,12 +18,11 @@ export default {
     rules: [
       {
         test: /\.tsx?$/,
-        exclude: /node_modules/,
-        use: ['ts-loader']
+        loader: 'ts-loader'
       },
       {
         test: /\.s?css$/,
-        use: ['style-loader', 'css-loader', 'sass-loader']
+        use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader']
       },
       {
         test: /\.(png|woff|woff2|eot|ttf|svg)$/,
@@ -34,13 +35,16 @@ export default {
       }
     ]
   },
-  resolve: { extensions: ['*', '.ts', '.tsx', '.js'] },
+  resolve: { extensions: ['.ts', '.tsx', '.js'] },
   output: {
     path: path.resolve(__dirname, './dist'),
-    filename: 'bundle.js'
+    filename: '[name].[contenthash].js',
+    clean: true
   },
   plugins: [
     new HtmlWebpackPlugin({ template: './src/index.html' }),
+    new MiniCssExtractPlugin(),
+    new ForkTsCheckerWebpackPlugin(),
     new webpack.DefinePlugin({
       PRODUCTION: JSON.stringify(production),
       DEV_SERVER: JSON.stringify(isDevServer)
@@ -53,9 +57,30 @@ export default {
     hot: true,
     port: 80
   },
+  watchOptions: { ignored: /node_modules/ },
   performance: {
     hints: false,
     maxEntrypointSize: 512000,
     maxAssetSize: 512000
+  },
+  optimization: {
+    moduleIds: 'deterministic',
+    runtimeChunk: 'single',
+    splitChunks: {
+      cacheGroups: {
+        reactVendor: {
+          test: /[\\/]node_modules[\\/](react|react-dom|react-router|react-router-dom|@remix-run[\\/]router)[\\/]/,
+          name: 'react-vendors',
+          chunks: 'all'
+        },
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendors',
+          chunks: 'all',
+          priority: -1,
+          reuseExistingChunk: true
+        }
+      }
+    }
   }
 }

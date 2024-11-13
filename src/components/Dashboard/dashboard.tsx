@@ -103,7 +103,7 @@ const playerObject: Player = {
   }
 }
 
-export function Dashboard() {
+export default function Dashboard() {
   usePageTitle('Kalliope. | Dashboard')
   const user = useDiscordLogin()
   const webSocket = useWebSocket()

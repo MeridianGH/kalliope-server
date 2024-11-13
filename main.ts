@@ -1,5 +1,4 @@
 import express, { Request, Response } from 'express'
-import cookieParser from 'cookie-parser'
 import { createServer as httpServer } from 'http'
 import { createServer as httpsServer } from 'https'
 import url from 'url'
@@ -8,6 +7,8 @@ import os from 'os'
 import path from 'path'
 import fetch from 'node-fetch'
 import httpProxy from 'http-proxy'
+import cookieParser from 'cookie-parser'
+import compression from 'compression'
 import {
   RESTError,
   RESTGetAPICurrentUserGuildsResult, RESTGetAPIUserResult,
@@ -43,6 +44,8 @@ app.use((req, res, next) => {
   }
   next()
 })
+
+app.use(compression())
 
 // Distribute folder
 app.use(express.static('dist', { index: '' }))

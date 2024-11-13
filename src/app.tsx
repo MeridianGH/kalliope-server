@@ -1,4 +1,4 @@
-import React, { Fragment, PropsWithChildren } from 'react'
+import React, { Fragment, lazy, PropsWithChildren } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { createRoot } from 'react-dom/client'
 import { Slide, ToastContainer } from 'react-toastify'
@@ -8,10 +8,11 @@ import { Navbar } from './components/Navbar/navbar'
 import { Header } from './components/Header/header'
 import { Home } from './components/Home/home'
 import { Footer } from './components/Footer/footer'
-import { Dashboard } from './components/Dashboard/dashboard'
-import { Statistics } from './components/Statistics/statistics'
 import kalliopeTransparentPNG from './assets/kalliope_transparent.png'
 import './app.scss'
+
+const Dashboard = lazy(() => import(/* webpackChunkName: 'dashboard' */ './components/Dashboard/dashboard'))
+const Statistics = lazy(() => import(/* webpackChunkName: 'statistics' */ './components/Statistics/statistics'))
 
 document.querySelector<HTMLLinkElement>('link[rel=icon]')!.href = kalliopeTransparentPNG
 

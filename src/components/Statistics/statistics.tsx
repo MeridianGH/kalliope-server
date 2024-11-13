@@ -20,7 +20,7 @@ const clientDataMapObject = {
   }
 }
 
-export function Statistics() {
+export default function Statistics() {
   usePageTitle('Kalliope. | Statistics')
   const webSocket = useWebSocket()
   const [clientDataMap, setClientDataMap] = useState<ClientDataMapType>(DEV_SERVER ? clientDataMapObject : null)
