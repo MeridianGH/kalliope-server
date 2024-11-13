@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from 'react'
-import './loadingbutton.scss'
 import { Warning } from '@phosphor-icons/react'
+import './loadingbutton.scss'
 
 export type LoadingButtonProps = {
   children: React.ReactNode,
@@ -9,7 +9,7 @@ export type LoadingButtonProps = {
   onClick: () => void | Promise<void>
 }
 
-export function LoadingButton({ children, className, disabled, onClick }: LoadingButtonProps) {
+export default function LoadingButton({ children, className, disabled, onClick }: LoadingButtonProps) {
   const [isLoading, setIsLoading] = React.useState(false)
   const [failure, setFailure] = React.useState(false)
 

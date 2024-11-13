@@ -1,10 +1,10 @@
 import React, { createContext, PropsWithChildren, useCallback, useEffect, useState } from 'react'
-import { Nullable, User, UserAPIResult } from '../types/types'
 import { useNavigate } from 'react-router-dom'
+import { Nullable, User, UserAPIResult } from '../types/types'
 
 export const DiscordUserContext = createContext<Nullable<User>>(undefined)
 
-export function DiscordUserProvider({ children }: PropsWithChildren) {
+export default function DiscordUserProvider({ children }: PropsWithChildren) {
   const [user, setUser] = useState<Nullable<User>>(null)
   const navigate = useNavigate()
 

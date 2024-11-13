@@ -1,20 +1,17 @@
-import React, { Fragment, lazy, PropsWithChildren, Suspense } from 'react'
+import React, { Fragment, PropsWithChildren } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { createRoot } from 'react-dom/client'
 import { Slide, ToastContainer } from 'react-toastify'
-import { WebsocketProvider } from './contexts/websocketContext'
-import { DiscordUserProvider } from './contexts/discordUserContext'
-import { Navbar } from './components/Navbar/navbar'
-import { Header } from './components/Header/header'
-import { Home } from './components/Home/home'
-import { Footer } from './components/Footer/footer'
+import WebsocketProvider from './contexts/websocketContext'
+import DiscordUserProvider from './contexts/discordUserContext'
+import Navbar from './components/Navbar/navbar'
+import Header from './components/Header/header'
+import Home from './components/Home/home'
+import Dashboard from './components/Dashboard/dashboard'
+import Statistics from './components/Statistics/statistics'
+import Footer from './components/Footer/footer'
 import kalliopeTransparentPNG from './assets/kalliope_transparent.png'
 import './app.scss'
-import { Loader } from './components/Loader/loader'
-import { Background } from './components/Background/background'
-
-const Dashboard = lazy(() => import(/* webpackChunkName: 'dashboard' */ './components/Dashboard/dashboard'))
-const Statistics = lazy(() => import(/* webpackChunkName: 'statistics' */ './components/Statistics/statistics'))
 
 document.querySelector<HTMLLinkElement>('link[rel=icon]')!.href = kalliopeTransparentPNG
 
@@ -28,50 +25,41 @@ const UserWebsocketProvider = ({ children }: PropsWithChildren) => (
 
 const isMobile = window.matchMedia('screen and (max-width: 768px)').matches
 
-export function App() {
+function App() {
   return (
     <Fragment>
-      <ToastContainer position={isMobile ? 'top-center' : 'bottom-right'} theme={'dark'} transition={Slide}/>
-      <Suspense
-        fallback={(
-          <div className={'flex-container'} style={{ width: '100vw', height: '100vh' }}>
-            <Background style={'transparent'}/>
-            <Loader/>
-          </div>
-        )}
-      >
-        <BrowserRouter>
-          <Routes>
-            <Route
-              index
-              element={(
-                <Fragment>
-                  <Navbar displayLinks={true}/>
-                  <Header/>
-                  <Home/>
-                  <Footer/>
-                </Fragment>
-              )}
-            />
-            <Route
-              path={'/dashboard'}
-              element={(
-                <UserWebsocketProvider>
-                  <Dashboard/>
-                </UserWebsocketProvider>
-              )}
-            />
-            <Route
-              path={'/statistics'}
-              element={(
-                <UserWebsocketProvider>
-                  <Statistics/>
-                </UserWebsocketProvider>
-              )}
-            />
-          </Routes>
-        </BrowserRouter>
-      </Suspense>
+      <ToastContainer position={isMobile ? 'top-center' : 'top-center'} theme={'dark'} transition={Slide}/>
+      <BrowserRouter>
+        <Routes>
+          <Route
+            index
+            element={(
+              <Fragment>
+                <Navbar displayLinks={true}/>
+                <Header/>
+                <Home/>
+                <Footer/>
+              </Fragment>
+            )}
+          />
+          <Route
+            path={'/dashboard'}
+            element={(
+              <UserWebsocketProvider>
+                <Dashboard/>
+              </UserWebsocketProvider>
+            )}
+          />
+          <Route
+            path={'/statistics'}
+            element={(
+              <UserWebsocketProvider>
+                <Statistics/>
+              </UserWebsocketProvider>
+            )}
+          />
+        </Routes>
+      </BrowserRouter>
     </Fragment>
   )
 }

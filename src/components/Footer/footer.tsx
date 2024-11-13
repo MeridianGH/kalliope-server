@@ -1,9 +1,9 @@
 import React from 'react'
-import './footer.scss'
 import { SiDiscord, SiGithub, SiGmail, SiReact } from '@icons-pack/react-simple-icons'
 import { HeartStraight } from '@phosphor-icons/react'
+import './footer.scss'
 
-export function Footer() {
+export default function Footer() {
   return (
     <footer>
       <div className={'social-icons flex-container nowrap'}>

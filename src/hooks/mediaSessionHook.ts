@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import { Track } from '../types/types'
-import { useWebSocket } from './webSocketHook'
+import useWebSocket from './webSocketHook'
 import nearSilence from '../assets/near-silence.mp3'
 
-export function useMediaSession(guildId?: string, track?: Track, paused?: boolean) {
+export default function useMediaSession(guildId?: string, track?: Track, paused?: boolean) {
   const [hasError, setHasError] = useState<boolean>(false)
   const webSocket = useWebSocket()
 

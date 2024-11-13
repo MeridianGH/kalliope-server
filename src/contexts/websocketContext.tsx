@@ -1,11 +1,11 @@
 import React, { createContext, PropsWithChildren, useCallback, useEffect, useRef, useState } from 'react'
-import { useDiscordLogin } from '../hooks/discordLoginHook'
 import { Id, toast } from 'react-toastify'
 import { MessageToUser, Nullable, UserMessageTypes } from '../types/types'
+import useDiscordLogin from '../hooks/discordLoginHook'
 
 export const WebSocketContext = createContext<Nullable<WebSocket>>(null)
 
-export function WebsocketProvider({ children }: PropsWithChildren) {
+export default function WebsocketProvider({ children }: PropsWithChildren) {
   const [webSocket, setWebSocket] = useState<Nullable<WebSocket>>(null)
   const reloadingToast = useRef<Nullable<Id>>(null)
   const user = useDiscordLogin()

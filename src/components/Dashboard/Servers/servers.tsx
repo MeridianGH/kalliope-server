@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
-import { GuildClientMapType, Nullable, PlayerListType } from '../../../types/types'
-import { RESTAPIPartialCurrentUserGuild } from 'discord-api-types/v10'
-import { useWebSocket } from '../../../hooks/webSocketHook'
-import { Visualizer } from '../Vizualizer/visualizer'
 import { CaretUp, DiscordLogo } from '@phosphor-icons/react'
+import { RESTAPIPartialCurrentUserGuild } from 'discord-api-types/v10'
+import { GuildClientMapType, Nullable, PlayerListType } from '../../../types/types'
+import useWebSocket from '../../../hooks/webSocketHook'
+import Visualizer from '../Vizualizer/visualizer'
 import genericServer from '../../../assets/generic_server.png'
 import 'react-loading-skeleton/dist/skeleton.css'
 import './servers.scss'
@@ -17,7 +17,7 @@ export type ServersProps = {
   setGuildId: (id: string) => void
 }
 
-export function Servers({ guildClientMap, playerList, userGuilds, guildId, setGuildId }: ServersProps) {
+export default function Servers({ guildClientMap, playerList, userGuilds, guildId, setGuildId }: ServersProps) {
   const webSocket = useWebSocket()
   const [collapsed, setCollapsed] = useState(false)
   const isMobile = window.matchMedia('screen and (max-width: 768px)').matches

@@ -1,27 +1,16 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Nullable, Player, Track } from '../../../types/types'
-import { useWebSocket } from '../../../hooks/webSocketHook'
-import { Thumbnail } from '../Thumbnail/thumbnail'
-import { LoadingButton } from '../../LoadingButton/loadingbutton'
 import {
-  CaretDown,
-  IconContext,
-  PauseCircle,
-  PlayCircle,
-  Queue,
-  Repeat,
-  RepeatOnce,
-  Shuffle,
-  SkipBack,
-  SkipForward,
-  SpeakerHigh,
-  SpeakerLow,
-  SpeakerNone,
-  SpeakerX
+  IconContext, CaretDown, PauseCircle, PlayCircle, Queue,
+  Repeat, RepeatOnce, Shuffle, SkipBack, SkipForward,
+  SpeakerHigh, SpeakerLow, SpeakerNone, SpeakerX
 } from '@phosphor-icons/react'
-import './playerbar.scss'
 import { useSwipeable } from 'react-swipeable'
+import { Nullable, Player, Track } from '../../../types/types'
+import useWebSocket from '../../../hooks/webSocketHook'
+import Thumbnail from '../Thumbnail/thumbnail'
+import LoadingButton from '../../LoadingButton/loadingbutton'
+import './playerbar.scss'
 
 export type PlayerBarProps = {
   guildId: Nullable<string>,
@@ -34,7 +23,7 @@ export type PlayerBarProps = {
   settings: Nullable<Player['settings']>
 }
 
-export function PlayerBar({ guildId, current, position, volume, timescale, paused, repeatMode, settings }: PlayerBarProps) {
+export default function PlayerBar({ guildId, current, position, volume, timescale, paused, repeatMode, settings }: PlayerBarProps) {
   const webSocket = useWebSocket()
   const [currentPosition, setCurrentPosition] = useState(position ?? 0)
   const [currentVolume, setCurrentVolume] = useState(50)
@@ -278,6 +267,7 @@ export function PlayerBar({ guildId, current, position, volume, timescale, pause
                   <input
                     className={'volume-slider-input'}
                     type={'range'}
+                    inputMode={'none'}
                     defaultValue={currentVolume.toString()}
                     step={'1'}
                     min={'0'}

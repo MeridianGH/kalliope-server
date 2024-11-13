@@ -1,9 +1,9 @@
 import React, { createRef, FormEvent, useCallback } from 'react'
-import './controls.scss'
 import { toast } from 'react-toastify'
-import { useWebSocket } from '../../../hooks/webSocketHook'
-import { Nullable, Player } from '../../../types/types'
 import { Equalizer, Faders, ListPlus, Trash } from '@phosphor-icons/react'
+import { Nullable, Player } from '../../../types/types'
+import useWebSocket from '../../../hooks/webSocketHook'
+import './controls.scss'
 
 export type ControlsProps = {
   guildId: Nullable<string>,
@@ -11,7 +11,7 @@ export type ControlsProps = {
   hasPlayer: boolean
 }
 
-export function Controls({ guildId, filter, hasPlayer }: ControlsProps) {
+export default function Controls({ guildId, filter, hasPlayer }: ControlsProps) {
   const webSocket = useWebSocket()
   const inputRef = createRef<HTMLInputElement>()
 

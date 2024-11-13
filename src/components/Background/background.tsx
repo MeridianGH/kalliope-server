@@ -3,7 +3,7 @@ import './background.scss'
 
 export type BackgroundProps = { style?: 'solid' | 'gradient' | 'transparent' }
 
-export function Background({ style = 'gradient' }: BackgroundProps) {
+export default function Background({ style = 'gradient' }: BackgroundProps) {
   return (
     <svg className={'background'} xmlns={'http://www.w3.org/2000/svg'} version={'1.1'} width={'100%'} height={'100%'} preserveAspectRatio={'xMidYMid slice'} viewBox={'0 0 2560 1440'}>
       <defs>

@@ -1,30 +1,29 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { IconContext, SignOut } from '@phosphor-icons/react'
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton'
-import { GuildClientMapType, MessageToUser, Nullable, Player, PlayerListType } from '../../types/types'
-import { useDiscordLogin } from '../../hooks/discordLoginHook'
-import { useWebSocket } from '../../hooks/webSocketHook'
-import { useMediaSession } from '../../hooks/mediaSessionHook'
-import { Background } from '../Background/background'
-import { PlayerBar } from './PlayerBar/playerbar'
-import { Servers } from './Servers/servers'
-import { Queue } from './Queue/queue'
-import { Controls } from './Controls/controls'
-import { usePageTitle } from '../../hooks/pageTitleHook'
-import kalliopeTransparentPNG from '../../assets/kalliope_transparent.png'
-import 'react-loading-skeleton/dist/skeleton.css'
-import './dashboard.scss'
+import { IconContext, SignOut } from '@phosphor-icons/react'
 import {
   SiBandcamp, SiBandcampHex,
   SiSoundcloud, SiSoundcloudHex,
   SiSpotify, SiSpotifyHex,
   SiTwitch, SiTwitchHex,
   SiVimeo, SiVimeoHex,
-  SiYoutube,
-  SiYoutubeHex
+  SiYoutube, SiYoutubeHex
 } from '@icons-pack/react-simple-icons'
+import { GuildClientMapType, MessageToUser, Nullable, Player, PlayerListType } from '../../types/types'
+import useDiscordLogin from '../../hooks/discordLoginHook'
+import useWebSocket from '../../hooks/webSocketHook'
+import useMediaSession from '../../hooks/mediaSessionHook'
+import usePageTitle from '../../hooks/pageTitleHook'
+import Background from '../Background/background'
+import PlayerBar from './PlayerBar/playerbar'
+import Servers from './Servers/servers'
+import Queue from './Queue/queue'
+import Controls from './Controls/controls'
+import kalliopeTransparentPNG from '../../assets/kalliope_transparent.png'
+import 'react-loading-skeleton/dist/skeleton.css'
+import './dashboard.scss'
 
 const playerObject: Player = {
   guildId: '610498937874546699',

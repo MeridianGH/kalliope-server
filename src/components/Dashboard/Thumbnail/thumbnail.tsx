@@ -9,7 +9,7 @@ export type ThumbnailProps = {
   fitTo: 'width' | 'height'
 }
 
-export function Thumbnail({ image, fitTo }: ThumbnailProps) {
+export default function Thumbnail({ image, fitTo }: ThumbnailProps) {
   const style = {}
   style[fitTo] = '100%'
   return (

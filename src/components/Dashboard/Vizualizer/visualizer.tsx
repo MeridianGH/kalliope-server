@@ -10,7 +10,7 @@ export type VisualizerProps = {
   paused?: boolean
 }
 
-export function Visualizer(props: VisualizerProps) {
+export default function Visualizer(props: VisualizerProps) {
   const playState = props.paused ? 'paused' : 'running'
   const background = props.style === 'white' ?
     'white' :

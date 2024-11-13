@@ -1,21 +1,17 @@
 import React, { useEffect, useRef, useState } from 'react'
+import { toast } from 'react-toastify'
 import {
-  closestCenter,
-  DndContext,
-  DragEndEvent,
-  KeyboardSensor,
-  MouseSensor,
-  TouchSensor,
-  useSensor,
-  useSensors
+  closestCenter, DndContext,
+  DragEndEvent, KeyboardSensor,
+  MouseSensor, TouchSensor,
+  useSensor, useSensors
 } from '@dnd-kit/core'
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
-import { toast } from 'react-toastify'
-import { useWebSocket } from '../../../hooks/webSocketHook'
-import { QueueTrack } from '../QueueTrack/queuetrack'
-import { Nullable, Track } from '../../../types/types'
 import { Playlist } from '@phosphor-icons/react'
+import { Nullable, Track } from '../../../types/types'
+import useWebSocket from '../../../hooks/webSocketHook'
+import QueueTrack from '../QueueTrack/queuetrack'
 import './queue.scss'
 
 export type QueueProps = {
@@ -23,7 +19,7 @@ export type QueueProps = {
   tracks: Nullable<Track[]>
 }
 
-export function Queue({ guildId, tracks }: QueueProps) {
+export default function Queue({ guildId, tracks }: QueueProps) {
   const webSocket = useWebSocket()
   const [items, setItems] = useState<number[] | undefined>()
   const timeoutId = useRef<number>()

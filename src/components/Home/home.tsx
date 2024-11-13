@@ -1,19 +1,16 @@
 import React, { useEffect } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import VanillaTilt from 'vanilla-tilt'
-import { useNavigate, useSearchParams } from 'react-router-dom'
-import { usePageTitle } from '../../hooks/pageTitleHook'
-import './home.scss'
 import {
   AppWindow, ArrowSquareOut, Download, GithubLogo,
-  Headphones, List,
-  Playlist,
-  SquaresFour, Terminal,
-  Waveform,
-  YoutubeLogo
+  Headphones, List, Playlist, SquaresFour,
+  Terminal, Waveform, YoutubeLogo
 } from '@phosphor-icons/react'
+import usePageTitle from '../../hooks/pageTitleHook'
+import './home.scss'
 
-export function Home() {
+export default function Home() {
   usePageTitle('Kalliope.')
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()

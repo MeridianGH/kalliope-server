@@ -1,14 +1,14 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import './navbar.scss'
 import kalliopeTransparentPNG from '../../assets/kalliope_transparent.png'
+import './navbar.scss'
 
 export type NavbarProps = {
   displayLinks?: boolean,
   hideOnMobile?: boolean
 }
 
-export function Navbar({ displayLinks = false, hideOnMobile = true }: NavbarProps) {
+export default function Navbar({ displayLinks = false, hideOnMobile = true }: NavbarProps) {
   return (
     <nav className={`navbar flex-container space-between nowrap ${hideOnMobile ? 'hideOnMobile' : ''}`}>
       <Link to={'/'} className={'nav-logo-container'}>

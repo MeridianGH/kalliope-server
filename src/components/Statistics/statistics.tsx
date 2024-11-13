@@ -1,12 +1,12 @@
 import React, { Fragment, useEffect, useState } from 'react'
-import { useWebSocket } from '../../hooks/webSocketHook'
-import { Navbar } from '../Navbar/navbar'
-import { Loader } from '../Loader/loader'
-import { Background } from '../Background/background'
-import { usePageTitle } from '../../hooks/pageTitleHook'
-import './statistics.scss'
-import { ClientDataMapType, MessageToUser, PlayerListType } from '../../types/types'
 import { ArrowsClockwise, ChartBar } from '@phosphor-icons/react'
+import { ClientDataMapType, MessageToUser, PlayerListType } from '../../types/types'
+import useWebSocket from '../../hooks/webSocketHook'
+import usePageTitle from '../../hooks/pageTitleHook'
+import Navbar from '../Navbar/navbar'
+import Loader from '../Loader/loader'
+import Background from '../Background/background'
+import './statistics.scss'
 
 const clientDataMapObject = {
   '1031853575732740217': {

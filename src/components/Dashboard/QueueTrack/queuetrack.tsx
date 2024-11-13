@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
-import { LoadingButton } from '../../LoadingButton/loadingbutton'
-import { Thumbnail } from '../Thumbnail/thumbnail'
-import { DotsSixVertical, DotsThreeVertical, Play, Trash } from '@phosphor-icons/react'
-import './queuetrack.scss'
-import { Track } from '../../../types/types'
-import { useWebSocket } from '../../../hooks/webSocketHook'
-import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import { useSortable } from '@dnd-kit/sortable'
+import { DotsSixVertical, DotsThreeVertical, Play, Trash } from '@phosphor-icons/react'
+import { Track } from '../../../types/types'
+import useWebSocket from '../../../hooks/webSocketHook'
+import LoadingButton from '../../LoadingButton/loadingbutton'
+import Thumbnail from '../Thumbnail/thumbnail'
+import './queuetrack.scss'
 
 export type QueueTrackProps = {
   index: number,
@@ -15,7 +15,7 @@ export type QueueTrackProps = {
   trackInfo: Track['info']
 }
 
-export function QueueTrack({ index, guildId, trackInfo }: QueueTrackProps) {
+export default function QueueTrack({ index, guildId, trackInfo }: QueueTrackProps) {
   const webSocket = useWebSocket()
   const sortable = useSortable({
     id: index + 1,

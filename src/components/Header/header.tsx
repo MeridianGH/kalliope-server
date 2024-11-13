@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Background } from '../Background/background'
-import './header.scss'
 import { CaretCircleDown, Cloud } from '@phosphor-icons/react'
 import { SiBandcamp, SiSoundcloud, SiSpotify, SiTwitch, SiVimeo, SiYoutube } from '@icons-pack/react-simple-icons'
+import Background from '../Background/background'
+import './header.scss'
 
-export function Header() {
+export default function Header() {
   useEffect(() => {
     const header = document.querySelector<HTMLElement>('header')!
     const observer = new IntersectionObserver(([entry]) => {
