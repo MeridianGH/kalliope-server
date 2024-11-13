@@ -1,6 +1,7 @@
 {
   "include": ["./*.ts", "./utilities/*.ts"],
   "compilerOptions": {
+    "outDir": "./server",
     "module": "ES2022",
     "target": "ES2022",
     "moduleResolution": "node",
@@ -8,7 +9,6 @@
     "sourceMap": true,
     "esModuleInterop": true,
     "strictNullChecks": true,
-    "skipLibCheck": true,
-    "jsx": "react"
+    "skipLibCheck": true
   }
 }

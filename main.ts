@@ -48,7 +48,7 @@ app.use((req, res, next) => {
 app.use(compression())
 
 // Distribute folder
-app.use(express.static('dist', { index: '' }))
+app.use(express.static(path.resolve(__dirname, '../dist/'), { index: false, maxAge: 86400 }))
 
 // Cookies
 app.use(cookieParser())
@@ -264,7 +264,7 @@ app.get('*', (req, res) => {
     if (req.path !== '/version' && req.path !== '/metrics') { return res.redirect(hostname) }
     return lavalinkProxy.web(req, res, {}, console.log)
   }
-  res.sendFile(path.resolve(__dirname, './dist/index.html'))
+  res.sendFile(path.resolve(__dirname, '../dist/index.html'))
 })
 
 const server = production ?
