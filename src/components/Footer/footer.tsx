@@ -1,16 +1,18 @@
 import React from 'react'
 import './footer.scss'
+import { SiDiscord, SiGithub, SiGmail, SiReact } from '@icons-pack/react-simple-icons'
+import { HeartStraight } from '@phosphor-icons/react'
 
 export function Footer() {
   return (
     <footer>
       <div className={'social-icons flex-container nowrap'}>
-        <a href={'https://github.com/MeridianGH/kalliope'}><i className={'fa-brands fa-github'}></i></a>
-        <a href={'https://discord.gg/qX2CBrrUpf'}><i className={'fa-brands fa-discord'}></i></a>
-        <a href={'mailto:meridianpy@gmail.com'}><i className={'fa-solid fa-envelope'}></i></a>
+        <a href={'https://github.com/MeridianGH/kalliope'}><SiGithub/></a>
+        <a href={'https://discord.gg/qX2CBrrUpf'}><SiDiscord/></a>
+        <a href={'mailto:meridian.gh.dev@gmail.com'}><SiGmail/></a>
       </div>
-      <span className={'small-text'}>{'Made with '}<i className={'fa-solid fa-heart'} style={{ color: 'var(--accent)' }}></i>{' using '}<i className={'fa-brands fa-react'} style={{ color: '#61dbfb' }}></i></span>
-      <a href={'https://kalliope.cc'} className={'small-text'}>{'© 2023 | Meridian | All rights reserved.'}</a>
+      <span className={'small-text flex-container nowrap'} style={{ gap: '0.25em' }}>{'Made with '}<HeartStraight size={'1em'} color={'var(--accent)'} weight={'fill'}/>{' using '}<SiReact size={'1em'} color={'default'}/></span>
+      <a href={'https://kalliope.cc'} className={'small-text'}>{'© 2024 · Meridian · All rights reserved.'}</a>
     </footer>
   )
 }

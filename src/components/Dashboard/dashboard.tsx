@@ -16,6 +16,15 @@ import { usePageTitle } from '../../hooks/pageTitleHook'
 import kalliopeTransparentPNG from '../../assets/kalliope_transparent.png'
 import 'react-loading-skeleton/dist/skeleton.css'
 import './dashboard.scss'
+import {
+  SiBandcamp, SiBandcampHex,
+  SiSoundcloud, SiSoundcloudHex,
+  SiSpotify, SiSpotifyHex,
+  SiTwitch, SiTwitchHex,
+  SiVimeo, SiVimeoHex,
+  SiYoutube,
+  SiYoutubeHex
+} from '@icons-pack/react-simple-icons'
 
 const playerObject: Player = {
   guildId: '610498937874546699',
@@ -159,12 +168,24 @@ export function Dashboard() {
               <span>{'Kalliope.'}</span>
             </Link>
             <div className={'dashboard-header-links flex-container nowrap'}>
-              <a href={'https://youtube.com'} target={'_blank'} style={{ backgroundColor: '#ff0000' }} rel={'noreferrer'}><i className={'fa-brands fa-youtube'}></i></a>
-              <a href={'https://spotify.com'} target={'_blank'} className={'source'} style={{ backgroundColor: '#1db954' }} rel={'noreferrer'}><i className={'fa-brands fa-spotify'}></i></a>
-              <a href={'https://twitch.tv'} target={'_blank'} style={{ backgroundColor: '#9146ff' }} rel={'noreferrer'}><i className={'fa-brands fa-twitch'}></i></a>
-              <a href={'https://soundcloud.com'} target={'_blank'} style={{ backgroundColor: '#ff8800' }} rel={'noreferrer'}><i className={'fa-brands fa-soundcloud'}></i></a>
-              <a href={'https://bandcamp.com'} target={'_blank'} style={{ backgroundColor: '#629aa9' }} rel={'noreferrer'}><i className={'fa-brands fa-bandcamp'}></i></a>
-              <a href={'https://vimeo.com'} target={'_blank'} style={{ backgroundColor: '#19b7ea' }} rel={'noreferrer'}><i className={'fa-brands fa-vimeo'}></i></a>
+              <a href={'https://youtube.com'} target={'_blank'} style={{ backgroundColor: SiYoutubeHex }} rel={'noreferrer'}>
+                <SiYoutube size={'1rem'}/>
+              </a>
+              <a href={'https://spotify.com'} target={'_blank'} className={'source'} style={{ backgroundColor: SiSpotifyHex }} rel={'noreferrer'}>
+                <SiSpotify size={'1rem'}/>
+              </a>
+              <a href={'https://twitch.tv'} target={'_blank'} style={{ backgroundColor: SiTwitchHex }} rel={'noreferrer'}>
+                <SiTwitch size={'1rem'}/>
+              </a>
+              <a href={'https://soundcloud.com'} target={'_blank'} style={{ backgroundColor: SiSoundcloudHex }} rel={'noreferrer'}>
+                <SiSoundcloud size={'1rem'}/>
+              </a>
+              <a href={'https://bandcamp.com'} target={'_blank'} style={{ backgroundColor: SiBandcampHex }} rel={'noreferrer'}>
+                <SiBandcamp size={'1rem'}/>
+              </a>
+              <a href={'https://vimeo.com'} target={'_blank'} style={{ backgroundColor: SiVimeoHex }} rel={'noreferrer'}>
+                <SiVimeo size={'1rem'}/>
+              </a>
             </div>
             <div className={'dashboard-header-user-container flex-container'}>
               <div className={'dashboard-header-user flex-container nowrap'}>

@@ -114,15 +114,6 @@ section h3 {
             background-color: var(--bg-lvl1);
             border-radius: calc(var(--card-border-radius) - 2px);
         }
-
-        > i {
-            font-size: 4rem;
-            text-align: center;
-            padding: 15px;
-            color: var(--text);
-            --fa-secondary-color: var(--accent);
-            --fa-secondary-opacity: 1;
-        }
     }
 }
 .feature-card:hover::before, .features-container:hover > .feature-card::after {
