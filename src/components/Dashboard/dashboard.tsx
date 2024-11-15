@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton'
+import Skeleton from 'react-loading-skeleton'
 import { IconContext, SignOut } from '@phosphor-icons/react'
 import {
   SiBandcamp, SiBandcampHex,
@@ -81,60 +81,58 @@ export default function Dashboard() {
 
   return (
     <IconContext.Provider value={{ size: '1.5rem' }}>
-      <SkeletonTheme baseColor={'#3f3f3f'} customHighlightBackground={'linear-gradient(to right, #3f3f3f 0%, #484848 80%, #3f3f3f 100%)'}>
-        <div className={'dashboard'}>
-          <Background style={'transparent'}/>
-          <div className={'dashboard-header flex-container space-between nowrap'}>
-            <Link to={'/'} className={'dashboard-header-title flex-container'}>
-              <img src={kalliopeTransparentPNG} alt={'Logo'}/>
-              <span>{'Kalliope.'}</span>
-            </Link>
-            <div className={'dashboard-header-links flex-container nowrap'}>
-              <a href={'https://youtube.com'} target={'_blank'} style={{ backgroundColor: SiYoutubeHex }} rel={'noreferrer'}>
-                <SiYoutube size={'1rem'}/>
+      <div className={'dashboard'}>
+        <Background style={'transparent'}/>
+        <div className={'dashboard-header flex-container space-between nowrap'}>
+          <Link to={'/'} className={'dashboard-header-title flex-container'}>
+            <img src={kalliopeTransparentPNG} alt={'Logo'}/>
+            <span>{'Kalliope.'}</span>
+          </Link>
+          <div className={'dashboard-header-links flex-container nowrap'}>
+            <a href={'https://youtube.com'} target={'_blank'} style={{ backgroundColor: SiYoutubeHex }} rel={'noreferrer'}>
+              <SiYoutube size={'1rem'}/>
+            </a>
+            <a href={'https://spotify.com'} target={'_blank'} className={'source'} style={{ backgroundColor: SiSpotifyHex }} rel={'noreferrer'}>
+              <SiSpotify size={'1rem'}/>
+            </a>
+            <a href={'https://twitch.tv'} target={'_blank'} style={{ backgroundColor: SiTwitchHex }} rel={'noreferrer'}>
+              <SiTwitch size={'1rem'}/>
+            </a>
+            <a href={'https://soundcloud.com'} target={'_blank'} style={{ backgroundColor: SiSoundcloudHex }} rel={'noreferrer'}>
+              <SiSoundcloud size={'1rem'}/>
+            </a>
+            <a href={'https://bandcamp.com'} target={'_blank'} style={{ backgroundColor: SiBandcampHex }} rel={'noreferrer'}>
+              <SiBandcamp size={'1rem'}/>
+            </a>
+            <a href={'https://vimeo.com'} target={'_blank'} style={{ backgroundColor: SiVimeoHex }} rel={'noreferrer'}>
+              <SiVimeo size={'1rem'}/>
+            </a>
+          </div>
+          <div className={'dashboard-header-user-container flex-container'}>
+            <div className={'dashboard-header-user flex-container nowrap'}>
+              {user ? <span>{user.global_name}</span> : <Skeleton width={'5rem'} containerClassName={'skeleton'}/>}
+              {user ? <img className={'dashboard-header-icon'} src={`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}`} alt={'Avatar'}/> : <Skeleton height={'2rem'} width={'2rem'} circle={true} containerClassName={'skeleton'}/>}
+              <a href={'/logout'} className={'dashboard-header-logout flex-container nowrap'}>
+                <SignOut weight={'bold'}/>
+                {'Logout'}
               </a>
-              <a href={'https://spotify.com'} target={'_blank'} className={'source'} style={{ backgroundColor: SiSpotifyHex }} rel={'noreferrer'}>
-                <SiSpotify size={'1rem'}/>
-              </a>
-              <a href={'https://twitch.tv'} target={'_blank'} style={{ backgroundColor: SiTwitchHex }} rel={'noreferrer'}>
-                <SiTwitch size={'1rem'}/>
-              </a>
-              <a href={'https://soundcloud.com'} target={'_blank'} style={{ backgroundColor: SiSoundcloudHex }} rel={'noreferrer'}>
-                <SiSoundcloud size={'1rem'}/>
-              </a>
-              <a href={'https://bandcamp.com'} target={'_blank'} style={{ backgroundColor: SiBandcampHex }} rel={'noreferrer'}>
-                <SiBandcamp size={'1rem'}/>
-              </a>
-              <a href={'https://vimeo.com'} target={'_blank'} style={{ backgroundColor: SiVimeoHex }} rel={'noreferrer'}>
-                <SiVimeo size={'1rem'}/>
-              </a>
-            </div>
-            <div className={'dashboard-header-user-container flex-container'}>
-              <div className={'dashboard-header-user flex-container nowrap'}>
-                {user ? <span>{user.global_name}</span> : <Skeleton width={'5rem'} containerClassName={'skeleton'}/>}
-                {user ? <img className={'dashboard-header-icon'} src={`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}`} alt={'Avatar'}/> : <Skeleton height={'2rem'} width={'2rem'} circle={true} containerClassName={'skeleton'}/>}
-                <a href={'/logout'} className={'dashboard-header-logout flex-container nowrap'}>
-                  <SignOut weight={'bold'}/>
-                  {'Logout'}
-                </a>
-              </div>
             </div>
           </div>
-          <Servers guildClientMap={guildClientMap} playerList={playerList} userGuilds={user?.guilds} guildId={guildId} setGuildId={setGuildId}/>
-          <Queue guildId={guildId} tracks={player?.queue.tracks}/>
-          <Controls guildId={guildId} filter={player?.filters.current} hasPlayer={!!player}/>
-          <PlayerBar
-            guildId={guildId}
-            current={player?.queue.current}
-            position={player?.position}
-            volume={player?.volume}
-            timescale={player?.filters.timescale}
-            paused={player?.paused}
-            repeatMode={player?.repeatMode}
-            settings={player?.settings}
-          />
         </div>
-      </SkeletonTheme>
+        <Servers guildClientMap={guildClientMap} playerList={playerList} userGuilds={user?.guilds} guildId={guildId} setGuildId={setGuildId}/>
+        <Queue guildId={guildId} tracks={player?.queue.tracks}/>
+        <Controls guildId={guildId} filter={player?.filters.current} hasPlayer={!!player}/>
+        <PlayerBar
+          guildId={guildId}
+          current={player?.queue.current}
+          position={player?.position}
+          volume={player?.volume}
+          timescale={player?.filters.timescale}
+          paused={player?.paused}
+          repeatMode={player?.repeatMode}
+          settings={player?.settings}
+        />
+      </div>
     </IconContext.Provider>
   )
 }
