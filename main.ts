@@ -58,10 +58,19 @@ app.use(express.static(path.resolve(__dirname, '../dist/'), { index: false, maxA
 app.use(cookieParser())
 
 // Security headers
-// app.use((_, res, next) => {
-//   res.setHeader('Content-Security-Policy', 'default-src \'self\'; script-src \'self\'; object-src \'none\'')
-//   next()
-// })
+app.use((_, res, next) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    'default-src \'self\'; ' +
+    'script-src \'self\' \'unsafe-inline\' \'unsafe-eval\'; ' +
+    'style-src \'self\' \'unsafe-inline\' fonts.googleapis.com; ' +
+    'font-src \'self\' fonts.gstatic.com; ' +
+    'img-src \'self\' data:; ' +
+    'connect-src \'self\'; ' +
+    'frame-src \'self\''
+  )
+  next()
+})
 
 // Endpoints
 // Login endpoint
@@ -133,7 +142,6 @@ const fetchToken = async (res: Response, bodyInit: Record<string, string>) => {
     .then((response) => response.json() as Promise<RESTPostOAuth2AccessTokenResult | RESTError>)
     .then((response) => 'message' in response ? { status: 502, error: response.message } : response)
     .catch(() => ({ status: 504, error: 'Discord API is unreachable' }))
-  console.log('new token', token)
 
   if ('access_token' in token) {
     res.cookie(
@@ -193,7 +201,6 @@ app.get('/api/user', express.json(), async (req: Request, res) => {
   const refreshToken = req.cookies.refresh_token as string | undefined
   const csrfTokenCookie = req.cookies.csrf_token as string | undefined
   const csrfTokenHeader = req.headers['X-CSRF-Token'] as string | undefined
-  console.log(oauthToken, refreshToken, csrfTokenCookie)
 
   let authorizationToken = oauthToken
   if (!authorizationToken) {
@@ -206,7 +213,6 @@ app.get('/api/user', express.json(), async (req: Request, res) => {
         return res.status(token.status).json({ error: token.error })
       }
 
-      console.log('refreshed token', token)
       authorizationToken = `${token.token_type} ${token.access_token}`
     } else {
       return res.status(401).json({ error: 'OAuth token missing' }) // Unauthorized
@@ -285,10 +291,13 @@ server.listen({ port: port }, () => {
   if (serve) { logging.info(`Webpack Dev Server reachable at ${origin}`) }
 })
 
+const wsServer = createWebSocketServer(hostname)
 
 server.on('upgrade', (request, socket, head) => {
+  if (request.headers.host === 'lavalink.' + hostname) {
     return lavalinkProxy.ws(request, socket, head)
   }
+  if (request.headers.origin === origin || request.headers.host === 'clients.' + hostname) {
     return wsServer.handleUpgrade(request, socket, head, (socket) => {
       wsServer.emit('connection', socket, request)
     })

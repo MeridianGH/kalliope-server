@@ -68,12 +68,14 @@ export default function WebsocketProvider({ children }: PropsWithChildren) {
   useEffect(() => {
     const ws = connectSocket()
     if (!ws) {
-      if (reloadingToast.current) { toast.dismiss(reloadingToast.current) }
-      return
+      return () => {
+        if (reloadingToast.current) { toast.dismiss(reloadingToast.current) }
+      }
     }
 
     const close = () => {
       ws.close(1000, 'WebSocket was closed by user.')
+      if (reloadingToast.current) { toast.dismiss(reloadingToast.current) }
     }
     window.addEventListener('beforeunload', close)
     return () => {

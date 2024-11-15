@@ -50,7 +50,7 @@ export default function PlayerBar({ guildId, current, position, volume, timescal
       return
     }
 
-    fetch(window.location.origin + '/colors', {
+    fetch(window.location.origin + '/api/colors', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
