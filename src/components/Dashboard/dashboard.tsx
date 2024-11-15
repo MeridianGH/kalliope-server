@@ -89,22 +89,22 @@ export default function Dashboard() {
             <span>Kalliope.</span>
           </Link>
           <div className={'dashboard-header-links flex-container nowrap'}>
-            <a href={'https://youtube.com'} target={'_blank'} style={{ backgroundColor: SiYoutubeHex }} rel={'noreferrer'}>
+            <a href={'https://youtube.com'} title={'YouTube'} style={{ backgroundColor: SiYoutubeHex }} rel={'noreferrer'} target={'_blank'}>
               <SiYoutube size={'1rem'}/>
             </a>
-            <a href={'https://spotify.com'} target={'_blank'} className={'source'} style={{ backgroundColor: SiSpotifyHex }} rel={'noreferrer'}>
+            <a href={'https://spotify.com'} title={'Spotify'} style={{ backgroundColor: SiSpotifyHex }} rel={'noreferrer'} target={'_blank'}>
               <SiSpotify size={'1rem'}/>
             </a>
-            <a href={'https://twitch.tv'} target={'_blank'} style={{ backgroundColor: SiTwitchHex }} rel={'noreferrer'}>
+            <a href={'https://twitch.tv'} title={'Twitch'} style={{ backgroundColor: SiTwitchHex }} rel={'noreferrer'} target={'_blank'}>
               <SiTwitch size={'1rem'}/>
             </a>
-            <a href={'https://soundcloud.com'} target={'_blank'} style={{ backgroundColor: SiSoundcloudHex }} rel={'noreferrer'}>
+            <a href={'https://soundcloud.com'} title={'SoundCloud'} style={{ backgroundColor: SiSoundcloudHex }} rel={'noreferrer'} target={'_blank'}>
               <SiSoundcloud size={'1rem'}/>
             </a>
-            <a href={'https://bandcamp.com'} target={'_blank'} style={{ backgroundColor: SiBandcampHex }} rel={'noreferrer'}>
+            <a href={'https://bandcamp.com'} title={'Bandcamp'} style={{ backgroundColor: SiBandcampHex }} rel={'noreferrer'} target={'_blank'}>
               <SiBandcamp size={'1rem'}/>
             </a>
-            <a href={'https://vimeo.com'} target={'_blank'} style={{ backgroundColor: SiVimeoHex }} rel={'noreferrer'}>
+            <a href={'https://vimeo.com'} title={'Vimeo'} style={{ backgroundColor: SiVimeoHex }} rel={'noreferrer'} target={'_blank'}>
               <SiVimeo size={'1rem'}/>
             </a>
           </div>
@@ -112,7 +112,7 @@ export default function Dashboard() {
             <div className={'dashboard-header-user flex-container nowrap'}>
               {user ? <span>{user.global_name}</span> : <Skeleton width={'5rem'} containerClassName={'skeleton'}/>}
               {user ? <img className={'dashboard-header-icon'} src={`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}`} alt={'Avatar'}/> : <Skeleton height={'2rem'} width={'2rem'} circle={true} containerClassName={'skeleton'}/>}
-              <a href={'/logout'} className={'dashboard-header-logout flex-container nowrap'}>
+              <a href={'/logout'} title={'Logout'} className={'dashboard-header-logout flex-container nowrap'}>
                 <SignOut weight={'bold'}/>
                 Logout
               </a>
