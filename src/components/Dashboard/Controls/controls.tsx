@@ -45,7 +45,7 @@ export default function Controls({ guildId, filter, hasPlayer }: ControlsProps) 
     <div className={'controls-container flex-container column start nowrap'}>
       <div className={'flex-container nowrap'}>
         <Faders/>
-        <h5 className={'controls-title'}>{'Controls'}</h5>
+        <h5 className={'controls-title'}>Controls</h5>
       </div>
       <form onSubmit={handlePlay} className={`controls-input controls-form ${!guildId ? 'disabled' : ''}`}>
         <input type={'text'} placeholder={'Add to queue'} ref={inputRef}/>
@@ -79,16 +79,16 @@ export default function Controls({ guildId, filter, hasPlayer }: ControlsProps) 
             )
           }}
         >
-          <option disabled>{'Select a filter...'}</option>
-          <option value={'none'}>{'No filter'}</option>
-          <option value={'bassboost'}>{'Bass Boost'}</option>
-          <option value={'classic'}>{'Classic'}</option>
-          <option value={'eightd'}>{'8D'}</option>
-          <option value={'earrape'}>{'Earrape'}</option>
-          <option value={'karaoke'}>{'Karaoke'}</option>
-          <option value={'nightcore'}>{'Nightcore'}</option>
-          <option value={'superfast'}>{'Superfast'}</option>
-          <option value={'vaporwave'}>{'Vaporwave'}</option>
+          <option disabled>Select a filter...</option>
+          <option value={'none'}>No filter</option>
+          <option value={'bassboost'}>Bass Boost</option>
+          <option value={'classic'}>Classic</option>
+          <option value={'eightd'}>8D</option>
+          <option value={'earrape'}>Earrape</option>
+          <option value={'karaoke'}>Karaoke</option>
+          <option value={'nightcore'}>Nightcore</option>
+          <option value={'superfast'}>Superfast</option>
+          <option value={'vaporwave'}>Vaporwave</option>
         </select>
       </div>
       <div className={'controls-spacer'}></div>

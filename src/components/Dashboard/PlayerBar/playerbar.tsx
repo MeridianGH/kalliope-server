@@ -232,7 +232,7 @@ export default function PlayerBar({ guildId, current, position, volume, timescal
                     }, true)
                   }}
                 >
-                  <span className={'tooltip-content'}>{'Toggle Autoplay'}</span>
+                  <span className={'tooltip-content'}>Toggle Autoplay</span>
                   <Queue/>
                 </LoadingButton>
                 {settings?.sponsorblockSupport && (
@@ -247,7 +247,7 @@ export default function PlayerBar({ guildId, current, position, volume, timescal
                       }, true)
                     }}
                   >
-                    <span className={'tooltip-content'}>{'Toggle SponsorBlock'}</span>
+                    <span className={'tooltip-content'}>Toggle SponsorBlock</span>
                     <div className={'sponsorblock-logo'}></div>
                   </LoadingButton>
                 )}

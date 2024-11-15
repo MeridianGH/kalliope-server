@@ -52,7 +52,7 @@ export default function Servers({ guildClientMap, playerList, userGuilds, guildI
       <div className={'server-title-container flex-container space-between nowrap'}>
         <div className={'flex-container nowrap'}>
           <DiscordLogo/>
-          <h5 className={'server-title'}>{'Your Servers'}</h5>
+          <h5 className={'server-title'}>Your Servers</h5>
         </div>
         {isMobile && <button onClick={() => setCollapsed(!collapsed)}><CaretUp style={collapsed ? { rotate: '180deg' } : undefined}/></button>}
       </div>
@@ -68,7 +68,7 @@ export default function Servers({ guildClientMap, playerList, userGuilds, guildI
 
       {guildClientMap && commonGuilds.length === 0 && (
         <div className={'flex-container'} style={{ width: '100%' }}>
-          <p>{'You have no servers in common with any instance of Kalliope.'}<br/>{'Host your own instance now using the '}<a href={'https://github.com/MeridianGH/kalliope#installation'} className={'underline'}>{'instructions'}</a>{' and make sure it\'s properly configured.'}</p>
+          <p>You have no servers in common with any instance of Kalliope.<br/>{'Host your own instance now using the '}<a href={'https://github.com/MeridianGH/kalliope#installation'} className={'underline'}>instructions</a>{' and make sure it\'s properly configured.'}</p>
         </div>
       )}
 

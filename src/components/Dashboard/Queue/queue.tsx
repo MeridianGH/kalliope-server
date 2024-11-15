@@ -97,9 +97,9 @@ export default function Queue({ guildId, tracks }: QueueProps) {
       <div className={'queue-container flex-container column start nowrap'}>
         <div className={'flex-container nowrap'}>
           <Playlist/>
-          <h5 className={'queue-title'}>{'Queue'}</h5>
+          <h5 className={'queue-title'}>Queue</h5>
         </div>
-        <div className={'flex-container'} style={{ width: '100%', height: '100%' }}>{'Select a server to view the queue.'}</div>
+        <div className={'flex-container'} style={{ width: '100%', height: '100%' }}>Select a server to view the queue.</div>
       </div>
     )
   }
@@ -114,7 +114,7 @@ export default function Queue({ guildId, tracks }: QueueProps) {
       <div className={'queue-container flex-container column start nowrap'}>
         <div className={'flex-container nowrap'}>
           <Playlist/>
-          <h5 className={'queue-title'}>{'Queue'}</h5>
+          <h5 className={'queue-title'}>Queue</h5>
         </div>
         {items && items.length > 0 && items.length === (tracks?.length ?? 0) ?
           (
@@ -130,7 +130,7 @@ export default function Queue({ guildId, tracks }: QueueProps) {
             </div>
           )}
         <div className={'queue-reorder-container flex-container'}>
-          {'Reordering...'}
+          Reordering...
           <div className={'queue-reorder-progress'}></div>
         </div>
       </div>

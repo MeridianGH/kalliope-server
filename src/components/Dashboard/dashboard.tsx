@@ -86,7 +86,7 @@ export default function Dashboard() {
         <div className={'dashboard-header flex-container space-between nowrap'}>
           <Link to={'/'} className={'dashboard-header-title flex-container'}>
             <img src={kalliopeTransparentPNG} alt={'Logo'}/>
-            <span>{'Kalliope.'}</span>
+            <span>Kalliope.</span>
           </Link>
           <div className={'dashboard-header-links flex-container nowrap'}>
             <a href={'https://youtube.com'} target={'_blank'} style={{ backgroundColor: SiYoutubeHex }} rel={'noreferrer'}>
@@ -114,7 +114,7 @@ export default function Dashboard() {
               {user ? <img className={'dashboard-header-icon'} src={`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}`} alt={'Avatar'}/> : <Skeleton height={'2rem'} width={'2rem'} circle={true} containerClassName={'skeleton'}/>}
               <a href={'/logout'} className={'dashboard-header-logout flex-container nowrap'}>
                 <SignOut weight={'bold'}/>
-                {'Logout'}
+                Logout
               </a>
             </div>
           </div>

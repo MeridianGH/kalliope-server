@@ -49,15 +49,15 @@ export default function Statistics() {
         <div className={'stats-card flex-container column'}>
           <div className={'flex-container nowrap'}>
             <ChartBar size={'3rem'}/>
-            <h1>{'Statistics'}</h1>
+            <h1>Statistics</h1>
           </div>
           {clientDataMap === null && <div className={'flex-container column'}><Loader/></div>}
           {!!clientDataMap && clientData.length === 0 && (
             <p>
-              {'This server is not managing any instance of Kalliope.'}
+              This server is not managing any instance of Kalliope.
               <br/>
               {'Host your own instance now using the '}
-              <a href={'https://github.com/MeridianGH/kalliope#installation'} className={'underline'}>{'instructions'}</a>
+              <a href={'https://github.com/MeridianGH/kalliope#installation'} className={'underline'}>instructions</a>
               {' and make sure it\'s properly configured.'}
             </p>
           )}
@@ -65,7 +65,7 @@ export default function Statistics() {
             <div className={'flex-container column nowrap'} style={{ width: '100%' }}>
               <div className={'stats-metrics-container'}>
                 <div className={'stats-metric flex-container space-between column start nowrap'}>
-                  {'Total guilds:'}
+                  Total guilds:
                   <span>
                     {clientData.reduce((acc, cur) => cur.guilds.length + acc, 0)}
                     {' guilds'}
@@ -83,18 +83,18 @@ export default function Statistics() {
                   <span>
                     {clientData.reduce((acc, cur) => (cur.ping === -1 ? 0 : cur.ping) + acc, 0) / (clientData.filter((data) => data.ping !== -1).length || 1)}
                     <wbr/>
-                    {'ms'}
+                    ms
                   </span>
                 </div>
                 <div className={'stats-metric flex-container space-between column start nowrap'}>
-                  {'Currently playing in:'}
+                  Currently playing in:
                   <span>
                     {playerList?.size ?? 0}
                     {' guilds'}
                   </span>
                 </div>
                 <div className={'stats-metric flex-container space-between column start nowrap'}>
-                  {'Currently connected:'}
+                  Currently connected:
                   <span>
                     {clientData.length}
                     {' clients'}
@@ -121,11 +121,11 @@ export default function Statistics() {
                         <br/>
                         {'Latency: '}
                         {data.ping}
-                        {'ms'}
+                        ms
                         <br/>
                       </p>
                       <p className={'small-text'}>
-                        {'Ready since:'}
+                        Ready since:
                         <br/>
                         {new Date(data.readyTimestamp).toLocaleString()}
                       </p>

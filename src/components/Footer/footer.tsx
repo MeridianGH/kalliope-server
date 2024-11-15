@@ -12,7 +12,7 @@ export default function Footer() {
         <a href={'mailto:meridian.gh.dev@gmail.com'}><SiGmail/></a>
       </div>
       <span className={'small-text flex-container nowrap'} style={{ gap: '0.25em' }}>{'Made with '}<HeartStraight size={'1em'} color={'var(--accent)'} weight={'fill'}/>{' using '}<SiReact size={'1em'} color={'default'}/></span>
-      <a href={'https://kalliope.cc'} className={'small-text'}>{'© 2024 · Meridian · All rights reserved.'}</a>
+      <a href={'https://kalliope.cc'} className={'small-text'}>© 2024 · Meridian · All rights reserved.</a>
     </footer>
   )
 }

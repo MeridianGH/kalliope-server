@@ -24,8 +24,8 @@ export default function Header() {
   return (
     <header className={'flex-container column nowrap'}>
       <Background style={'gradient'}/>
-      <h1 className={'header-title'}>{'Kalliope.'}</h1>
-      <p className={'header-slogan'}>{'Stream high quality music in your Discord server.'}</p>
+      <h1 className={'header-title'}>Kalliope.</h1>
+      <p className={'header-slogan'}>Stream high quality music in your Discord server.</p>
       <div className={'source-icons-container flex-container'}>
         <SiYoutube color={'default'} size={'2rem'}/>
         <SiSpotify color={'default'} size={'2rem'}/>
@@ -35,7 +35,7 @@ export default function Header() {
         <SiVimeo color={'default'} size={'2rem'}/>
         <Cloud weight={'fill'} size={'2rem'}/>
       </div>
-      <Link to={'/dashboard'} className={'cta-button'}>{'Dashboard'}</Link>
+      <Link to={'/dashboard'} className={'cta-button'}>Dashboard</Link>
       <a className={'scroll-hint'} href={'#features'} tabIndex={-1}><CaretCircleDown weight={'fill'}/></a>
     </header>
   )

@@ -70,7 +70,7 @@ export default tseslint.config(
       'no-multiple-empty-lines': ['warn', { max: 2, maxEOF: 0 }],
       'member-delimiter-style': ['warn', { singleline: { delimiter: 'comma', requireLast: false }, multiline: { delimiter: 'comma', requireLast: false } }],
       'jsx-indent': ['off'],
-      'jsx-curly-brace-presence': ['warn', 'always'],
+      'jsx-curly-brace-presence': ['warn', { props: 'always', children: 'never', propElementValues: 'always' }],
       'jsx-curly-newline': ['warn', { singleline: 'forbid', multiline: 'forbid' }],
       'jsx-wrap-multilines': ['warn', { declaration: 'parens-new-line', assignment: 'parens-new-line', return: 'parens-new-line', arrow: 'parens-new-line' }],
       'jsx-tag-spacing': ['warn', { beforeSelfClosing: 'never' }],

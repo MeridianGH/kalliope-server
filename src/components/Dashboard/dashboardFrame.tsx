@@ -17,7 +17,7 @@ export default function DashboardFrame() {
       <div className={'dashboard-header flex-container space-between nowrap'}>
         <Link to={'/'} className={'dashboard-header-title flex-container'}>
           <img src={kalliopeTransparentPNG} alt={'Logo'}/>
-          <span>{'Kalliope.'}</span>
+          <span>Kalliope.</span>
         </Link>
         <Skeleton height={'2rem'} containerClassName={'skeleton'}/>
         <div className={'dashboard-header-user-container flex-container'}>
