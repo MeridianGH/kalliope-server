@@ -7,7 +7,6 @@ import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin'
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 const production = process.argv[process.argv.indexOf('--mode') + 1] !== 'development'
-const isDevServer = process.env.WEBPACK_SERVE === 'true'
 
 // noinspection JSUnusedGlobalSymbols
 export default {
@@ -45,19 +44,27 @@ export default {
     new HtmlWebpackPlugin({ template: './src/index.html' }),
     new MiniCssExtractPlugin({ filename: '[name].[contenthash].css' }),
     new ForkTsCheckerWebpackPlugin(),
-    new webpack.DefinePlugin({
-      PRODUCTION: JSON.stringify(production),
-      DEV_SERVER: JSON.stringify(isDevServer)
-    })
+    new webpack.DefinePlugin({ PRODUCTION: JSON.stringify(production) })
   ],
   devtool: 'source-map',
   devServer: {
-    static: path.resolve(__dirname, './dist'),
     historyApiFallback: true,
-    hot: true,
-    port: 80
+    port: 80,
+    devMiddleware: { index: false },
+    proxy: [
+      {
+        context: ['/login', '/logout', '/auth', '/api'],
+        target: 'http://localhost:8080'
+      },
+      {
+        context: ['/dev'],
+        target: 'ws://localhost:8080',
+        pathRewrite: { '^/dev': '' },
+        ws: true
+      }
+    ]
   },
-  watchOptions: { ignored: /node_modules/ },
+  infrastructureLogging: { level: 'warn' },
   performance: {
     hints: false,
     maxEntrypointSize: 512000,

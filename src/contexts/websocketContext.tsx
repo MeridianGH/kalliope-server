@@ -12,7 +12,7 @@ export default function WebsocketProvider({ children }: PropsWithChildren) {
 
   const connectSocket = useCallback(() => {
     if (!user) { return null }
-    const ws = new WebSocket(`ws${PRODUCTION ? 's' : ''}://${location.host}`)
+    const ws = new WebSocket(`ws${PRODUCTION ? 's' : ''}://${location.host}${!PRODUCTION ? '/dev' : ''}`)
 
     function request(data: UserMessageTypes): void
     function request(data: UserMessageTypes, awaitResponse: true): Promise<MessageToUser>
@@ -66,8 +66,6 @@ export default function WebsocketProvider({ children }: PropsWithChildren) {
   }, [user])
 
   useEffect(() => {
-    if (DEV_SERVER) { return }
-
     const ws = connectSocket()
     if (!ws) {
       if (reloadingToast.current) { toast.dismiss(reloadingToast.current) }

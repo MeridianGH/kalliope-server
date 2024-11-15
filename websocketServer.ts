@@ -88,7 +88,7 @@ class HeartbeatWSServer extends WebSocketServer<typeof HeartbeatWebSocket> {
   }
 }
 
-export function createWebSocketServer(domain: string) {
+export function createWebSocketServer(hostname: string) {
   const wsServer = new HeartbeatWSServer({ noServer: true })
 
   wsServer.on('connection', (ws, req) => {
@@ -247,12 +247,12 @@ export function createWebSocketServer(domain: string) {
       const message = JSON.parse(rawData.toString()) as MessageToServer
 
       function isUserMessage(data: MessageToServer): data is UserMessage {
-        return data ? req.headers.host === domain : false
+        return data ? req.headers.host === hostname : false
       }
 
       if (isUserMessage(message)) {
         handleUserMessage(message)
-      } else if (req.headers.host === 'clients.' + domain) {
+      } else if (req.headers.host === 'clients.' + hostname) {
         handleClientMessage(message)
       }
     })

@@ -8,22 +8,10 @@ import Loader from '../Loader/loader'
 import Background from '../Background/background'
 import './statistics.scss'
 
-const clientDataMapObject = {
-  '1031853575732740217': {
-    guilds: ['610498937874546699'],
-    users: 14,
-    readyTimestamp: 1712918626950,
-    ping: 138,
-    displayAvatarURL: 'https://cdn.discordapp.com/avatars/1031853575732740217/5b2bcb5c07565482233ca94d177f9906.webp',
-    displayName: 'Kalliope Dev',
-    version: '2.0.0'
-  }
-}
-
 export default function Statistics() {
   usePageTitle('Kalliope. | Statistics')
   const webSocket = useWebSocket()
-  const [clientDataMap, setClientDataMap] = useState<ClientDataMapType>(DEV_SERVER ? clientDataMapObject : null)
+  const [clientDataMap, setClientDataMap] = useState<ClientDataMapType>(null)
   const [playerList, setPlayerList] = useState<PlayerListType>(new Set())
 
   useEffect(() => {
