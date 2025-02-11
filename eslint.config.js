@@ -102,7 +102,7 @@ export default tseslint.config(
     },
     settings: { react: { version: 'detect' } }
   },
-  { ignores: ['dist/'] },
+  { ignores: ['dist/', 'server/', 'docs/'] },
   {
     files: ['**/*.js'],
     extends: [tseslint.configs.disableTypeChecked]
