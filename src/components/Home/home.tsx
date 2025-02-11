@@ -19,7 +19,7 @@ export default function Home() {
     if (searchParams.size > 0) {
       if (searchParams.has('logout')) { toast.success('Successfully logged out.') }
       if (searchParams.has('error')) { toast.error(`Discord authentication error:\n${decodeURIComponent(searchParams.get('error') ?? 'Unknown error')}`) }
-      navigate('/', { replace: true })
+      void navigate('/', { replace: true })
     }
   }, [navigate, searchParams])
 

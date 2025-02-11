@@ -67,11 +67,11 @@ export default function PlayerBar({ guildId, current, position, volume, timescal
 
   const expand = useCallback(() => {
     if (!isMobile) { return }
-    navigate('/dashboard', { state: 'expanded' })
+    void navigate('/dashboard', { state: 'expanded' })
   }, [isMobile, navigate])
   const collapse = useCallback(() => {
     if (!isMobile) { return }
-    navigate(-1)
+    void navigate(-1)
   }, [isMobile, navigate])
 
   useEffect(() => {

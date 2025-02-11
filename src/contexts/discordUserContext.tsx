@@ -24,17 +24,17 @@ export default function DiscordUserProvider({ children }: PropsWithChildren) {
         }
         const result = await response.json() as UserAPIResult
         if ('error' in result) {
-          navigate(`/?error=${encodeURIComponent(result.error)}`)
+          void navigate(`/?error=${encodeURIComponent(result.error)}`)
           return
         }
         if (!response.ok) {
-          navigate(`/?error=${encodeURIComponent('Unknown error')}`)
+          void navigate(`/?error=${encodeURIComponent('Unknown error')}`)
           return
         }
         return result
       })
       .catch(() => {
-        navigate(`/?error=${encodeURIComponent('Unknown error')}`)
+        void navigate(`/?error=${encodeURIComponent('Unknown error')}`)
       })
 
     if (!userResponse) { return }
