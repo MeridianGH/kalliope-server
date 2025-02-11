@@ -65,7 +65,7 @@ app.use((_, res, next) => {
     'script-src \'self\' \'unsafe-inline\' \'unsafe-eval\'; ' +
     'style-src \'self\' \'unsafe-inline\' fonts.googleapis.com; ' +
     'font-src \'self\' fonts.gstatic.com; ' +
-    'img-src \'self\' data:; ' +
+    'img-src \'self\' data: *; ' +
     'connect-src \'self\'; ' +
     'frame-src \'self\''
   )
