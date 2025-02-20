@@ -58,6 +58,7 @@ export default function Dashboard() {
           setPlayer(data.player)
           break
         case 'error':
+          if (data.requestId) { break } // Assume error will be handled in original request
           toast.error(data.errorMessage)
           break
       }
