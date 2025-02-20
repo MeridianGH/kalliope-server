@@ -9,6 +9,23 @@ import genericServer from '../../../assets/generic_server.png'
 import 'react-loading-skeleton/dist/skeleton.css'
 import './servers.scss'
 
+function LoadingServerIcon({ guild }: { guild?: Nullable<RESTAPIPartialCurrentUserGuild> }) {
+  const [isLoaded, setLoaded] = useState(false)
+  return (
+    <>
+      <img
+        src={guild?.icon ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}` : genericServer}
+        className={'server-logo'}
+        alt={'Server Icon'}
+        onError={(event) => { event.currentTarget.src = genericServer }}
+        onLoad={guild?.icon ? () => setLoaded(true) : undefined}
+        style={{ display: isLoaded ? 'block' : 'none' }}
+      />
+      {!isLoaded && <Skeleton className={'server-logo'} containerClassName={'skeleton'}/>}
+    </>
+  )
+}
+
 export type ServersProps = {
   guildClientMap: Nullable<GuildClientMapType>,
   playerList: Nullable<PlayerListType>,
@@ -36,10 +53,14 @@ export default function Servers({ guildClientMap, playerList, userGuilds, guildI
     if (!webSocket) { return }
     if (!guildClientMap) {
       if (webSocket.readyState === 1) {
-        webSocket.request({ type: 'requestGuildClientMap' })
+        void new Promise((resolve) => setTimeout(resolve, 500)).then(() => {
+          webSocket.request({ type: 'requestGuildClientMap' })
+        })
       } else {
         webSocket.addEventListener('open', () => {
-          webSocket.request({ type: 'requestGuildClientMap' })
+          void new Promise((resolve) => setTimeout(resolve, 500)).then(() => {
+            webSocket.request({ type: 'requestGuildClientMap' })
+          })
         }, { once: true })
       }
     }
@@ -59,7 +80,7 @@ export default function Servers({ guildClientMap, playerList, userGuilds, guildI
 
       {(!userGuilds || !guildClientMap) && Array.from({ length: isMobile ? 3 : 6 }).map((_, index) => (
         <div key={index} className={'server-item flex-container nowrap'}>
-          <Skeleton className={'server-logo'} containerClassName={'skeleton'}/>
+          <LoadingServerIcon/>
           <div className={'server-item-text flex-container space-between nowrap'}>
             <Skeleton containerClassName={'skeleton'} width={[100, 50, 200][index % 3]} style={{ maxWidth: '100%' }}/>
           </div>
@@ -78,12 +99,7 @@ export default function Servers({ guildClientMap, playerList, userGuilds, guildI
           className={`server-item ${guildId === guild.id ? 'active' : ''} ${playerList?.has(guild.id) ? 'playing' : ''} flex-container nowrap`}
           onClick={() => { setGuildId(guild.id) }}
         >
-          <img
-            src={guild.icon ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}` : genericServer}
-            className={'server-logo'}
-            alt={'Server Icon'}
-            onError={(event) => { event.currentTarget.src = genericServer }}
-          />
+          <LoadingServerIcon guild={guild}/>
           <div className={'server-item-text flex-container space-between nowrap'}>
             <span>{guild.name}</span>
             {playerList?.has(guild.id) && <Visualizer style={'white'}/>}
