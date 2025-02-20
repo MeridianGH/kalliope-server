@@ -20,8 +20,11 @@
     --toastify-toast-padding: 1rem;
 
     .Toastify {
+        width: 0;
+        height: 0;
         position: fixed;
         margin: 0;
+        padding: 0;
         z-index: 999;
     }
     .Toastify__toast {
